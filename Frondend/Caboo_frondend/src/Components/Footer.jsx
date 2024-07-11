@@ -5,8 +5,8 @@ const Footer = () => {
   return (
     <div className='h-96 bg-black text-white '>
         
-            <div className=' pl-36 pt-8 h-auto'>
-             <img  src={logo} alt="Logo" className="h-14" />
+            <div className=' pl-36 pt-8 h-auto  '>
+             <img  src={logo} alt="Logo" className="h-14 mx-auto md:mx-0" />
              <span className='text-xl pl-5 pt-5 font-bold block'>Visit Help Center</span>
 
             </div>
