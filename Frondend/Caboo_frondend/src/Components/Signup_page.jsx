@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import mainImage from "../assets/mainimage.webp";
 import useFormsubmition from "../Hooks/useFormsubmition";
+import {user_signup} from "../Utils/Constanse"
 
 const Signup_page = () => {
 
@@ -41,10 +42,10 @@ const Signup_page = () => {
           return ['image/jpeg', 'image/png'].includes(value.type);
         }).required('Profile image is required'),
       });
-
+      
       const onSubmit = (values) => {
-        // console.log(values);
-        FormSubmition(values)
+        console.log(user_signup)
+        FormSubmition(values,user_signup)
       };
     
       return (
