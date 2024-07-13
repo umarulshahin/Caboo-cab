@@ -3,7 +3,7 @@ import driver_img from "../assets/driver_Layout.jpg";
 
 const LandingPage_layer2 = () => {
   return (
-    <div className="h-screen flex flex-col md:flex-row">
+    <div className="h-screen flex flex-col md:flex-row" id="/second_layout">
       <div className="hidden md:flex w-full md:w-3/6 items-center justify-center">
         <img className="h-[400px]" src={driver_img} alt="driver image" />
       </div>

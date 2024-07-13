@@ -12,16 +12,17 @@ const LandingPage = () => {
 
   }
   return (
-    <div>
-      <div className="h-20 bg-black">
+    <div id="/main">
+      <div className="h-20 bg-black ">
+         
       <Header headprops={headprops} />
 
       </div>
-      <div className=" bg-black flex">
+      <div className="bg-black  flex">
         <Landing_Form />
       </div>
 
-      <div className="">
+      <div>
         <LandingPage_layer2 />
       </div>
       <>

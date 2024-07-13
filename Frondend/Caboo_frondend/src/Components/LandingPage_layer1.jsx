@@ -22,15 +22,15 @@ const Landing_Form = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-3/6 flex justify-center">
+    <div className="container mx-auto " id="/first_layout">
+      <div className="flex flex-col md:flex-row  ">
+        <div className="w-full md:w-3/6 flex justify-center ">
           <div className="h-screen flex flex-col items-center md:items-start justify-center text-white px-6 md:pl-16">
             <span className="text-2xl font-bold text-center md:text-left">
               Always Ready To Assist, Anytime <br /> Anywhere With C<span className="text-yellow-500">a</span>boo
             </span>
 
-            <div className="mt-10 w-full max-w-md">
+            <div className="mt-10 w-full max-w-md" id="first_layout">
               <span className="font-bold text-center block md:text-left">Request a ride, hop in, and go.</span>
               <Formik
                 initialValues={initialValues}
