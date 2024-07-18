@@ -13,11 +13,11 @@ const LandingPage = () => {
   }
   return (
     <div id="/main">
-      <div className="h-20 bg-black ">
+      <>
          
       <Header headprops={headprops} />
 
-      </div>
+      </>
       <div className="bg-black  flex">
         <Landing_Form />
       </div>
