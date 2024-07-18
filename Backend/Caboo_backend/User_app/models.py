@@ -2,6 +2,13 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+import os
+
+def truncate_filename(instance, filename):
+
+    filename_base, filename_ext = os.path.splitext(filename)
+    truncated_filename = filename_base[:100] + filename_ext
+    return os.path.join('img', 'profile', truncated_filename)
 
 
 class CustomUserManager(BaseUserManager):
@@ -29,11 +36,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True,blank=False)
     username= models.CharField(max_length=30, blank=False)
     address= models.CharField(max_length=150,blank=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
-    phone=models.CharField(max_length=10,blank=False)
-    profile =  models.ImageField(upload_to='img/profile',blank=False)
+    phone=models.CharField(max_length=10,blank=False,unique=True)
+    profile = models.ImageField(upload_to=truncate_filename, blank=False, max_length=250)
 
     objects = CustomUserManager()
 
@@ -42,3 +49,4 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
