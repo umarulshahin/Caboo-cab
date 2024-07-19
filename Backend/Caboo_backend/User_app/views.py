@@ -7,9 +7,39 @@ from .models import *
 import random
 from django.core.mail import send_mail
 from django.conf import settings
+from .tasks import send_email_task
+from celery.result import AsyncResult
 
 
-
+@api_view(['POST'])
+def Email_validate(request):
+    
+    data=request.data
+    
+    if CustomUser.objects.filter(email=data["email"]).exists():
+        
+        return Response({"message":"alredy email exist","email":data})
+    else:
+        
+        otp_code = str(random.randint(100000,999999))
+        subject="Caboo OTP verification"
+        message=f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
+        from_email='akkushahin666@gmail.com'
+        recipient_list=['akkushahin666@gmail.com']
+        
+        result = send_email_task.delay(subject, message,from_email,recipient_list)
+        response=task_status(result.id)
+        print(response,"response")
+        print(result.id,"yes work")
+        # result=AsyncResult(task_id)
+        # if result.ready():
+        #     print(result.status)
+        #     print(result.result)
+        # else:
+        #     print(result.status,"else case")
+            
+    return Response({'success':result.id})
+    
 @api_view(['POST'])
 def Signup(request):
     
@@ -58,4 +88,30 @@ def Otp_genaration(email):
         return "otp faild"
    
 
+def task_status(task_id):
+    result = AsyncResult(task_id)
+    
+    if result.ready():
+        # Task is complete
+        if result.successful():
+            print("yes workin 1")
+            return Response({
+                'status': 'success',
+                'result': result.result  # This is the result returned by the task
+            })
+        else:
+            # Task failed
+            print("yes workin 2")
 
+            return Response({
+                'status': 'failed',
+                'result': str(result.result)  # Error message or traceback
+            })
+    else:
+        # Task is still running
+        print("yes workin 3")
+
+        return Response({
+            'status': 'pending',
+            'result': None
+        })

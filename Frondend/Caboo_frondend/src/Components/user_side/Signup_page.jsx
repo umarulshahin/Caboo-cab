@@ -1,9 +1,9 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import mainImage from "../assets/mainimage.webp";
-import useFormsubmition from "../Hooks/useFormsubmition";
-import { user_signup } from "../Utils/Constanse";
+import mainImage from "../../assets/mainimage.webp";
+import { user_signup_url} from "../../Utils/Constanse";
+import useFormsubmition from "../../Hooks/useFormsubmition"
 
 const Signup_page = () => {
   const { FormSubmition } = useFormsubmition();
@@ -41,12 +41,12 @@ const Signup_page = () => {
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
         "Password must contain at least one uppercase letter, one lowercase letter, and one number"
       ),
-    profile: Yup.mixed()
-      .test("fileType", "Unsupported file format", (value) => {
-        if (!value) return true; // Allow empty value if not required
-        return ["image/jpeg", "image/png"].includes(value.type);
-      })
-      .required("Profile image is required"),
+    // profile: Yup.mixed()
+    //   .test("fileType", "Unsupported file format", (value) => {
+    //     if (!value) return true; // Allow empty value if not required
+    //     return ["image/jpeg", "image/png"].includes(value.type);
+    //   })
+    //   .required("Profile image is required"),
   });
 
   const onSubmit = (values) => {
@@ -54,7 +54,7 @@ const Signup_page = () => {
 
     console.log(values,".......adddqdd")
 
-    FormSubmition(values,user_signup);
+    FormSubmition(values,user_signup_url);
 
   };
 
@@ -70,7 +70,7 @@ const Signup_page = () => {
               <span className="font-bold text-2xl flex items-center">
                 Create an account
               </span>
-              <div className="mt-10 w-full max-w-md">
+              <div className="mt-10 w-96 max-w-md text-lg font-bold relative ">
                 <Formik
                   initialValues={initialValues}
                   validationSchema={validationSchema}
@@ -78,7 +78,7 @@ const Signup_page = () => {
                 >
                   {({ isSubmitting, setFieldValue }) => (
                     <Form>
-                      <div className="mb-4 relative w-full text-lg font-bold">
+                      <div >
                         <Field
                           type="text"
                           id="username"
@@ -93,7 +93,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4 relative w-full text-lg font-bold">
+                      <div >
                         <Field
                           type="email"
                           id="email"
@@ -108,7 +108,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4 relative w-full text-lg font-bold">
+                      <div >
                         <Field
                           type="text"
                           id="phone"
@@ -123,7 +123,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4 relative w-full text-lg font-bold">
+                      <div >
                         <Field
                           type="text"
                           id="address"
@@ -138,7 +138,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4 relative w-full text-lg font-bold">
+                      <div className="mb-4 relative  text-lg font-bold">
                         <Field
                           type="password"
                           id="password"
@@ -153,7 +153,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4 relative w-full text-lg font-bold">
+                      {/* <div className="mb-4 relative w-full text-lg font-bold">
                         <input
                           type="file"
                           id="profile"
@@ -168,7 +168,7 @@ const Signup_page = () => {
                           component="div"
                           className="text-red-500 text-sm mt-1"
                         />
-                      </div>
+                      </div> */}
 
                       <div className="flex justify-center items-center">
                         <button
