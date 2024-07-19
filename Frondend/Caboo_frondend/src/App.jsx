@@ -4,11 +4,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Landing_Form from "./Components/LandingPage_layer1";
 import LandingPage_layer2 from "./Components/LandingPage_layer2";
 import Signin_selection from "./Pages/Signin_selection";
-import Signup from "./Pages/Signup";
+import Signup from "./Pages/user_side/Signup";
 import { appStore, persist } from "./Redux/Store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import OtpVerification from "./Pages/OtpVerification";
+import OtpVerification from "./Pages/user_side/OtpVerification";
 
 const App = () => {
   return (
@@ -23,7 +23,6 @@ const App = () => {
               <Route path="/signin_selection" element={<Signin_selection />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/otpverify" element={<OtpVerification />} />
-
             </Routes>
           </BrowserRouter>
         </PersistGate>

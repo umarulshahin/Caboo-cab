@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import logo from "../assets/Logo.png";
-import { Link,  useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 
 const Header = (props) => {
   const { ride, drive, user } = props.headprops;
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
-  const handleSignin=()=>{
-    navigate('/signin_selection',{ state: { signin: true } })
-}
-const handleSignup=()=>{
-  navigate('/signin_selection',{ state: { signin: false } })
-}
+  const handleSignin = () => {
+    navigate('/signin_selection', { state: { signin: true } });
+  }
+
+  const handleSignup = () => {
+    navigate('/signin_selection', { state: { signin: false } });
+  }
+
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black">
       <div className="flex flex-wrap items-center justify-between p-4">
@@ -24,22 +26,24 @@ const handleSignup=()=>{
           <div className="hidden sm:flex sm:space-x-8 pl-6">
             {ride && (
               <ScrollLink
-                to="/first_layout"
+                to="first_layout"
                 smooth={true}
                 duration={500}
-                className="text-white font-extrabold cursor-pointer"
+                className="text-white font-extrabold cursor-pointer hover:text-yellow-500"
+               
               >
-                {ride ? "Ride" : ""}
+                Ride
               </ScrollLink>
             )}
             {drive && (
               <ScrollLink
-                to="/second_layout"
+                to="second_layout"
                 smooth={true}
                 duration={500}
-                className="text-white font-extrabold cursor-pointer"
+                className="text-white font-extrabold cursor-pointer hover:text-yellow-500"
+               
               >
-                {drive ? "Drive" : ""}
+                Drive
               </ScrollLink>
             )}
           </div>
@@ -53,7 +57,6 @@ const handleSignup=()=>{
             <div className="flex space-x-3">
               <button
                 onClick={handleSignin}
-
                 className="bg-white h-7 w-[70px] rounded-md font-bold text-center"
               >
                 Sign in
@@ -91,12 +94,12 @@ const handleSignup=()=>{
             <div className="flex flex-col items-end space-y-2 pt-4">
               {ride && (
                 <Link className="text-white font-extrabold">
-                  {ride ? "Ride" : ""}
+                  Ride
                 </Link>
               )}
               {drive && (
                 <Link className="text-white font-extrabold">
-                  {drive ? "Drive" : ""}
+                  Drive
                 </Link>
               )}
               <Link className="text-white font-extrabold">About</Link>

@@ -38,7 +38,30 @@ const useFormsubmition = () => {
         }
     };
 
-    return { FormSubmition };
+    const Modalforms= async(values,urls)=>{
+
+        try{
+            const response = await axios.post(urls,values,{
+                headers:{
+                    "Content-Type":"application/json",
+
+                }
+            });
+
+            if(response.status===200){
+                console.log(response.data,"modalform response")
+            }
+        }catch(error){
+          console.error(error,"Modalform error")
+        }
+       
+
+        
+
+    }
+    
+    return { FormSubmition,Modalforms};
+
 };
 
 export default useFormsubmition;

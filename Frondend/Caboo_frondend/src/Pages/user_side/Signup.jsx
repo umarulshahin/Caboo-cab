@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
-import Signup_page from "../Components/Signup_page";
+import Header from "../../Components/Header";
+import Footer from "../../Components/Footer";
+import Signup_page from "../../Components/user_side/Signup_page";
 
 const Signup = () => {
   const headprops = {
@@ -15,7 +15,7 @@ const Signup = () => {
       <Header headprops={headprops} />
       </div>
       <div>
-         <Signup_page></Signup_page>
+         <Signup_page />
       </div>
       <div>
         <Footer />
