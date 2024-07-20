@@ -14,7 +14,7 @@ const Signup_page = () => {
     phone: "",
     address: "",
     password: "",
-    profile: null, // This will hold the File object
+    con_password:"",
   };
 
   const validationSchema = Yup.object().shape({
@@ -40,7 +40,12 @@ const Signup_page = () => {
       .matches(
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
         "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+        
       ),
+      con_password: Yup.string()
+      .required("Confirm password is required")
+      .oneOf([Yup.ref('password'), null], "Passwords must match")
+      
     // profile: Yup.mixed()
     //   .test("fileType", "Unsupported file format", (value) => {
     //     if (!value) return true; // Allow empty value if not required
@@ -52,7 +57,6 @@ const Signup_page = () => {
   const onSubmit = (values) => {
     
 
-    console.log(values,".......adddqdd")
 
     FormSubmition(values,user_signup_url);
 
@@ -70,7 +74,7 @@ const Signup_page = () => {
               <span className="font-bold text-2xl flex items-center">
                 Create an account
               </span>
-              <div className="mt-10 w-96 max-w-md text-lg font-bold relative ">
+              <div className="mt-6 w-96 max-w-md text-lg font-bold relative ">
                 <Formik
                   initialValues={initialValues}
                   validationSchema={validationSchema}
@@ -78,7 +82,7 @@ const Signup_page = () => {
                 >
                   {({ isSubmitting, setFieldValue }) => (
                     <Form>
-                      <div >
+                      <div className="mb-4" >
                         <Field
                           type="text"
                           id="username"
@@ -93,7 +97,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div >
+                      <div className="mb-4">
                         <Field
                           type="email"
                           id="email"
@@ -108,7 +112,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div >
+                      <div className="mb-4">
                         <Field
                           type="text"
                           id="phone"
@@ -123,7 +127,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div >
+                      <div className="mb-4">
                         <Field
                           type="text"
                           id="address"
@@ -138,7 +142,7 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4 relative  text-lg font-bold">
+                      <div className="mb-4">
                         <Field
                           type="password"
                           id="password"
@@ -148,6 +152,20 @@ const Signup_page = () => {
                         />
                         <ErrorMessage
                           name="password"
+                          component="div"
+                          className="text-red-500 text-sm mt-1"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <Field
+                          type="password"
+                          id="con_password"
+                          name="con_password"
+                          placeholder="Confirm Password"
+                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
+                        />
+                        <ErrorMessage
+                          name="con_password"
                           component="div"
                           className="text-red-500 text-sm mt-1"
                         />
@@ -173,9 +191,9 @@ const Signup_page = () => {
                       <div className="flex justify-center items-center">
                         <button
                           type="submit"
-                          className="px-4 py-2 bg-white text-black font-bold rounded-md"
+                          className="px-10 py-2 bg-white text-black font-bold rounded-md"
                         >
-                          Create Account
+                          Continue
                         </button>
                       </div>
                     </Form>

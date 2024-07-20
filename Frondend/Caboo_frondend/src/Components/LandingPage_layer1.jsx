@@ -22,7 +22,7 @@ const Landing_Form = () => {
   };
 
   return (
-    <div className="container mx-auto " id="/first_layout">
+    <div className="container mx-auto " id="first_layout">
       <div className="flex flex-col md:flex-row  ">
         <div className="w-full md:w-3/6 flex justify-center ">
           <div className="h-screen flex flex-col items-center md:items-start justify-center text-white px-6 md:pl-16">
@@ -31,7 +31,7 @@ const Landing_Form = () => {
             </span>
 
             <div className="mt-10 w-full max-w-md" id="first_layout">
-              <span className="font-bold text-center block md:text-left">Request a ride, hop in, and go.</span>
+              <span className="font-bold text-center block md:text-left">Request a ride, hop in, and enjoy the journey.</span>
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}

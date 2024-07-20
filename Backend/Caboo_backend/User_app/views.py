@@ -1,91 +1,93 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from .serializer import SignupSerializer
+from rest_framework.decorators import api_view,permission_classes
+from .serializer import *
 from rest_framework import status
 from .models import *
 import random
-from django.core.mail import send_mail
 from django.conf import settings
 from .tasks import send_email_task
 from celery.result import AsyncResult
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import IsAuthenticated
 
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['name'] = user.username
+        token["role"]=user.is_superuser
+
+        return token
+class MyTokenobtainedPairView(TokenObtainPairView):
+    serializer_class=MyTokenObtainPairSerializer
 
 @api_view(['POST'])
 def Email_validate(request):
     
-    data=request.data
-    
-    if CustomUser.objects.filter(email=data["email"]).exists():
+    if request.method == "POST":
+
+        data=request.data
         
-        return Response({"message":"alredy email exist","email":data})
-    else:
-        
-        otp_code = str(random.randint(100000,999999))
-        subject="Caboo OTP verification"
-        message=f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
-        from_email='akkushahin666@gmail.com'
-        recipient_list=['akkushahin666@gmail.com']
-        
-        result = send_email_task.delay(subject, message,from_email,recipient_list)
-        response=task_status(result.id)
-        print(response,"response")
-        print(result.id,"yes work")
-        # result=AsyncResult(task_id)
-        # if result.ready():
-        #     print(result.status)
-        #     print(result.result)
-        # else:
-        #     print(result.status,"else case")
+        if CustomUser.objects.filter(email=data["email"]).exists():
             
-    return Response({'success':result.id})
+            return Response({"success":"alredy email exist","email":data})
+        else:
+            
+            otp_code = str(random.randint(100000,999999))
+            subject="Caboo OTP verification"
+            message=f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
+            from_email='akkushahin666@gmail.com'
+            recipient_list=['akkushahin666@gmail.com']
+            
+            result = send_email_task.delay(subject, message,from_email,recipient_list)
+            response=task_status(result.id)
+            
+            if response.status_code ==200:
+                OtpStorage.objects.create(otp=otp_code,email=data['email'])
+                return Response({'success':"Otp sended","email":data['email']})
+            else:
+                return Response({"error": "OTP genaration faild , try after sometime"}, status=status.HTTP_400_BAD_REQUEST)
+       
+@api_view(['POST'])
+def OTP_validate(request):
+    
+    if request.method == "POST":
+        serializer=OTPverifySerializer(data=request.data)
+        
+        if serializer.is_valid():
+            return Response({"success":"OTP verified successfully"})
+        
+        return Response({"error":serializer.errors})
+        
     
 @api_view(['POST'])
 def Signup(request):
     
     if request.method == "POST":
-        try:
-            data = request.data 
-
-            if CustomUser.objects.filter(email=data['email']).exists():
-                return Response({"error": "email already exists"}, status=status.HTTP_400_BAD_REQUEST)
-            if CustomUser.objects.filter(phone=data['phone']).exists():
-                return Response({"error": "phone number already exists"}, status=status.HTTP_400_BAD_REQUEST)
-            otp_code=Otp_genaration(data['email'])
-            print(otp_code,"otp_code")   
-            
-            if not otp_code:
-                return Response({"error": "OTP genaration faild , try after sometime"}, status=status.HTTP_400_BAD_REQUEST)
-                
-            # serializer = SignupSerializer(data=data)
-            
-            # if serializer.is_valid():
-            #     serializer.save()
-            
-            return Response({"otp": otp_code, "user_data":data})
         
+        try:
+            
+            serializer = SignupSerializer(data=request.data)
+            
+            if serializer.is_valid():
+                serializer.save()
+                
+                subject="Welcome Caboo cab"
+                message=f'Congratulations! Your account has been successfully created. Welcome to our community!'
+                from_email='akkushahin666@gmail.com'
+                recipient_list=['akkushahin666@gmail.com']
+                send_email_task.delay(subject, message,from_email,recipient_list)
+                
+                return Response({"success":"success","data":serializer.data,"password":request.data.get('password')})
+            return Response({"error":serializer.errors})
+            
         except Exception as e:
             print(f"Error processing request: {str(e)}")
             return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-def Otp_genaration(email):
-    
-    try:
-                otp_code = str(random.randint(100000,999999))
-                print(email)
-                send_mail(
-                    "Caboo OTP verification",
-                    f'Your OTP code is {otp_code}. It is valid for 3 minutes.',
-                    'akkushahin666@gmail.com',
-                    ['akkushahin666@gmail.com'],
-                    fail_silently=False,
-                )
-                
-                return otp_code
-            
-    except Exception as e:
-        
-        return "otp faild"
    
 
 def task_status(task_id):
@@ -115,3 +117,34 @@ def task_status(task_id):
             'status': 'pending',
             'result': None
         })
+        
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])    
+def Image_Upload(request):
+    
+    if request.method == "PATCH":
+        image = request.FILES.get('image')
+        user_email = request.user.email
+        print(image, "image")
+        if not image:
+            return Response({"error": "Image file is required"}, status=400)
+        data = {"image": image, "user": user_email}
+
+        serializer = ImageUploadSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"Success": "Image uploaded successfully"}, status=200)
+        return Response({"error": serializer.errors}, status=400)
+    
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])    
+def GetUser(request):
+    user = request.user
+        
+    data=CustomUser.objects.filter(email=user)
+    serializer=UserSerializer(data,many=True)
+           
+    return Response(serializer.data)
+
+    

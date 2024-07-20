@@ -1,15 +1,16 @@
-import React from 'react'
-// Signin_form.js
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-// import google_icon from '../../assets/Google_icon.png';
+import { useSelector } from 'react-redux';
+import useGetUser from '../../Hooks/useGetUser';
+import { signin_urls } from '../../Utils/Constanse';
 
 const Password = () => {
-
-    
+  const email=useSelector((state)=>state.signup_data.email)
+  const { signin }=useGetUser()
+  const [errormessage,seterrormessage]=useState('')
   const initialValues = {
-    Password: '',
+    password: '',
   };
 
   const validationSchema = Yup.object().shape({
@@ -23,13 +24,17 @@ const Password = () => {
   });
 
   const onSubmit = (values) => {
+    values["email"]=email.email
+
     console.log(values);
+    signin(values,signin_urls,seterrormessage)
+      
   };
 
   return (
-    <div className=" bg-white h-80 text-black flex flex-col justify-center items-center">
+    <div className="bg-white h-80 text-black flex flex-col justify-center items-center">
       <div className=''>
-        <span className=" text-2xl font-bold pr-16">Enter your password</span>
+        <span className="text-2xl font-bold pr-16">Enter your password</span>
       </div>
       <div>
         <Formik
@@ -46,8 +51,9 @@ const Password = () => {
                 placeholder="Enter password"
                 className="mt-1 block w-72 py-2 px-4 border border-gray-300 rounded-md text-black"
               />
+              <span className='text-red-500 text-sm mt-1'>{errormessage ? errormessage:''}</span>
               <ErrorMessage
-                name="passwprd"
+                name="password"
                 component="div"
                 className="text-red-500 text-sm mt-1"
               />
@@ -63,22 +69,8 @@ const Password = () => {
           </Form>
         </Formik>
       </div>
-      {/* <div className="flex items-center justify-center mt-5 w-[270px]">
-        <hr className="flex-grow border-t border-black" />
-        <span className="text-black mx-2">or</span>
-        <hr className="flex-grow border-t border-black" />
-      </div>
-      <div className="mt-5 w-full flex justify-center">
-        <button
-          type="button"
-          className="bg-white w-72 text-black px-4 py-2 border border-black rounded-md font-bold flex items-center justify-center"
-        >
-          <img src={google_icon} alt="Google icon" className="mr-2 h-5 w-5" />
-          Continue with Google
-        </button>
-      </div> */}
     </div>
-  )
+  );
 }
 
-export default Password
+export default Password;

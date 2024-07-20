@@ -1,13 +1,16 @@
 import React, { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import useFormsubmition from '../../Hooks/useFormsubmition';
+import { Otpverify_url } from '../../Utils/Constanse';
 
 const OtpForm = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputRefs = useRef([]);
   const [errormessage,seterrormessage]=useState('')
 
-  const user_data=useSelector((state)=>state.signup_data.user_data)
-  const otp_code=useSelector((state)=>state.signup_data.otp)
+  const email=useSelector((state)=>state.signup_data.email)
+  const { otpverify } = useFormsubmition()
+
 
 
   const handleChange = (element, index) => {
@@ -30,23 +33,30 @@ const OtpForm = () => {
 
   const handleSubmit = () => {
     const otpValue = otp.join("");
-    console.log("Entered OTP is:", otpValue);
-    // Perform OTP verification here
-    if(otpValue===otp_code){
-        console.log("yes otp it's ok")
-    }else{
-       seterrormessage("The OTP entered is incorrect. Please try again.")
+    console.log(otpValue.length)
+    if(otpValue.length !== 6){
+      seterrormessage('OTP must be 6 digits long and all fields must be filled.')
+      return
     }
+      seterrormessage('')
+      const data={
+        otp:otpValue,
+        email:email
+      }
+      console.log(data)
+      otpverify(data,Otpverify_url,seterrormessage)
+    
+    
   };
 
   return (
     <div className="flex flex-col items-center mt-10">
-        <div className='text-white flex flex-col items-center '>
+        <div className='text-black flex flex-col items-center '>
             <span className='font-bold text-2xl'>OTP Verification</span>
             <br />
             <span className='pt-2'>One Time Password (OTP) has been sent via mail to 
              </span>
-             <span className='p-2'>{user_data.email}</span>
+             <span className='p-2'>{email}</span>
         </div>
       <div className="flex space-x-2">
         {otp.map((data, index) => (
@@ -69,7 +79,7 @@ const OtpForm = () => {
 
       <button 
         onClick={handleSubmit}
-        className="mt-5 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        className="mt-5 px-4 py-2 bg-black text-white rounded hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
       >
         Verify OTP
       </button>
