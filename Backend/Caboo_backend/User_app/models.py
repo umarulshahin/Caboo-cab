@@ -36,7 +36,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True,blank=False)
     username= models.CharField(max_length=30, blank=False)
     address= models.CharField(max_length=150,blank=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     phone=models.CharField(max_length=10,blank=False,unique=True)
@@ -50,3 +50,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
     
+
+class OtpStorage(models.Model):
+    otp=models.CharField(max_length=10,blank=False)
+    email=models.EmailField(unique=True,blank=False)

@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 def send_email_task(self, subject, message, from_email, recipient_list):
     try:
         send_mail(subject, message, from_email, recipient_list,fail_silently=False)
-        return "done"
+        return "success"
     except Exception as e:
         self.retry(exc=e)
         return "fails"

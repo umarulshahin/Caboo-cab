@@ -19,9 +19,9 @@ const Signin_form = () => {
   });
 
   const onSubmit = (values) => {
-    console.log(values,"email");
 
     Modalforms(values,email_validate_url)
+    
   };
 
   return (

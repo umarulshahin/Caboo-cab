@@ -8,7 +8,10 @@ import Signup from "./Pages/user_side/Signup";
 import { appStore, persist } from "./Redux/Store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import OtpVerification from "./Pages/user_side/OtpVerification";
+import { Toaster, toast } from 'sonner'
+import UserHome from "./Pages/user_side/UserHome";
+import UserProfile from "./Pages/user_side/UserProfile";
+
 
 const App = () => {
   return (
@@ -16,13 +19,16 @@ const App = () => {
       <Provider store={appStore}>
         <PersistGate loading={null} persistor={persist}>
           <BrowserRouter>
+          <Toaster position="bottom-center" richColors/>
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/first_layout" element={<Landing_Form />} />
               <Route path="/second_layout" element={<LandingPage_layer2 />} />
               <Route path="/signin_selection" element={<Signin_selection />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/otpverify" element={<OtpVerification />} />
+              <Route path="/userhome" element={<UserHome />}/>
+              <Route path="/userprofile" element={<UserProfile/>}/>
+
             </Routes>
           </BrowserRouter>
         </PersistGate>
