@@ -4,8 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import { useDispatch, useSelector } from "react-redux";
 import avatar from "../assets/profile_img.png"
-import { addUser } from "../Redux/UserSlice";
+import { addToken_data, addUser } from "../Redux/UserSlice";
 import { backendUrl } from "../Utils/Constanse";
+import Cookies from "js-cookie"
 
 const Header = (props) => {
   const { ride, drive, user } = props.headprops;
@@ -13,8 +14,20 @@ const Header = (props) => {
   const navigate = useNavigate();
   const dispatch=useDispatch()
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profile,setprofile]=useState('')
+  const [username,setUsername]=useState('')
   const data = useSelector((state) => state.user_data.user_data);
-  const { profile, username, email, phone } = data[0];
+
+  useEffect(()=>{
+    
+    if(data){
+      const { profile, username, email, phone } = data[0];
+      setprofile(profile)
+      setUsername(username)
+    }
+    
+  
+  },[data])
 
   const handleSignin = () => {
     navigate('/signin_selection', { state: { signin: true } });
@@ -26,23 +39,27 @@ const Header = (props) => {
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
 
-  const user_data=useSelector((state)=>state.user_data.token_data)
+  // const user_data=useSelector((state)=>state.user_data.user_data)
 
-  useEffect(()=>{
-      if(!user_data){
-        navigate('/signin_selection', { state: { modal: 'ride' } })
-      }
-  },[user_data])
+  // useEffect(()=>{
+  //     if(!data){
+  //       navigate('/signin_selection', { state: { modal: 'ride' } })
+  //     }
+  // },[data])
 
   const handleLogout=()=>{
+
     dispatch(addUser(null))
+    dispatch(addToken_data(null))
+    Cookies.remove('userTokens')
+    navigate("/")
   }
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black">
   <div className="flex flex-wrap items-center justify-between p-4">
     <div className="flex items-center">
-      <Link to="/">
-        <img src={logo} alt="Logo" className="h-12" />
+    <Link to={data ? "/userhome" : "/"}>
+    <img src={logo} alt="Logo" className="h-12" />
       </Link>
       <div className="hidden sm:flex sm:space-x-8 pl-6">
         {ride && (
@@ -73,7 +90,7 @@ const Header = (props) => {
         Help
       </Link>
       {/* Profile Section */}
-      {user_data && (
+      {data && (
           <div className="relative flex items-center space-x-2">
           <img
           src={profile ? `${backendUrl}${profile}` : avatar}
@@ -82,7 +99,7 @@ const Header = (props) => {
             onClick={toggleDropdown}
           />
           <span className="text-white font-bold cursor-pointer" onClick={toggleDropdown}>
-            {user_data.name}
+            {username}
           </span>
         
           {/* Dropdown Menu */}

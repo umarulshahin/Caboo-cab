@@ -125,7 +125,7 @@ def Image_Upload(request):
     if request.method == "PATCH":
         image = request.FILES.get('image')
         user_email = request.user.email
-        print(image, "image")
+        
         if not image:
             return Response({"error": "Image file is required"}, status=400)
         data = {"image": image, "user": user_email}
@@ -143,8 +143,24 @@ def GetUser(request):
     user = request.user
         
     data=CustomUser.objects.filter(email=user)
+    print(data)
     serializer=UserSerializer(data,many=True)
            
     return Response(serializer.data)
 
     
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def ProfilUpdate(request):
+    
+    id = request.user.id
+    user=CustomUser.objects.get(id=id)
+    
+    if user :
+        serializer =UserSerializer(user,request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response({"error":serializer.errors})
+        
+    return Response({"error":"User data not get"})

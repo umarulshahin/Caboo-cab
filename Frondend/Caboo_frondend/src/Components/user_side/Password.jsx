@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import  { useEffect, useState } from 'react';
+
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import useGetUser from '../../Hooks/useGetUser';
 import { signin_urls } from '../../Utils/Constanse';
+import Cookies from "js-cookie"
+import { useNavigate } from 'react-router-dom';
 
 const Password = () => {
+
   const email=useSelector((state)=>state.signup_data.email)
   const { signin }=useGetUser()
   const [errormessage,seterrormessage]=useState('')
+  const Navigate=useNavigate()
   const initialValues = {
     password: '',
   };
@@ -23,6 +28,7 @@ const Password = () => {
       ),
   });
 
+
   const onSubmit = (values) => {
     values["email"]=email.email
 
@@ -30,6 +36,18 @@ const Password = () => {
     signin(values,signin_urls,seterrormessage)
       
   };
+
+  
+  useEffect(()=>{  
+
+    const user_token=Cookies.get("userTokens")
+    if(user_token){
+ 
+     Navigate('/userhome')
+ 
+    }
+ 
+     },[])
 
   return (
     <div className="bg-white h-80 text-black flex flex-col justify-center items-center">

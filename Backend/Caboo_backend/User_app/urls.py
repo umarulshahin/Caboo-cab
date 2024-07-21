@@ -12,5 +12,6 @@ urlpatterns = [
     path('token/',MyTokenobtainedPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/',TokenRefreshView.as_view(), name='token_refresh'),
     path('image_uploade/',Image_Upload,name="image_uploade"),
-    path("getuser/",GetUser,name="getuser")
+    path("getuser/",GetUser,name="getuser"),
+    path("profilupdate/",ProfilUpdate,name="profilupdate"),
 ]

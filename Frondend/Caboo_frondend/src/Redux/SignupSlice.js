@@ -14,6 +14,6 @@ const signup_dataSlice = createSlice({
   },
 });
 
-export const { addsignup_data,addemail } = signup_dataSlice.actions;
+export const { addemail } = signup_dataSlice.actions;
 
 export default signup_dataSlice.reducer;
