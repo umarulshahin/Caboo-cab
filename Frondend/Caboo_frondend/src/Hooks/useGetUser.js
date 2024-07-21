@@ -8,15 +8,28 @@ import { addToken_data, addUser } from "../Redux/UserSlice";
 import { useNavigate } from "react-router-dom";
 import { img_upload_url } from "../Utils/Constanse";
 import { user_data_url } from "../Utils/Constanse";
+import { addadmin_data, addadmin_token } from "../Redux/AdminSlice";
 
 const useGetUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const Get_data = async (urls) => {
+  const Get_data = async (urls,role=null) => {
     try {
-      const raw_token = Cookies.get("userTokens");
-      const token = JSON.parse(raw_token);
+      let raw_token
+      let token
+      if (role === 'Admin'){
+        raw_token = Cookies.get("adminTokens");
+        token = JSON.parse(raw_token);
+        console.log(token.access)
+      } else{
+
+        raw_token = Cookies.get("userTokens");
+        token = JSON.parse(raw_token);
+        console.log(token.access)
+
+      }
+
       const response = await axios.get(urls, {
         headers: {
           Authorization: `Bearer ${token.access}`,
@@ -26,15 +39,21 @@ const useGetUser = () => {
 
       if (response.status === 200) {
         console.log(response.data, "get user ");
+        if(role==="admin"){
+          dispatch(addadmin_data(response.data))
+        }else{
+            dispatch(addUser(response.data));
 
-        dispatch(addUser(response.data));
+        }
+
       }
     } catch (error) {
       console.log(error, "get_data");
     }
   };
 
-  const signin = async (data, urls, seterrormessage = null) => {
+  const signin = async (data, urls, seterrormessage = null,role=null) => {
+
     try {
       const response = await axios.post(urls, data, {
         headers: {
@@ -43,20 +62,37 @@ const useGetUser = () => {
       });
 
       if (response.status === 200) {
-        toast.success("Login successfully");
-        const token = JSON.stringify(response.data);
-        Cookies.set("userTokens", token, { expires: 7 });
-        const value = jwtDecode(response.data.access);
-        dispatch(addToken_data(value));
-        Get_data(user_data_url);
-        navigate("/userhome");
+
+        if(role==="admin"){
+
+            const token = JSON.stringify(response.data);
+            Cookies.set("adminTokens", token, { expires: 7 });
+            const value = jwtDecode(response.data.access);
+            dispatch(addadmin_token(value));
+            Get_data(user_data_url,role);
+            toast.success("Login successfully");
+            navigate("/admin_home");
+
+        }else{
+            console.log(response.data)
+
+            const token = JSON.stringify(response.data);
+            Cookies.set("userTokens", token, { expires: 7 });
+            const value = jwtDecode(response.data.access);
+            dispatch(addToken_data(value));
+            Get_data(user_data_url);
+            toast.success("Login successfully");
+            navigate("/userhome");
+        }
+
       }
     } catch (error) {
+        console.log(error, "Signin");
       if (
         error.response.data.detail ===
         "No active account found with the given credentials"
       ) {
-        seterrormessage(
+        toast.warning(
           "Your email and password do not match. Please try again"
         );
       }
