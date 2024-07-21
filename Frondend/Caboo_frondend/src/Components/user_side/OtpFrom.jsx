@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useFormsubmition from '../../Hooks/useFormsubmition';
 import { Otpverify_url } from '../../Utils/Constanse';
+import Cookies from "js-cookie"
 
 const OtpForm = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -10,8 +11,19 @@ const OtpForm = () => {
 
   const email=useSelector((state)=>state.signup_data.email)
   const { otpverify } = useFormsubmition()
+  
+  useEffect(()=>{
 
+  
+   const user_token=Cookies.get("User_Tokens")
+   if(user_token){
 
+    Navigate(-1)
+
+   }
+
+    },[])
+  
 
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return false;

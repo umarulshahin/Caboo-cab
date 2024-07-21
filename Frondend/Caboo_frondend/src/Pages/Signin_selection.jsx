@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaArrowRight } from 'react-icons/fa'; 
 import Modal from '../Components/user_side/Modal';
 import Signin_form from '../Components/user_side/Signin_form';
 import OtpForm from '../Components/user_side/OtpFrom';
 import Password from '../Components/user_side/Password';
-
+import Cookies from "js-cookie"
 
 const Signin_selection = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   let { state } = useLocation();
   const { signin,modal } = state || { signin: true };
+  const Navigate=useNavigate()
 
 
   const openModal = (content) => {
@@ -38,6 +39,16 @@ const Signin_selection = () => {
     user: false,
   };
 
+  // useEffect(()=>{  
+
+  //   const user_token=Cookies.get("userTokens")
+  //   if(user_token){
+ 
+  //    Navigate('/userhome')
+ 
+  //   }
+ 
+  //    },[])
 
   return (
     <div>
@@ -45,6 +56,7 @@ const Signin_selection = () => {
         <Header headprops={headprops} />
       </div>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
+
             {modalContent === 'ride' && <Signin_form />}
             {modalContent === 'OTP verify' && <OtpForm /> }
             {modalContent === 'password' && <Password /> }

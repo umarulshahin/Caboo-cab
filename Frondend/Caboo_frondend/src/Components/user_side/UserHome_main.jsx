@@ -5,6 +5,8 @@ import { FiFlag, FiMapPin } from "react-icons/fi";
 import map from "../../assets/map.jpg";
 
 const UserHome_main = () => {
+
+  
   const initialValues = {
     location: "",
     destination: "",

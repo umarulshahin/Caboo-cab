@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { addemail, addsignup_data } from '../Redux/SignupSlice';
+import { addemail} from '../Redux/SignupSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import useGetUser from './useGetUser';
@@ -21,6 +21,7 @@ const useFormsubmition = () => {
             });
 
             if (response.status === 200) {
+
                 console.log(response.data, 'signup response');
                 console.log(response.data.data.email, 'signup response');
                 console.log(response.data.password, 'signup response');

@@ -11,6 +11,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Toaster, toast } from 'sonner'
 import UserHome from "./Pages/user_side/UserHome";
 import UserProfile from "./Pages/user_side/UserProfile";
+import PrivatRoute from "./PrivatRoute";
+import PrivatRoute_user from "./PrivatRoute_user";
 
 
 const App = () => {
@@ -21,13 +23,14 @@ const App = () => {
           <BrowserRouter>
           <Toaster position="bottom-center" richColors/>
             <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/first_layout" element={<Landing_Form />} />
-              <Route path="/second_layout" element={<LandingPage_layer2 />} />
-              <Route path="/signin_selection" element={<Signin_selection />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/userhome" element={<UserHome />}/>
-              <Route path="/userprofile" element={<UserProfile/>}/>
+
+              <Route path="/" element={<PrivatRoute><LandingPage /></PrivatRoute>} />
+              {/* <Route path="/first_layout" element={<Landing_Form />} />
+              <Route path="/second_layout" element={<LandingPage_layer2 />} /> */}
+              <Route path="/signin_selection" element={<PrivatRoute><Signin_selection /></PrivatRoute>} />
+              <Route path="/signup" element={<PrivatRoute><Signup /></PrivatRoute>} />
+              <Route path="/userhome" element={ <PrivatRoute_user><UserHome /></PrivatRoute_user> } />
+              <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
 
             </Routes>
           </BrowserRouter>

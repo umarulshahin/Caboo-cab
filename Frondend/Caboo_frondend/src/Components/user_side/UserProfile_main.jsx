@@ -1,16 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import profile_img_placeholder from "../../assets/profile_img.png";
 import useGetUser from "../../Hooks/useGetUser";
 import { useSelector } from "react-redux";
 import { backendUrl } from "../../Utils/Constanse";
+import { user_data_url } from "../../Utils/Constanse";
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import UserEdit from "./UserEdit";
+import { profileUpdate_url } from "../../Utils/Constanse";
+
+
 
 const UserProfile_main = () => {
+
+
   const [profile_img, setProfileImage] = useState("");
   const { img_validate } = useGetUser();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address,setAddress] = useState("")
+  const [id,setid] = useState("")
   const data = useSelector((state) => state.user_data.user_data);
-  const { profile, username, email, phone } = data[0];
+  const {Get_data,ProfilUpdate}=useGetUser()
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const handleImageChange = (event) => {
+  useEffect(()=>{
+
+   Get_data(user_data_url)
+      
+  },[])
+
+  useEffect(()=>{
+    
+    if(data){
+
+      const { profile, username,address, email, phone,id } = data[0];
+      setProfileImage(profile)
+      setEmail(email)
+      setPhone(phone)
+      setUsername(username)
+      setAddress(address)
+      setid(id)
+
+    }
+    
+  },[data])
+    
+    const handleImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       const reader = new FileReader();
@@ -30,13 +67,27 @@ const UserProfile_main = () => {
     }
   };
 
+  const handleEditClick = () => {
+    setModalIsOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalIsOpen(false);
+  };
+
+  const handleSave = (updatedData) => {
+    // Handle saving updated data
+    console.log("Updated data:", updatedData);
+    updatedData["id"]=id
+    ProfilUpdate(updatedData,profileUpdate_url)
+  };
   return (
     <div className="flex min-h-screen mt-16"> {/* Added mt-16 for margin top */}
       <div className="w-1/6 bg-white">{/* Sidebar content here */}</div>
       <div className="w-5/6 mt-10 pl-10 flex flex-col">
         <span className="text-4xl text-white font-bold">Account info</span>
         <img
-          src={profile ? `${backendUrl}${profile}` : profile_img_placeholder}
+          src={profile_img ? `${backendUrl}${profile_img}` : profile_img_placeholder}
           alt="User Profile"
           className="h-32 w-32 rounded-full object-cover cursor-pointer border-2 border-gray-500 my-6"
           onClick={() => document.getElementById("fileInput").click()}
@@ -62,15 +113,33 @@ const UserProfile_main = () => {
           </div>
         </div>
         <div className="mb-6">
+          <span className="text-white font-bold text-xl block">Address</span>
+          <div className="border border-gray-300 p-2 rounded mt-2 ml-4 w-64">
+            <span className="text-white font-medium ">{address}</span>
+          </div>
+        </div>
+        
+        <div className="mb-6">
           <span className="text-white font-bold text-xl block">Phone</span>
           <div className="border border-gray-300 p-2 rounded mt-2 ml-4 w-64">
             <span className="text-white font-medium ">{phone}</span>
           </div>
         </div>
-
-        <button className="bg-white text-black px-4 py-2 rounded-md font-bold mt-6 self-start">
+        
+        <button
+          className="bg-white text-black px-4 py-2 ml-24 rounded-md font-bold my-6 self-start flex items-center"
+          onClick={handleEditClick}
+        >
+          <FontAwesomeIcon icon={faEdit} className="mr-2" />
           Edit
         </button>
+        <UserEdit
+        isOpen={modalIsOpen}
+        onClose={handleModalClose}
+        user={{ username, email, address, phone }}
+        onSave={handleSave}
+      />
+        
       </div>
     </div>
   );
