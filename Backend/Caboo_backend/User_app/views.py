@@ -136,14 +136,12 @@ def Image_Upload(request):
             return Response({"Success": "Image uploaded successfully"}, status=200)
         return Response({"error": serializer.errors}, status=400)
     
-    
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])    
 def GetUser(request):
+    
     user = request.user
-        
     data=CustomUser.objects.filter(email=user)
-    print(data)
     serializer=UserSerializer(data,many=True)
            
     return Response(serializer.data)
