@@ -25,11 +25,11 @@ const UserProfile_main = () => {
   const {Get_data,ProfilUpdate}=useGetUser()
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  useEffect(()=>{
+  // useEffect(()=>{
 
-   Get_data(user_data_url)
+  //  Get_data(user_data_url,null)
       
-  },[])
+  // },[])
 
   useEffect(()=>{
     

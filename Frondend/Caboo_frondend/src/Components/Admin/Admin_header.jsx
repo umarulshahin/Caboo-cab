@@ -19,9 +19,9 @@ const Admin_header = (props) => {
     const data = useSelector((state) => state.admin_data.admin_data);
   
     useEffect(()=>{
-      console.log(data,'data')
+      console.log(data,'data header')
       if(data){
-        const { profile, username, email, phone } = data[0];
+        const { profile, username, email, phone } = data;
         setprofile(profile)
         setUsername(username)
       }
@@ -71,6 +71,16 @@ const Admin_header = (props) => {
       
         </div>
       </div>
+      <div className="flex flex-grow items-center justify-center px-4 space-x-4 sm:space-x-8">
+      {/* Search Bar */}
+      <div className="flex-grow max-w-xs sm:max-w-md">
+        <input
+          type="text"
+          placeholder="Search..."
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-blackfocus:outline-none focus:ring-2 focus:ring-yellow-500"
+        />
+      </div>
+      </div>
   
       <div className="flex items-center px-8 space-x-4">
       <Link className="text-white font-extrabold hidden sm:block pr-6">
@@ -92,8 +102,7 @@ const Admin_header = (props) => {
             {/* Dropdown Menu */}
             {dropdownOpen && (
               <div className="absolute right-0 mt-40 w-48 font-bold bg-white text-black rounded-sm shadow-lg">
-                <Link to="#" className="block px-4 py-2 hover:bg-gray-200">Profile</Link>
-                <Link to="/settings" className="block px-4 py-2 hover:bg-gray-200">Settings</Link>
+               
                 <button onClick={handleLogout}  className="block w-full px-4 py-2 text-left hover:bg-gray-200">Logout</button>
               </div>
             )}
