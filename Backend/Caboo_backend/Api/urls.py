@@ -24,5 +24,8 @@ urlpatterns = [
   
   #*.....................Admin Api .........................
   
-  path('getAdmin/',Get_admin,name="getAdmin")
+  path('getAdmin/',Get_admin,name="getAdmin"),
+  path('getUsers/',Get_users,name="getUsers"),
+  path('statusManagement/',Status_management,name="statusManagement")
+  
 ]

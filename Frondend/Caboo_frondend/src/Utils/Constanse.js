@@ -19,3 +19,7 @@ export const backendUrl = 'http://127.0.0.1:8000';
 export const profileUpdate_url = "http://127.0.0.1:8000/Api/profilupdate/";
 
 export const admin_data_url = "http://127.0.0.1:8000/Api/getAdmin/";
+
+export const get_Users_url = "http://127.0.0.1:8000/Api/getUsers/";
+
+export const statusManagment_url = "http://127.0.0.1:8000/Api/statusManagement/";

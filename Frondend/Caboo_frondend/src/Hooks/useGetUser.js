@@ -31,13 +31,12 @@ const useGetUser = () => {
      
       } else {
         raw_token = Cookies.get("userTokens");
-       
+      
       }
       if(raw_token){
+
         token = JSON.parse(raw_token);
         console.log(token.access);
-
-
       }
 
       const response = await axios.get(urls,{

@@ -15,6 +15,8 @@ import PrivatRoute from "./PrivatRoute";
 import PrivatRoute_user from "./PrivatRoute_user";
 import Admin_Signin from "./Pages/Admin/Admin_Signin";
 import Admin_home from "./Pages/Admin/Admin_home";
+import "./App.css";
+import User_list from "./Pages/Admin/User_list";
 
 
 const App = () => {
@@ -35,8 +37,10 @@ const App = () => {
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
 
 
-              <Route path="/admin" element={<Admin_Signin />} />
+              <Route path="/admin" element={<PrivatRoute><Admin_Signin /></PrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />
+              <Route path="/User_list" element={<User_list />} />
+
 
 
             </Routes>
