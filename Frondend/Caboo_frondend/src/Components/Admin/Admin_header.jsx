@@ -4,9 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import { useDispatch, useSelector } from "react-redux";
 import avatar from "../../assets/profile_img.png"
-import { addToken_data, addUser } from "../../Redux/UserSlice";
 import { backendUrl } from "../../Utils/Constanse";
 import Cookies from "js-cookie"
+import { addadmin_data, addadmin_token } from "../../Redux/AdminSlice";
 
 const Admin_header = (props) => {
     const { ride, drive, user } = props.headprops;
@@ -19,7 +19,7 @@ const Admin_header = (props) => {
     const data = useSelector((state) => state.admin_data.admin_data);
   
     useEffect(()=>{
-      console.log(data,'data header')
+      
       if(data){
         const { profile, username, email, phone } = data;
         setprofile(profile)
@@ -35,8 +35,8 @@ const Admin_header = (props) => {
   
     const handleLogout=()=>{
   
-      dispatch(addUser(null))
-      dispatch(addToken_data(null))
+      dispatch(addadmin_data(null))
+      dispatch(addadmin_token(null))
       Cookies.remove('adminTokens')
       navigate("/admin")
     }
