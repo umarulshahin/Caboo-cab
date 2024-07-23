@@ -6,6 +6,7 @@ import persistStore from "redux-persist/es/persistStore";
 import signupReducer from "./SignupSlice"
 import userReducer from "./UserSlice"
 import AdminReducer from "./AdminSlice";
+import DriverReducer from "./DriverSlice";
 
 const persistConfig ={
     key:'root',
@@ -15,7 +16,8 @@ const persistConfig ={
 const rootReducer = combineReducers({
     signup_data:signupReducer,
     user_data:userReducer,
-    admin_data:AdminReducer
+    admin_data:AdminReducer,
+    driver_data:DriverReducer
 })
 
 const PersistedReducer = persistReducer(persistConfig,rootReducer)

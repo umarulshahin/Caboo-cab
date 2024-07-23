@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie"
 
 const Signin_form = () => {
+  
     const { Modalforms } = useFormsubmition()
     const Navigate =useNavigate()
   const initialValues = {
@@ -22,7 +23,7 @@ const Signin_form = () => {
   });
 
   const onSubmit = (values) => {
-
+    values['role']="user"
     Modalforms(values,email_validate_url)
     
   };

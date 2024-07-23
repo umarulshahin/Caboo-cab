@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import useGetUser from './useGetUser';
 import { signin_urls } from '../Utils/Constanse';
+import { addDriver_data } from '../Redux/DriverSlice';
 
 const useFormsubmition = () => {
     const dispatch=useDispatch()
@@ -22,22 +23,25 @@ const useFormsubmition = () => {
 
             if (response.status === 200) {
 
-                console.log(response.data, 'signup response');
-                console.log(response.data.data.email, 'signup response');
-                console.log(response.data.password, 'signup response');
-
 
                 if(response.data.success==="success"){
 
-                    toast.success("Congratulations! Your account has been successfully created")
-                    
-                    const data={
-                        email:response.data.data.email,
-                        password:response.data.password
-                    }
-                    console.log(data)
+                    console.log(response.data.data.role)
+                    if(response.data.data.role==='driver'){
+                       console.log(response.data)
+                       dispatch(addDriver_data(response.data))
+                       navigate('/vehicle_doc')
 
-                    signin(data,signin_urls)
+                    }else{
+                             const data={
+                                email:response.data.data.email,
+                                password:response.data.password
+                            }
+                            toast.success("Congratulations! Your account has been successfully created")
+
+                            signin(data,signin_urls)
+                    }
+                    
 
 
                 }else {
@@ -69,14 +73,13 @@ const useFormsubmition = () => {
             });
 
             if(response.status===200){
-                if(response.data.success==="Otp sended"){
-
-                    dispatch(addemail(response.data.email))
+                if(response.data.success==="OTP sent"){
+                    dispatch(addemail(response.data.data))
                     navigate('/signin_selection', { state: { modal: 'OTP verify' } });
 
                 }else if(response.data.success==="alredy email exist"){
                     console.log(response.data)
-                    dispatch(addemail(response.data.email))
+                    dispatch(addemail(response.data.data))
                     navigate('/signin_selection', { state: { modal: 'password' } });
 
 
