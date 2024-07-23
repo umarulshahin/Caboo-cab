@@ -5,16 +5,16 @@ class SignupSerializer(serializers.ModelSerializer):
      
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'address', 'phone', 'password']
+        fields = ['email', 'username', 'address', 'phone', 'password','role','id']
         extra_kwargs = {
             'password': {'write_only': True},
         }
         
     def validate(self, attrs):
         
-            if CustomUser.objects.filter(email=attrs['email']).exists():
+            if CustomUser.objects.filter(email=attrs['email'],role=attrs['role']).exists():
                 raise serializers.ValidationError({"email": "Email already exists."})
-            if CustomUser.objects.filter(phone=attrs['phone']).exists():
+            if CustomUser.objects.filter(phone=attrs['phone'],role=attrs['role']).exists():
                 raise serializers.ValidationError({"phone": "Phone number already exists."})
             return attrs
            
@@ -25,7 +25,8 @@ class SignupSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             address=validated_data['address'],
             phone=validated_data['phone'],
-            password=validated_data['password']
+            password=validated_data['password'],
+            role=validated_data['role']
         )
         user.save()
         return user

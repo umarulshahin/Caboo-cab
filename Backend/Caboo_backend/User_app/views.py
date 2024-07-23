@@ -28,29 +28,36 @@ class MyTokenobtainedPairView(TokenObtainPairView):
 @api_view(['POST'])
 def Email_validate(request):
     
-    if request.method == "POST":
-
-        data=request.data
+     if request.method == "POST":
+        data = request.data
         
-        if CustomUser.objects.filter(email=data["email"]).exists():
+        # Check if the user already exists
+        if CustomUser.objects.filter(email=data["email"], role=data["role"]).exists():
+            return Response({"success": "alredy email exist", "email": data})
+        
+        # Generate OTP code
+        otp_code = str(random.randint(100000, 999999))
+        subject = "Caboo OTP verification"
+        message = f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
+        from_email = 'akkushahin666@gmail.com'
+        recipient_list = ["akkushahin666@gmail.com"]
+
+        # Send email task (Make sure send_email_task is defined and works properly)
+        result = send_email_task.delay(subject, message, from_email, recipient_list)
+        response = task_status(result.id)
+
+        if response.status_code == 200:
+            # Handle OTP storage
+            try:
+                otp_entry = OtpStorage.objects.get(email=data['email'])
+                otp_entry.otp = otp_code
+                otp_entry.save()
+            except OtpStorage.DoesNotExist:
+                OtpStorage.objects.create(otp=otp_code, email=data['email'])
             
-            return Response({"success":"alredy email exist","email":data})
+            return Response({'success': "OTP sent", "data": data})
         else:
-            
-            otp_code = str(random.randint(100000,999999))
-            subject="Caboo OTP verification"
-            message=f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
-            from_email='akkushahin666@gmail.com'
-            recipient_list=['akkushahin666@gmail.com']
-            
-            result = send_email_task.delay(subject, message,from_email,recipient_list)
-            response=task_status(result.id)
-            
-            if response.status_code ==200:
-                OtpStorage.objects.create(otp=otp_code,email=data['email'])
-                return Response({'success':"Otp sended","email":data['email']})
-            else:
-                return Response({"error": "OTP genaration faild , try after sometime"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "OTP generation failed, try again later"}, status=status.HTTP_400_BAD_REQUEST)
        
 @api_view(['POST'])
 def OTP_validate(request):

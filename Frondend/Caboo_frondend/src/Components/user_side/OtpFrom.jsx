@@ -53,7 +53,7 @@ const OtpForm = () => {
       seterrormessage('')
       const data={
         otp:otpValue,
-        email:email
+        email:email.email
       }
       console.log(data)
       otpverify(data,Otpverify_url,seterrormessage)
@@ -68,7 +68,7 @@ const OtpForm = () => {
             <br />
             <span className='pt-2'>One Time Password (OTP) has been sent via mail to 
              </span>
-             <span className='p-2'>{email}</span>
+             <span className='p-2'>{email.email}</span>
         </div>
       <div className="flex space-x-2">
         {otp.map((data, index) => (

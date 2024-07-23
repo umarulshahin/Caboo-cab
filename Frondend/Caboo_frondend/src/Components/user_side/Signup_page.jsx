@@ -5,10 +5,12 @@ import mainImage from "../../assets/mainimage.webp";
 import { user_signup_url} from "../../Utils/Constanse";
 import useFormsubmition from "../../Hooks/useFormsubmition"
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Signup_page = () => {
   const { FormSubmition } = useFormsubmition();
   const Navigate=useNavigate()
+  const role=useSelector((state)=>state.signup_data.email)
 
   const initialValues = {
     username: "",
@@ -58,7 +60,7 @@ const Signup_page = () => {
 
   const onSubmit = (values) => {
     
-
+        values['role']=role.role
 
     FormSubmition(values,user_signup_url);
 

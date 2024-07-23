@@ -51,6 +51,8 @@ INSTALLED_APPS = [
 
     
     'User_app',
+    'Admin_app',
+    'Driver_app'
     
 ]
 

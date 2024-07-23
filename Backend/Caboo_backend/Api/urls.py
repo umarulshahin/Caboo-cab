@@ -1,6 +1,7 @@
 from django.urls import path
 from User_app.views import *
 from Admin_app.views import *
+from Driver_app.views import *
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
@@ -26,6 +27,11 @@ urlpatterns = [
   
   path('getAdmin/',Get_admin,name="getAdmin"),
   path('getUsers/',Get_users,name="getUsers"),
-  path('statusManagement/',Status_management,name="statusManagement")
+  path('statusManagement/',Status_management,name="statusManagement"),
+  
+    #*.....................Driver Api .........................
+    
+  path('driver_signup/',Driver_signup,name="driver_signup")
+
   
 ]

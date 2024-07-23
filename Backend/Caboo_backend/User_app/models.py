@@ -41,6 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     phone=models.CharField(max_length=10,blank=False,unique=True)
     profile = models.ImageField(upload_to=truncate_filename, blank=False, max_length=250)
+    role= models.CharField(max_length=50,blank=True)
 
     objects = CustomUserManager()
 

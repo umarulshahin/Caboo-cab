@@ -8,6 +8,7 @@ import Signin_form from '../Components/user_side/Signin_form';
 import OtpForm from '../Components/user_side/OtpFrom';
 import Password from '../Components/user_side/Password';
 import Cookies from "js-cookie"
+import Driver_sign_in from './Driver/Driver_sign_in';
 
 const Signin_selection = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -60,6 +61,8 @@ const Signin_selection = () => {
             {modalContent === 'ride' && <Signin_form />}
             {modalContent === 'OTP verify' && <OtpForm /> }
             {modalContent === 'password' && <Password /> }
+            {modalContent === 'Drive' && <Driver_sign_in /> }
+
 
       </Modal>
       {signin ? (
@@ -68,7 +71,7 @@ const Signin_selection = () => {
             Sign in to Ride <FaArrowRight className="ml-4 mt-2" />
           </Link>
 
-          <Link to="/" className="flex items-center">
+          <Link to="#" onClick={() => openModal('Drive')} className="flex items-center">
             Sign in to Drive <FaArrowRight className="ml-4 mt-2" />
           </Link>
         </div>

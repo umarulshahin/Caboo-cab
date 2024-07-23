@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const signup_dataSlice = createSlice({
   name: "signup_data",
   initialState: {
-    email:null
+    email:{}
 
   },
   reducers: {
