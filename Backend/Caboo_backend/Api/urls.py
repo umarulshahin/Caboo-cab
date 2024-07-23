@@ -27,7 +27,9 @@ urlpatterns = [
   
   path('getAdmin/',Get_admin,name="getAdmin"),
   path('getUsers/',Get_users,name="getUsers"),
+  path('getDriver/',Get_Drivers,name='getDrivers'),
   path('statusManagement/',Status_management,name="statusManagement"),
+  path('Drivermanagement/',Driver_management,name="Drivermanagment"),
   
     #*.....................Driver Api .........................
     

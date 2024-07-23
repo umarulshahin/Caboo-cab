@@ -28,7 +28,7 @@ const Sidebar_admin = () => {
       Users
     </NavLink>
     <NavLink 
-      to='/driver' 
+      to='/Driver_list' 
       className="font-bold text-xl w-full text-center py-2 px-4  hover:bg-gray-300 rounded"
     >
       Drivers

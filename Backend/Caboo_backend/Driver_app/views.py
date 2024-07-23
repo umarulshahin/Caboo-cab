@@ -18,7 +18,8 @@ def Driver_signup(request):
         'address': data.get('customuser[address]'),
         'phone': data.get('customuser[phone]'),
         'role': data.get('customuser[role]'),
-        'profile': files.get('profile')  # Handle profile image upload
+        'profile': files.get('profile') ,
+        'is_active':False # Handle profile image upload
     }
     
     # Check if CustomUser with provided email exists

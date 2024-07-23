@@ -4,12 +4,15 @@ import useAdmin from '../../Hooks/useAdmin'
 import { useSelector } from 'react-redux'
 import BlockModal from './BlockModal'
 import { statusManagment_url } from '../../Utils/Constanse'
+import { get_Users_url } from '../../Utils/Constanse' 
 
 const User_list_page = () => {
     const {GetUsers,Usermanagement}=useAdmin()
 
     useEffect(()=>{
-     GetUsers()
+      console.log("yes working")
+   
+     GetUsers(get_Users_url,"user")
     },[])
 
     const [selectedUser, setSelectedUser] = useState(null);

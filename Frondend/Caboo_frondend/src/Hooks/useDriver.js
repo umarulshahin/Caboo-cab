@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { addDriver_data } from '../Redux/DriverSlice';
+import WaitingModal from '../Components/Driver/WaitingModal';
 
 const useDriver = () => {
     const dispatch = useDispatch();
@@ -32,11 +33,12 @@ const useDriver = () => {
             });
         
             if (response.status === 201) {
-                console.log(response.data)
-                if (response.data.success === "success") {
+                console.log(response.data.success)
+                if (response.data.success === "Driver successfully created") {
 
-                        dispatch(addDriver_data(response.data));
                         console.log(response.data);
+                        toast.success("Congratulations! Your account has been successfully created")
+                        navigate("/waitingModal")
 
                 } else {
                     console.log(response.data.error)

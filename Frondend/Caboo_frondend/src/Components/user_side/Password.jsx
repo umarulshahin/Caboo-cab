@@ -30,6 +30,7 @@ const Password = () => {
 
 
   const onSubmit = (values) => {
+    console.log(email.email)
     values["email"]=email.email
 
     console.log(values);

@@ -78,8 +78,8 @@ const useFormsubmition = () => {
                     navigate('/signin_selection', { state: { modal: 'OTP verify' } });
 
                 }else if(response.data.success==="alredy email exist"){
-                    console.log(response.data)
-                    dispatch(addemail(response.data.data))
+                    console.log(response.data.email)
+                    dispatch(addemail(response.data.email))
                     navigate('/signin_selection', { state: { modal: 'password' } });
 
 
