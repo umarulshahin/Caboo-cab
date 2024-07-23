@@ -26,7 +26,7 @@ const useGetUser = () => {
     try {
       let raw_token;
       let token={};
-      if (role === "Admin") {
+      if(role === "admin") {
         raw_token = Cookies.get("adminTokens");
      
       } else {
@@ -72,6 +72,7 @@ const useGetUser = () => {
 
       if (response.status === 200) {
         if (role === "admin") {
+
           const token = JSON.stringify(response.data);
           Cookies.set("adminTokens", token, { expires: 7 });
           const value = jwtDecode(response.data.access);
@@ -79,6 +80,7 @@ const useGetUser = () => {
           Get_data(admin_data_url,value.user_id,role);
           toast.success("Login successfully");
           navigate("/admin_home");
+
         } else {
           console.log(response.data);
 

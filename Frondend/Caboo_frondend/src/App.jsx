@@ -18,6 +18,9 @@ import Admin_home from "./Pages/Admin/Admin_home";
 import "./App.css";
 import User_list from "./Pages/Admin/User_list";
 import Vehicle_doc from "./Pages/Driver/Vehicle_doc";
+import WaitingModal from "./Components/Driver/WaitingModal";
+import Driver_list from "./Pages/Admin/Driver_list";
+import Documents from "./Pages/Admin/Documents";
 
 
 const App = () => {
@@ -41,9 +44,17 @@ const App = () => {
               <Route path="/admin" element={<PrivatRoute><Admin_Signin /></PrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />
               <Route path="/User_list" element={<User_list />} />
+              <Route path="/Driver_list" element={<Driver_list />} />
+              <Route path="/Documents" element={<Documents />} />
+
+              
+
 
 
               <Route path='/vehicle_doc' element={<Vehicle_doc /> } />
+              <Route path='/waitingModal' element={<WaitingModal /> } />
+
+
 
 
 

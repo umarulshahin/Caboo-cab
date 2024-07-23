@@ -32,8 +32,21 @@ def Email_validate(request):
         data = request.data
         
         # Check if the user already exists
-        if CustomUser.objects.filter(email=data["email"], role=data["role"]).exists():
-            return Response({"success": "alredy email exist", "email": data})
+        user=CustomUser.objects.filter(email=data["email"], role=data["role"]).exists()
+        if user:
+            if data['role']=="diver" and user.is_active:
+                
+                return Response({"success": "alredy email exist", "email": data})
+            
+            elif data['role']=="diver" and not user.is_active:
+                
+                return Response({"success": "Still processing ", "email": data})
+            
+            else:
+                return Response({"success": "alredy email exist", "email": data})
+
+                
+
         
         # Generate OTP code
         otp_code = str(random.randint(100000, 999999))

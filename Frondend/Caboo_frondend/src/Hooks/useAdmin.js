@@ -1,28 +1,41 @@
 
 import axios from 'axios'
 import Cookies from "js-cookie"
-import { get_Users_url } from '../Utils/Constanse'
 import { useDispatch } from 'react-redux'
-import { addUsers_list } from '../Redux/AdminSlice'
+import { addDriver_list, addUsers_list } from '../Redux/AdminSlice'
+import { get_Driver_url, get_Users_url } from '../Utils/Constanse'
+
 const useAdmin = () => {
+
     const dispatch=useDispatch()
-    const GetUsers=async()=>{
+    const GetUsers=async(urls,role=null)=>{
 
         try{
            const raw_token=Cookies.get("adminTokens")
            const token=JSON.parse(raw_token)
-
-         const response= await axios.get(get_Users_url,{
-            headers:{
-               
-                Authorization: `Bearer ${token.access}`,
-                "Content-Type": "multipart/form-data",
-            }
-         });
+           console.log(token.access)
+           
+       
+         const response = await axios.get(urls,{
+            headers: {
+              Authorization: `Bearer ${token.access}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
 
          if(response.status===200){
+            console.log(response.data)
+            if(role==="driver"){
+                console.log("yes")
+             dispatch(addDriver_list(response.data))
+             return
 
-            dispatch(addUsers_list(response.data))
+            }else if(role==="user"){
+                console.log("yes working")
+                dispatch(addUsers_list(response.data))
+                return
+
+            }
          }
 
         }catch(error){
@@ -43,13 +56,21 @@ const useAdmin = () => {
             })
 
             if (response.status===200){
+
                 console.log(response.data)
-                GetUsers()
+              
+                GetUsers(get_Users_url,"user")
+                GetUsers(get_Driver_url,"driver")
+
             }
         }catch(error){
             console.error(error,"Usermanagment")
 
         }
+    }
+
+    const Driver_Management= async()=>{
+         
     }
     return {GetUsers,Usermanagement}
 }
