@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from Driver_app.models import *
 from User_app.models import *
+from Authentication_app.models import *
+
 
 class DriverDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Driver_data
+        model = DriverData
         fields = ['aadhaar', 'vehicle_name', 'vehicle_no', 'rc_img', 'license', 'insurance', 'vehicle_Photo']
 
 class UserSerializer(serializers.ModelSerializer):

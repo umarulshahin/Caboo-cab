@@ -4,14 +4,10 @@ from rest_framework.decorators import api_view,permission_classes
 from .serializer import *
 from rest_framework import status
 from .models import *
-import random
-from django.conf import settings
-from .tasks import send_email_task
-from celery.result import AsyncResult
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
-
+from  Authentication_app.models import *
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -25,63 +21,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenobtainedPairView(TokenObtainPairView):
     serializer_class=MyTokenObtainPairSerializer
 
-@api_view(['POST'])
-def Email_validate(request):
-    
-     if request.method == "POST":
-        data = request.data
-        
-        # Check if the user already exists
-        user=CustomUser.objects.filter(email=data["email"], role=data["role"]).exists()
-        if user:
-            if data['role']=="diver" and user.is_active:
-                
-                return Response({"success": "alredy email exist", "email": data})
-            
-            elif data['role']=="diver" and not user.is_active:
-                
-                return Response({"success": "Still processing ", "email": data})
-            
-            else:
-                return Response({"success": "alredy email exist", "email": data})
-
-                
-
-        
-        # Generate OTP code
-        otp_code = str(random.randint(100000, 999999))
-        subject = "Caboo OTP verification"
-        message = f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
-        from_email = 'akkushahin666@gmail.com'
-        recipient_list = ["akkushahin666@gmail.com"]
-
-        # Send email task (Make sure send_email_task is defined and works properly)
-        result = send_email_task.delay(subject, message, from_email, recipient_list)
-        response = task_status(result.id)
-
-        if response.status_code == 200:
-            # Handle OTP storage
-            try:
-                otp_entry = OtpStorage.objects.get(email=data['email'])
-                otp_entry.otp = otp_code
-                otp_entry.save()
-            except OtpStorage.DoesNotExist:
-                OtpStorage.objects.create(otp=otp_code, email=data['email'])
-            
-            return Response({'success': "OTP sent", "data": data})
-        else:
-            return Response({"error": "OTP generation failed, try again later"}, status=status.HTTP_400_BAD_REQUEST)
-       
-@api_view(['POST'])
-def OTP_validate(request):
-    
-    if request.method == "POST":
-        serializer=OTPverifySerializer(data=request.data)
-        
-        if serializer.is_valid():
-            return Response({"success":"OTP verified successfully"})
-        
-        return Response({"error":serializer.errors})
+# 
         
     
 @api_view(['POST'])
@@ -110,33 +50,33 @@ def Signup(request):
             return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
    
 
-def task_status(task_id):
-    result = AsyncResult(task_id)
+# def task_status(task_id):
+#     result = AsyncResult(task_id)
     
-    if result.ready():
-        # Task is complete
-        if result.successful():
-            print("yes workin 1")
-            return Response({
-                'status': 'success',
-                'result': result.result  # This is the result returned by the task
-            })
-        else:
-            # Task failed
-            print("yes workin 2")
+#     if result.ready():
+#         # Task is complete
+#         if result.successful():
+#             print("yes workin 1")
+#             return Response({
+#                 'status': 'success',
+#                 'result': result.result  # This is the result returned by the task
+#             })
+#         else:
+#             # Task failed
+#             print("yes workin 2")
 
-            return Response({
-                'status': 'failed',
-                'result': str(result.result)  # Error message or traceback
-            })
-    else:
-        # Task is still running
-        print("yes workin 3")
+#             return Response({
+#                 'status': 'failed',
+#                 'result': str(result.result)  # Error message or traceback
+#             })
+#     else:
+#         # Task is still running
+#         print("yes workin 3")
 
-        return Response({
-            'status': 'pending',
-            'result': None
-        })
+#         return Response({
+#             'status': 'pending',
+#             'result': None
+#         })
         
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])    

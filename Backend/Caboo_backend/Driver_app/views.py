@@ -4,6 +4,7 @@ from rest_framework import status
 from .serializer import CustomUserSerializer, DriverSerializers
 from rest_framework.parsers import MultiPartParser, FormParser
 from User_app.models import *
+from Authentication_app.models import *
 
 @api_view(["POST"])
 def Driver_signup(request):
@@ -11,7 +12,7 @@ def Driver_signup(request):
     files = request.FILES
     print(data)
     
-    # Extract and handle custom user data
+   
     custom_user_data = {
         'email': data.get('customuser[email]'),
         'username': data.get('customuser[username]'),
@@ -19,7 +20,7 @@ def Driver_signup(request):
         'phone': data.get('customuser[phone]'),
         'role': data.get('customuser[role]'),
         'profile': files.get('profile') ,
-        'is_active':False # Handle profile image upload
+        'is_active':False 
     }
     
     # Check if CustomUser with provided email exists

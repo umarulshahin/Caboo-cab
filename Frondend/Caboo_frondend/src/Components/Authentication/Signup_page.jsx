@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 const Signup_page = () => {
   const { FormSubmition } = useFormsubmition();
   const Navigate=useNavigate()
-  const role=useSelector((state)=>state.signup_data.email)
+  const role=useSelector((state)=>state.Authentication.email)
 
   const initialValues = {
     username: "",

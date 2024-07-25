@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import Header from "../../Components/Header";
 import Footer from "../../Components/Footer";
-import Signup_page from "../../Components/user_side/Signup_page";
-import Cookies from "js-cookie"
+import Signup_page from "../../Components/Authentication/Signup_page";
 
 const Signup = () => {
 

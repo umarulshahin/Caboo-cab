@@ -3,10 +3,10 @@ import persistReducer from "redux-persist/es/persistReducer";
 import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
 // import { persistReducer } from "redux-persist";
-import signupReducer from "./SignupSlice"
 import userReducer from "./UserSlice"
 import AdminReducer from "./AdminSlice";
 import DriverReducer from "./DriverSlice";
+import AuthenticationReducer from "./AuthenticationSlice";
 
 const persistConfig ={
     key:'root',
@@ -14,7 +14,7 @@ const persistConfig ={
 }
 
 const rootReducer = combineReducers({
-    signup_data:signupReducer,
+    Authentication:AuthenticationReducer,
     user_data:userReducer,
     admin_data:AdminReducer,
     driver_data:DriverReducer
