@@ -5,11 +5,11 @@ from rest_framework import status
 from User_app.models import *
 import random
 from django.conf import settings
-from User_app.tasks import send_email_task
 from celery.result import AsyncResult
 from rest_framework.permissions import IsAuthenticated
 from .serializer import *
 from Driver_app.models import *
+from Authentication_app.models import *
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])

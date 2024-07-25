@@ -1,10 +1,7 @@
 import React from "react";
 import LandingPage from "./Pages/LandingPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Landing_Form from "./Components/LandingPage_layer1";
-import LandingPage_layer2 from "./Components/LandingPage_layer2";
 import Signin_selection from "./Pages/Signin_selection";
-import Signup from "./Pages/user_side/Signup";
 import { appStore, persist } from "./Redux/Store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -21,6 +18,8 @@ import Vehicle_doc from "./Pages/Driver/Vehicle_doc";
 import WaitingModal from "./Components/Driver/WaitingModal";
 import Driver_list from "./Pages/Admin/Driver_list";
 import Documents from "./Pages/Admin/Documents";
+import Signup from "./Pages/Authentication/Signup";
+import OtpForm from "./Components/Authentication/OtpFrom";
 
 
 const App = () => {
@@ -33,13 +32,11 @@ const App = () => {
             <Routes>
 
               <Route path="/" element={<PrivatRoute><LandingPage /></PrivatRoute>} />
-              {/* <Route path="/first_layout" element={<Landing_Form />} />
-              <Route path="/second_layout" element={<LandingPage_layer2 />} /> */}
               <Route path="/signin_selection" element={<PrivatRoute><Signin_selection /></PrivatRoute>} />
               <Route path="/signup" element={<PrivatRoute><Signup /></PrivatRoute>} />
               <Route path="/userhome" element={ <PrivatRoute_user><UserHome /></PrivatRoute_user> } />
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
-
+              <Route path="/otpverification" element={<OtpForm />} />
 
               <Route path="/admin" element={<PrivatRoute><Admin_Signin /></PrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />

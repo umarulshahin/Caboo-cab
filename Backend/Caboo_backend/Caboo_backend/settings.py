@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     
     'User_app',
     'Admin_app',
-    'Driver_app'
+    'Driver_app',
+    'Authentication_app',
     
 ]
 
@@ -157,7 +158,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'User_app.CustomUser'
+AUTH_USER_MODEL = 'Authentication_app.CustomUser'
 
 
 MEDIA_URL = '/media/'

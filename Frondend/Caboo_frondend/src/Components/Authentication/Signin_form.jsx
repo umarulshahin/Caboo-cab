@@ -7,11 +7,12 @@ import useFormsubmition from '../../Hooks/useFormsubmition'
 import { email_validate_url } from '../../Utils/Constanse';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie"
+import useAuthentication from '../../Hooks/useAuthentication';
 
 const Signin_form = () => {
   
-    const { Modalforms } = useFormsubmition()
-    const Navigate =useNavigate()
+  const {Emailvalidation}=useAuthentication()
+  const Navigate =useNavigate()
   const initialValues = {
     email: '',
   };
@@ -23,8 +24,7 @@ const Signin_form = () => {
   });
 
   const onSubmit = (values) => {
-    values['role']="user"
-    Modalforms(values,email_validate_url)
+    Emailvalidation(values,email_validate_url)
     
   };
 

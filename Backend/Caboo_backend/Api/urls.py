@@ -2,6 +2,7 @@ from django.urls import path
 from User_app.views import *
 from Admin_app.views import *
 from Driver_app.views import *
+from Authentication_app.views import *
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
