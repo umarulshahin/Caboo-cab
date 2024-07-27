@@ -12,17 +12,14 @@ const validationSchema = Yup.object({
     "Full Name must start with a letter and contain only letters and spaces"
   ),
   email: Yup.string().email("Invalid email address").required("Email is required"),
-  address: Yup.string().required("Address is required")
-  .matches(
-    /^[a-zA-Z][a-zA-Z\s]*$/,
-    "Address must start with a letter and contain only letters and spaces"
-  ),
+
   phone: Yup.string().matches(/^\d{10}$/, "Phone number must be 10 digits")
   .required("Phone number is required"),
 });
 
 const UserEdit = ({ isOpen, onClose, user, onSave }) => {
   const handleSubmit = (values, { setSubmitting }) => {
+  console.log(values,"yes values")
     onSave(values);
     setSubmitting(false);
     onClose();
@@ -62,15 +59,7 @@ const UserEdit = ({ isOpen, onClose, user, onSave }) => {
                 />
                 <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Address</label>
-                <Field
-                  type="text"
-                  name="address"
-                  className="border p-2 w-full rounded"
-                />
-                <ErrorMessage name="address" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+            
               <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Phone</label>
                 <Field

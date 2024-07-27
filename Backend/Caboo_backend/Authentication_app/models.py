@@ -39,13 +39,11 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, blank=False)
     username = models.CharField(max_length=30, blank=False)
-    address = models.CharField(max_length=150, blank=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     phone = models.CharField(max_length=10, blank=False, unique=True)
     profile = models.ImageField(upload_to=upload_profile_image, blank=False, max_length=250)
-    role = models.CharField(max_length=50, blank=True)
 
     objects = CustomUserManager()
 

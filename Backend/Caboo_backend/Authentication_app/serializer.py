@@ -1,22 +1,26 @@
 from rest_framework import serializers
 from .models import *
 from  Authentication_app.models import *
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
+
+class EmailValidationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
 class SignupSerializer(serializers.ModelSerializer):
      
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'address', 'phone', 'password','role','id']
+        fields = ['email', 'username' , 'phone', 'password','id']
         extra_kwargs = {
             'password': {'write_only': True},
         }
         
     def validate(self, attrs):
         
-            if CustomUser.objects.filter(email=attrs['email'],role=attrs['role']).exists():
+            if CustomUser.objects.filter(email=attrs['email']).exists():
                 raise serializers.ValidationError({"email": "Email already exists."})
-            if CustomUser.objects.filter(phone=attrs['phone'],role=attrs['role']).exists():
+            if CustomUser.objects.filter(phone=attrs['phone']).exists():
                 raise serializers.ValidationError({"phone": "Phone number already exists."})
             return attrs
            
@@ -25,10 +29,8 @@ class SignupSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
-            address=validated_data['address'],
             phone=validated_data['phone'],
             password=validated_data['password'],
-            role=validated_data['role']
         )
         user.save()
         return user
@@ -48,22 +50,59 @@ class OTPverifySerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError("OTP is invalid")
         
-class ImageUploadSerializer(serializers.Serializer):
-    image = serializers.ImageField()
-    user = serializers.EmailField()
-    
-    def create(self, validated_data):
-        user = CustomUser.objects.filter(email=validated_data["user"]).first()
-        if user:
-            user.profile = validated_data["image"]
-            user.save()
-            return user
-        raise serializers.ValidationError("User not found")
-    
-class UserSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model=CustomUser
-        fields=['username', 'email', 'phone','address', 'profile','id']
-        read_only_fields = ['id']
+class CustomTokenSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate(self, data):
+        try:
+            user = CustomUser.objects.get(email=data['email'], is_active=True)
+        except CustomUser.DoesNotExist:
+            raise serializers.ValidationError("Invalid email or user not active.")
         
+        refresh = RefreshToken.for_user(user)
+        refresh['username'] = user.username
+
+        return {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'username': user.username,
+        }
+        
+class CustomUserSerializer(serializers.ModelSerializer):
+    profile = serializers.ImageField(required=False)  # Handle profile photo
+
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'username', 'phone', 'profile','is_active']
+
+
+class DriverSerializers(serializers.ModelSerializer):
+    customuser = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all(), required=True)
+
+    class Meta:
+        model = DriverData
+        fields = [
+            'customuser', 'aadhaar', 'vehicle_name', 'vehicle_no', 
+            'rc_img', 'license', 'insurance', 'vehicle_photo'
+        ]
+
+    def validate(self, attrs):
+        # Validation logic
+        if DriverData.objects.filter(aadhaar=attrs.get('aadhaar')).exists():
+            raise serializers.ValidationError({"aadhaar": "Aadhaar already exists"})
+        if DriverData.objects.filter(vehicle_no=attrs.get('vehicle_no')).exists():
+            raise serializers.ValidationError({"vehicle_no": "Vehicle Number already exists"})
+        return attrs
+
+    def create(self, validated_data):
+        driver_data = DriverData.objects.create(
+            customuser=validated_data.get('customuser'),
+            aadhaar=validated_data.get('aadhaar'),
+            vehicle_name=validated_data.get('vehicle_name'),
+            vehicle_no=validated_data.get('vehicle_no'),
+            rc_img=validated_data.get('rc_img'),
+            license=validated_data.get('license'),
+            insurance=validated_data.get('insurance'),
+            vehicle_photo=validated_data.get('vehicle_photo')
+        )
+        return driver_data

@@ -2,9 +2,9 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import mainImage from "../../assets/mainimage.webp";
-import { driver_signup_url } from "../../Utils/Constanse";
 import { useSelector } from "react-redux";
-import useDriver from "../../Hooks/useDriver";
+import useAuthentication from "../../Hooks/useAuthentication";
+import { driver_signup_url } from "../../Utils/Constanse";
 
 const initialValues = {
     aadhaar: "",
@@ -69,16 +69,16 @@ const validationSchema = Yup.object().shape({
 });
 const Vehicle_doc_form = () => {
     const driver = useSelector((state) => state.driver_data.driver_data);
-    const role = useSelector((state) => state.signup_data.email);
-    const { Drivercreation } = useDriver();
+    const role = useSelector((state) => state.Authentication.role);
+    const { DriverCreation } = useAuthentication();
+    
+    const onSubmit = (values) => {
+        console.log(driver)
 
-    const onSubmit = async (values) => {
-        // Add additional fields to values if needed
-        values['role'] = role.role;
-        values['customuser'] = driver.data;
+        values['role'] = role;
+        values['customuser'] = driver;
         console.log("Submitted values:", values);
-        await Drivercreation(values, driver_signup_url);
-        // Navigate("/somepath"); // Change "/somepath" to your desired route
+        DriverCreation(values, driver_signup_url);
     };
 
     return (
@@ -101,52 +101,60 @@ const Vehicle_doc_form = () => {
                                 {({ setFieldValue, values }) => (
                                     <Form>
                                         {/* Aadhaar Number */}
-                                        <div className="mb-4">
-                                            <Field
-                                                type="text"
-                                                id="aadhaar"
-                                                name="aadhaar"
-                                                placeholder="Aadhaar Number"
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
-                                            />
-                                            <ErrorMessage
-                                                name="aadhaar"
-                                                component="div"
-                                                className="text-red-500 text-sm mt-1"
-                                            />
-                                        </div>
+                                        <div className="relative mb-6">
+                                <Field
+                                    type="text"
+                                    id="aadhaar"
+                                    name="aadhaar"
+                                    required
+                                    className="peer block w-full p-2 pt-6 pb-2 bg-gray-200 border-0 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-black"
+                                />
+                                <span className="absolute left-0 top-0 px-4 py-2 text-gray-700 transition-transform duration-300 transform peer-placeholder-shown:translate-y-2 peer-placeholder-shown:scale-100 peer-focus:translate-y-[-0.5rem] peer-focus:scale-75 origin-left pointer-events-none">
+                                    Aadhaar Number
+                                </span>
+                                <ErrorMessage
+                                    name="aadhaar"
+                                    component="div"
+                                    className="text-red-500 text-sm mt-1"
+                                />
+                            </div>
 
-                                        {/* Vehicle Name */}
-                                        <div className="mb-4">
-                                            <Field
-                                                type="text"
-                                                id="vehicle_name"
-                                                name="vehicle_name"
-                                                placeholder="Vehicle Name"
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
-                                            />
-                                            <ErrorMessage
-                                                name="vehicle_name"
-                                                component="div"
-                                                className="text-red-500 text-sm mt-1"
-                                            />
-                                        </div>
+                            <div className="relative mb-6">
+                                <Field
+                                    type="text"
+                                    id="vehicle_name"
+                                    name="vehicle_name"
+                                    required
+                                    className="peer block w-full p-2 pt-6 pb-2 bg-gray-200 border-0 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-black"
+                                />
+                                <span className="absolute left-0 top-0 px-4 py-2 text-gray-700 transition-transform duration-300 transform peer-placeholder-shown:translate-y-2 peer-placeholder-shown:scale-100 peer-focus:translate-y-[-0.5rem] peer-focus:scale-75 origin-left pointer-events-none">
+                                    Vehicle Name
+                                </span>
+                                <ErrorMessage
+                                    name="vehicle_name"
+                                    component="div"
+                                    className="text-red-500 text-sm mt-1"
+                                />
+                            </div>
 
-                                        {/* Vehicle Number */}
-                                        <div className="mb-4">
-                                            <Field
-                                                type="text"
-                                                id="vehicle_no"
-                                                name="vehicle_no"
-                                                placeholder="Vehicle Number"
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
-                                            />
-                                            <ErrorMessage
-                                                name="vehicle_no"
-                                                component="div"
-                                                className="text-red-500 text-sm mt-1"
-                                            />
-                                        </div>
+                            <div className="relative mb-6">
+                                <Field
+                                    type="text"
+                                    id="vehicle_no"
+                                    name="vehicle_no"
+                                    required
+                                    className="peer block w-full p-2 pt-6 pb-2 bg-gray-200 border-0 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-black"
+                                />
+                                <span className="absolute left-0 top-0 px-4 py-2 text-gray-700 transition-transform duration-300 transform peer-placeholder-shown:translate-y-2 peer-placeholder-shown:scale-100 peer-focus:translate-y-[-0.5rem] peer-focus:scale-75 origin-left pointer-events-none">
+                                    Vehicle Number
+                                </span>
+                                <ErrorMessage
+                                    name="vehicle_no"
+                                    component="div"
+                                    className="text-red-500 text-sm mt-1"
+                                />
+                            </div>
+
 
                                         {/* RC Document */}
                                         <div className="mb-4">
@@ -291,7 +299,7 @@ const Vehicle_doc_form = () => {
                                         <div className="mt-6 flex justify-center">
                                             <button
                                                 type="submit"
-                                                className="px-4 py-2 bg-white text-black rounded-md"
+                                                className="px-20 py-2 bg-white text-black rounded-md"
                                             >
                                                 Submit
                                             </button>

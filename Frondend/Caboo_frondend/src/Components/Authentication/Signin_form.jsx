@@ -3,15 +3,16 @@ import React, { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import google_icon from '../../assets/Google_icon.png';
-import useFormsubmition from '../../Hooks/useFormsubmition'
 import { email_validate_url } from '../../Utils/Constanse';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie"
 import useAuthentication from '../../Hooks/useAuthentication';
+import { useSelector } from 'react-redux';
 
 const Signin_form = () => {
   
   const {Emailvalidation}=useAuthentication()
+  const role = useSelector((state)=>state.Authentication.role)
   const Navigate =useNavigate()
   const initialValues = {
     email: '',
@@ -24,6 +25,7 @@ const Signin_form = () => {
   });
 
   const onSubmit = (values) => {
+    values['role']=role
     Emailvalidation(values,email_validate_url)
     
   };

@@ -2,23 +2,24 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import mainImage from "../../assets/mainimage.webp";
-import { user_signup_url} from "../../Utils/Constanse";
-import useFormsubmition from "../../Hooks/useFormsubmition"
+import { user_signup_url } from "../../Utils/Constanse"; 
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import useAuthentication from "../../Hooks/useAuthentication";
 
 const Signup_page = () => {
-  const { FormSubmition } = useFormsubmition();
-  const Navigate=useNavigate()
-  const role=useSelector((state)=>state.Authentication.email)
+  const navigate = useNavigate();
+  const {Signup_validation}=useAuthentication()
+
+  const user = useSelector((state) => state.Authentication.email);
+  const role = useSelector((state) => state.Authentication.role);
+
 
   const initialValues = {
     username: "",
-    email: "",
+    lastname: "",
     phone: "",
-    address: "",
     password: "",
-    con_password:"",
   };
 
   const validationSchema = Yup.object().shape({
@@ -28,42 +29,28 @@ const Signup_page = () => {
         /^[a-zA-Z][a-zA-Z\s]*$/,
         "Full Name must start with a letter and contain only letters and spaces"
       ),
-    email: Yup.string().email("Invalid email format").required("Email is required"),
+    lastname: Yup.string()
+      .required("Last Name is required")
+      .matches(
+        /^[a-zA-Z][a-zA-Z\s]*$/,
+        "Last Name must start with a letter and contain only letters and spaces"
+      ),
     phone: Yup.string()
       .matches(/^\d{10}$/, "Phone number must be 10 digits")
       .required("Phone number is required"),
-    address: Yup.string()
-      .required("Address is required")
-      .matches(
-        /^[a-zA-Z][a-zA-Z\s]*$/,
-        "Address must start with a letter and contain only letters and spaces"
-      ),
-    password: Yup.string()
+      password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
       .matches(
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
         "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-        
       ),
-      con_password: Yup.string()
-      .required("Confirm password is required")
-      .oneOf([Yup.ref('password'), null], "Passwords must match")
-      
-    // profile: Yup.mixed()
-    //   .test("fileType", "Unsupported file format", (value) => {
-    //     if (!value) return true; // Allow empty value if not required
-    //     return ["image/jpeg", "image/png"].includes(value.type);
-    //   })
-    //   .required("Profile image is required"),
   });
 
   const onSubmit = (values) => {
-    
-        values['role']=role.role
-
-    FormSubmition(values,user_signup_url);
-
+    values["email"] = user;
+    values["role"] = role
+    Signup_validation(values, user_signup_url);
   };
 
   return (
@@ -78,22 +65,25 @@ const Signup_page = () => {
               <span className="font-bold text-2xl flex items-center">
                 Create an account
               </span>
-              <div className="mt-6 w-96 max-w-md text-lg font-bold relative ">
+              <div className="mt-6 w-96 max-w-md text-lg font-bold relative">
                 <Formik
                   initialValues={initialValues}
                   validationSchema={validationSchema}
                   onSubmit={onSubmit}
                 >
-                  {({ isSubmitting, setFieldValue }) => (
+                  {({ isSubmitting }) => (
                     <Form>
-                      <div className="mb-4" >
+                      <div className="relative mb-6">
                         <Field
                           type="text"
                           id="username"
                           name="username"
-                          placeholder="Full Name"
-                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
+                          required
+                          className="peer block w-full p-2 pt-6 pb-2 bg-gray-200 border-0 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-black"
                         />
+                        <span className="absolute left-0 top-0 px-4 py-2 text-gray-700 transition-transform duration-300 transform peer-placeholder-shown:translate-y-2 peer-placeholder-shown:scale-100 peer-focus:translate-y-[-0.5rem] peer-focus:scale-75 origin-left pointer-events-none">
+                          Full Name
+                        </span>
                         <ErrorMessage
                           name="username"
                           component="div"
@@ -101,29 +91,35 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4">
+                      <div className="relative mb-6">
                         <Field
-                          type="email"
-                          id="email"
-                          name="email"
-                          placeholder="Email"
-                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
+                          type="text"
+                          id="lastname"
+                          name="lastname"
+                          required
+                          className="peer block w-full p-2 pt-6 pb-2 bg-gray-200 border-0 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-black"
                         />
+                        <span className="absolute left-0 top-0 px-4 py-2 text-gray-700 transition-transform duration-300 transform peer-placeholder-shown:translate-y-2 peer-placeholder-shown:scale-100 peer-focus:translate-y-[-0.5rem] peer-focus:scale-75 origin-left pointer-events-none">
+                          Last Name
+                        </span>
                         <ErrorMessage
-                          name="email"
+                          name="lastname"
                           component="div"
                           className="text-red-500 text-sm mt-1"
                         />
                       </div>
 
-                      <div className="mb-4">
+                      <div className="relative mb-6">
                         <Field
                           type="text"
                           id="phone"
                           name="phone"
-                          placeholder="Phone"
-                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
+                          required
+                          className="peer block w-full p-2 pt-6 pb-2 bg-gray-200 border-0 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-black"
                         />
+                        <span className="absolute left-0 top-0 px-4 py-2 text-gray-700 transition-transform duration-300 transform peer-placeholder-shown:translate-y-2 peer-placeholder-shown:scale-100 peer-focus:translate-y-[-0.5rem] peer-focus:scale-75 origin-left pointer-events-none">
+                          Phone
+                        </span>
                         <ErrorMessage
                           name="phone"
                           component="div"
@@ -131,66 +127,23 @@ const Signup_page = () => {
                         />
                       </div>
 
-                      <div className="mb-4">
-                        <Field
-                          type="text"
-                          id="address"
-                          name="address"
-                          placeholder="Address"
-                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
-                        />
-                        <ErrorMessage
-                          name="address"
-                          component="div"
-                          className="text-red-500 text-sm mt-1"
-                        />
-                      </div>
-
-                      <div className="mb-4">
+                      <div className="relative mb-6">
                         <Field
                           type="password"
                           id="password"
                           name="password"
-                          placeholder="Password"
-                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
+                          required
+                          className="peer block w-full p-2 pt-6 pb-2 bg-gray-200 border-0 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-gray-700 text-black"
                         />
+                        <span className="absolute left-0 top-0 px-4 py-2 text-gray-700 transition-transform duration-300 transform peer-placeholder-shown:translate-y-2 peer-placeholder-shown:scale-100 peer-focus:translate-y-[-0.5rem] peer-focus:scale-75 origin-left pointer-events-none">
+                          Password
+                        </span>
                         <ErrorMessage
                           name="password"
                           component="div"
                           className="text-red-500 text-sm mt-1"
                         />
                       </div>
-                      <div className="mb-4">
-                        <Field
-                          type="password"
-                          id="con_password"
-                          name="con_password"
-                          placeholder="Confirm Password"
-                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-black"
-                        />
-                        <ErrorMessage
-                          name="con_password"
-                          component="div"
-                          className="text-red-500 text-sm mt-1"
-                        />
-                      </div>
-
-                      {/* <div className="mb-4 relative w-full text-lg font-bold">
-                        <input
-                          type="file"
-                          id="profile"
-                          name="profile"
-                          onChange={(event) => {
-                            setFieldValue("profile", event.currentTarget.files[0]);
-                          }}
-                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-md text-white"
-                        />
-                        <ErrorMessage
-                          name="profile"
-                          component="div"
-                          className="text-red-500 text-sm mt-1"
-                        />
-                      </div> */}
 
                       <div className="flex justify-center items-center">
                         <button

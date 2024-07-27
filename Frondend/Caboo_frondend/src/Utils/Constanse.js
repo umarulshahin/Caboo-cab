@@ -6,7 +6,7 @@ export const email_validate_url = 'http://127.0.0.1:8000/Api/emailvalidate/';
 
 export const Otpverify_url = "http://127.0.0.1:8000/Api/otpverify/";
 
-export const signin_urls = "http://127.0.0.1:8000/Api/token/";
+export const signin_urls = "http://127.0.0.1:8000/Api/token_view/";
 
 export const refresh_Token = "http://127.0.0.1:8000/Api/token/refresh/";
 

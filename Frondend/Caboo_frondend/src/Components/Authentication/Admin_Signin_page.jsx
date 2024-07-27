@@ -2,16 +2,15 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import mainImage from "../../assets/mainimage.webp";
-import { signin_urls} from "../../Utils/Constanse";
 import useFormsubmition from "../../Hooks/useFormsubmition"
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/Logo.png";
-import useGetUser from "../../Hooks/useGetUser";
-
+import useAuthentication from "../../Hooks/useAuthentication";
+import { signin_urls } from "../../Utils/Constanse";
 
 const Admin_signin_page = () => {
     const { FormSubmition } = useFormsubmition();
-    const {signin}=useGetUser()  
+    const {Signin}=useAuthentication()
     const initialValues = {
       email: "",
       password: "",
@@ -35,7 +34,7 @@ const Admin_signin_page = () => {
     const onSubmit = (values) => {
       
       console.log(values)
-      signin(values,signin_urls,null,"admin");
+      Signin(values,signin_urls,null,"admin");
   
     };
   
