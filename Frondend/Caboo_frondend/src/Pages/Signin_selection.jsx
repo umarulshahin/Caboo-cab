@@ -6,8 +6,6 @@ import Footer from '../Components/Footer';
 import Modal from '../Components/Authentication/Modal';
 import Signin_form from '../Components/Authentication/Signin_form';
 import OtpForm from '../Components/Authentication/OtpFrom';
-import Driver_sign_in from './Driver/Driver_sign_in';
-import Password from '../Components/Authentication/Password';
 import { addrole } from '../Redux/AuthenticationSlice';
 
 const Signin_selection = () => {
@@ -51,8 +49,7 @@ const Signin_selection = () => {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {modalContent === 'Ride' && <Signin_form />}
         {modalContent === 'OTP verify' && <OtpForm />}
-        {modalContent === 'password' && <Password />}
-        {modalContent === 'Drive' && <Driver_sign_in />}
+        {modalContent === 'Drive' && <Signin_form />}
       </Modal>
       {state?.signin ? (
         <div className="h-screen bg-black text-white space-x-80 flex justify-center items-center font-medium text-xl underline">
@@ -111,7 +108,7 @@ const Signin_selection = () => {
       ) : (
         <div className="h-screen bg-black text-white space-x-80 flex justify-center items-center font-medium text-xl underline">
           <button
-            onClick={() => handleOption('ride')}
+            onClick={() => handleOption('Ride')}
             className="relative flex items-center gap-1 py-4 px-9 border-4 border-transparent text-lg bg-inherit rounded-full font-semibold text-white shadow-[0_0_0_2px] shadow-white cursor-pointer overflow-hidden transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_0_0_12px_transparent] hover:text-gray-900 active:scale-95 group"
           >
             <svg 

@@ -19,7 +19,6 @@ const UserProfile_main = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [address,setAddress] = useState("")
   const [id,setid] = useState("")
   const data = useSelector((state) => state.user_data.user_data);
   const {Get_data,ProfilUpdate}=useGetUser()
@@ -35,12 +34,11 @@ const UserProfile_main = () => {
     
     if(data){
 
-      const { profile, username,address, email, phone,id } = data[0];
+      const { profile, username, email, phone,id } = data[0];
       setProfileImage(profile)
       setEmail(email)
       setPhone(phone)
       setUsername(username)
-      setAddress(address)
       setid(id)
 
     }
@@ -112,12 +110,7 @@ const UserProfile_main = () => {
             <span className="text-white font-medium ">{email}</span>
           </div>
         </div>
-        <div className="mb-6">
-          <span className="text-white font-bold text-xl block">Address</span>
-          <div className="border border-gray-300 p-2 rounded mt-2 ml-4 w-64">
-            <span className="text-white font-medium ">{address}</span>
-          </div>
-        </div>
+      
         
         <div className="mb-6">
           <span className="text-white font-bold text-xl block">Phone</span>
@@ -136,7 +129,7 @@ const UserProfile_main = () => {
         <UserEdit
         isOpen={modalIsOpen}
         onClose={handleModalClose}
-        user={{ username, email, address, phone }}
+        user={{ username, email, phone }}
         onSave={handleSave}
       />
         

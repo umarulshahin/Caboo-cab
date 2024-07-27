@@ -13,6 +13,11 @@ const OtpForm = () => {
   const inputRefs = useRef([]);
   const { Otp_verification, Emailvalidation } = useAuthentication();
   const email = useSelector((state) => state.Authentication.email);
+  const role = useSelector((state) => state.Authentication.role);
+
+
+  console.log(role)
+  console.log(email)
 
   useEffect(() => {
     const user_token = Cookies.get("User_Tokens");
@@ -62,16 +67,20 @@ const OtpForm = () => {
       return;
     }
     seterrormessage('');
+
     const data = {
       otp: otpValue,
-      email: email.email
+      email: email
     };
     Otp_verification(data, Otpverify_url, seterrormessage);
   };
 
   const handleResendOtp = () => {
-
-    Emailvalidation({email:email.email},email_validate_url);
+     const data={
+      email : email,
+      role:role
+     }
+    Emailvalidation(data,email_validate_url);
     setTimer(30); 
     setIsButtonDisabled(true);
   };
@@ -83,7 +92,7 @@ const OtpForm = () => {
         <br />
         <span className='pt-2'>One Time Password (OTP) has been sent via mail to 
         </span>
-        <span className='p-2'>{email.email}</span>
+        <span className='pb-4'>{email}</span>
       </div>
       <div className="flex space-x-2">
         {otp.map((data, index) => (
@@ -96,7 +105,7 @@ const OtpForm = () => {
             onChange={(e) => handleChange(e.target, index)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             onFocus={(e) => e.target.select()}
-            className="w-10 h-10 border border-gray-300 text-center text-xl rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-14 h-12 border border-gray-400 text-center text-xl rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         ))}
       </div>

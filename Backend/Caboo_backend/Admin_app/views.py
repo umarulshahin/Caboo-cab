@@ -16,6 +16,7 @@ from Authentication_app.models import *
 def Get_admin(request):
     
     admin_id = request.GET.get('id', None)
+    print(admin_id)
     user=CustomUser.objects.get(id=admin_id)
     if user:
         serializer=UserSerializer(user)

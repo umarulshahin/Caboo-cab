@@ -39,7 +39,7 @@ const useFormsubmition = () => {
                             }
                             toast.success("Congratulations! Your account has been successfully created")
 
-                            signin(data,signin_urls)
+                            // signin(data,signin_urls)
                     }
                     
 

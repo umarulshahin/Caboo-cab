@@ -1,7 +1,7 @@
 import React from 'react'
 import Footer from '../../Components/Footer'
 import Header from '../../Components/Header';
-import Vehicle_doc_form from '../../Components/Driver/Vehicle_doc_form';
+import Vehicle_doc_form from '../../Components/Authentication/Vehicle_doc_form';
 
 const Vehicle_doc = () => {
     const headprops = {

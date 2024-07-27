@@ -10,16 +10,17 @@ import UserHome from "./Pages/user_side/UserHome";
 import UserProfile from "./Pages/user_side/UserProfile";
 import PrivatRoute from "./PrivatRoute";
 import PrivatRoute_user from "./PrivatRoute_user";
-import Admin_Signin from "./Pages/Admin/Admin_Signin";
 import Admin_home from "./Pages/Admin/Admin_home";
 import "./App.css";
 import User_list from "./Pages/Admin/User_list";
-import Vehicle_doc from "./Pages/Driver/Vehicle_doc";
 import WaitingModal from "./Components/Driver/WaitingModal";
 import Driver_list from "./Pages/Admin/Driver_list";
 import Documents from "./Pages/Admin/Documents";
 import Signup from "./Pages/Authentication/Signup";
 import OtpForm from "./Components/Authentication/OtpFrom";
+import Vehicle_doc from "./Pages/Authentication/Vehicle_doc";
+import AdminPrivatRoute from "./AdminPrivatRoute";
+import Admin_Signin from "./Pages/Authentication/Admin_Signin";
 
 
 const App = () => {
@@ -38,7 +39,7 @@ const App = () => {
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
               <Route path="/otpverification" element={<OtpForm />} />
 
-              <Route path="/admin" element={<PrivatRoute><Admin_Signin /></PrivatRoute>} />
+              <Route path="/admin" element={<AdminPrivatRoute><Admin_Signin /></AdminPrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />
               <Route path="/User_list" element={<User_list />} />
               <Route path="/Driver_list" element={<Driver_list />} />

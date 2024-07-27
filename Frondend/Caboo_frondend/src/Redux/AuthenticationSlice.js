@@ -3,9 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const AuthenticationSlice = createSlice({
   name: "signup_data",
   initialState: {
-    email:{},
+    email:'',
     user_status:'',
-    role:''
+    role:'',
+    driver_status:'',
 
   },
   reducers: {
@@ -18,10 +19,13 @@ const AuthenticationSlice = createSlice({
     },
     addrole:(state,action)=>{
       state.role=action.payload
+    },
+    addDriver_status:(state,action)=>{
+      state.driver_status=action.payload
     }
   },
 });
 
-export const { addemail,addUser_status,addrole } = AuthenticationSlice.actions;
+export const { addemail,addUser_status,addrole,addDriver_status } = AuthenticationSlice.actions;
 
 export default AuthenticationSlice.reducer;
