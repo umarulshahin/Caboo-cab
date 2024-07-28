@@ -3,8 +3,9 @@ import Sidebar_admin from './Sidebar_admin'
 import useAdmin from '../../Hooks/useAdmin'
 import { useSelector } from 'react-redux'
 import BlockModal from './BlockModal'
-import { statusManagment_url } from '../../Utils/Constanse'
+import { backendUrl, statusManagment_url } from '../../Utils/Constanse'
 import { get_Users_url } from '../../Utils/Constanse' 
+import avatar from "../../assets/profile_img.png"
 
 const User_list_page = () => {
     const {GetUsers,Usermanagement}=useAdmin()
@@ -64,10 +65,10 @@ const User_list_page = () => {
           <thead>
             <tr className="w-full bg-gray-100">
               <th className="py-2 px-4 text-left text-gray-600">ID</th>
+              <th className="py-2 px-4 text-left text-gray-600"></th>
               <th className="py-2 px-4 text-left text-gray-600">Name</th>
               <th className="py-2 px-4 text-left text-gray-600">Phone</th>
               <th className="py-2 px-4 text-left text-gray-600">Wallet</th>
-              <th className="py-2 px-4 text-left text-gray-600">Address</th>
               <th className="py-2 px-4 text-left text-gray-600">Status</th>
               <th className="py-2 px-4 text-left text-gray-600">Action</th>
             </tr>
@@ -76,10 +77,16 @@ const User_list_page = () => {
             {User_list.map((data) => (
               <tr key={data.id} className="rounded-lg">
                 <td className="py-2 px-4">{data.id}</td>
+                <td className="py-4 px-4">
+                    <img
+                    src={data.profile ? `${backendUrl}${data.profile}` : avatar}
+                    alt="Profile"
+                      className="h-8 w-8 rounded-full object-cover cursor-pointer"
+                    />
+                    </td>
                 <td className="py-2 px-4">{data.username}</td>
                 <td className="py-2 px-4">{data.phone}</td>
                 <td className="py-2 px-4">$1000</td>
-                <td className="py-2 px-4">{data.address}</td>
                 <td className="py-2 px-4">
               <span className={data.is_active ? 'text-green-600' : 'text-red-600'}>
                 {data.is_active ? "Active" : "Blocked"}

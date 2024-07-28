@@ -29,3 +29,5 @@ export const driver_signup_url = "http://127.0.0.1:8000/Api/driver_signup/";
 export const get_Driver_url = "http://127.0.0.1:8000/Api/getDriver/";
 
 export const DriverManagement_url="http://127.0.0.1:8000/Api/Drivermanagement/";
+
+export const Driver_data_urls = "http://127.0.0.1:8000/Api/driver_data/";

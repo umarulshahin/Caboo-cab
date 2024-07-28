@@ -73,7 +73,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'phone', 'profile','is_active']
+        fields = ['email', 'username', 'phone', 'profile']
 
 
 class DriverSerializers(serializers.ModelSerializer):

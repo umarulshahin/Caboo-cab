@@ -33,7 +33,8 @@ urlpatterns = [
   
     #*.....................Driver Api .........................
     
-  path('driver_signup/',Driver_signup,name="driver_signup")
+  path('driver_signup/',Driver_signup,name="driver_signup"),
+  path('driver_data/',Driver_Data,name="driver_data"),
 
   
 ]

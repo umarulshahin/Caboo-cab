@@ -5,15 +5,12 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { addToken_data, addUser } from "../Redux/UserSlice";
 import { useNavigate } from "react-router-dom";
-import {
-  img_upload_url,
-  user_data_url,
-  admin_data_url,
-} from "../Utils/Constanse";
-
-import { addadmin_data, addadmin_token } from "../Redux/AdminSlice";
+import {img_upload_url,user_data_url,} from "../Utils/Constanse";
+import { addadmin_data } from "../Redux/AdminSlice";
+import { addDriver_data } from "../Redux/DriverSlice";
 
 const useGetUser = () => {
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,14 +26,16 @@ const useGetUser = () => {
       if(role === "admin") {
         raw_token = Cookies.get("adminTokens");
      
-      } else {
-        raw_token = Cookies.get("userTokens");
+      } else if (role === 'driver') {
+        raw_token = Cookies.get("DriverTokens");
       
+      }else{
+        raw_token = Cookies.get("userTokens");
+
       }
       if(raw_token){
 
         token = JSON.parse(raw_token);
-        console.log(token.access);
       }
 
       const response = await axios.get(urls,{
@@ -51,8 +50,15 @@ const useGetUser = () => {
         console.log(response.data, "get user ");
         if (role === "admin") {
           dispatch(addadmin_data(response.data));
-        } else {
+
+        } else if(role === 'driver') {
+
+          dispatch(addDriver_data(response.data));
+
+        }else{
+
           dispatch(addUser(response.data));
+
         }
       }
     } catch (error) {
@@ -61,49 +67,7 @@ const useGetUser = () => {
     }
   };
 
-  const signin = async (data, urls, seterrormessage = null, role = null) => {
-    
-    try {
-      const response = await axios.post(urls, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.status === 200) {
-        if (role === "admin") {
-
-          const token = JSON.stringify(response.data);
-          Cookies.set("adminTokens", token, { expires: 7 });
-          const value = jwtDecode(response.data.access);
-          dispatch(addadmin_token(value));
-          Get_data(admin_data_url,value.user_id,role);
-          toast.success("Login successfully");
-          navigate("/admin_home");
-
-        } else {
-          console.log(response.data);
-
-          const token = JSON.stringify(response.data);
-          Cookies.set("userTokens", token, { expires: 7 });
-          const value = jwtDecode(response.data.access);
-          dispatch(addToken_data(value));
-          Get_data(user_data_url, null);
-          toast.success("Login successfully");
-          navigate("/userhome");
-        }
-      }
-    } catch (error) {
-      console.log(error, "Signin");
-      if (
-        error.response.data.detail ===
-        "No active account found with the given credentials"
-      ) {
-        toast.warning("Your email and password do not match. Please try again");
-      }
-      console.log(error, "Signin");
-    }
-  };
+  
 
   const img_validate = async (file) => {
     if (file) {
@@ -154,7 +118,7 @@ const useGetUser = () => {
     }
   };
 
-  return { img_validate, signin, Get_data, ProfilUpdate };
+  return { img_validate, Get_data, ProfilUpdate };
 };
 
 export default useGetUser;

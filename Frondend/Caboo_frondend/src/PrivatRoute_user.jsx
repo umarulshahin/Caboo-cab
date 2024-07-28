@@ -6,8 +6,8 @@ import { Navigate } from 'react-router-dom'
 const PrivatRoute_user = ({children}) => {
     
     const user=Cookies.get('userTokens')
+        return user ? children :< Navigate to="/" /> ;
 
-    return user ? children :< Navigate to="/" /> ;
 
 }
 

@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const WaitingModal = () => {
@@ -9,23 +8,24 @@ const WaitingModal = () => {
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                <div className="flex  items-center justify-center border-b pb-2">
-                    <h3 className="text-xl font-semibold">Thaks For Registering</h3>
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4">
+                <div className="flex justify-between items-center border-b pb-3">
+                    <h3 className="text-xl font-bold text-gray-800">Thank You for Registering!</h3>
                     <button
-                        className="text-gray-500 hover:text-gray-700"
+                        className="text-gray-600 hover:text-gray-800 text-xl"
                         onClick={closeModal}
                     >
                         &times;
                     </button>
                 </div>
-                <div className="mt-4 flex justify-center text-xl font-medium">
-                    <p>Our Authority will check your details and verify. After verification, you can login.</p>
+                <div className="mt-4 text-gray-700 text-center">
+                    <p>Your request has been received. We will review your details and send a confirmation email once the process is complete.</p>
+                    <p>Thank you for your patience!</p>
                 </div>
-                <div className="mt-4 flex justify-center">
+                <div className="mt-6 flex justify-center">
                     <button
-                        className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-700"
+                        className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-500 focus:outline-none"
                         onClick={closeModal}
                     >
                         Close
