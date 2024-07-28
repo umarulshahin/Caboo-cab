@@ -3,7 +3,7 @@ import { addDriver_status, addemail, addrole, addUser_status } from '../Redux/Au
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { admin_data_url, signin_urls, user_data_url } from '../Utils/Constanse';
+import { admin_data_url, Driver_data_urls, signin_urls, user_data_url } from '../Utils/Constanse';
 import { addadmin_token } from '../Redux/AdminSlice';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from "js-cookie";
@@ -40,11 +40,19 @@ const useAuthentication = () => {
                 if (successMessage === "alredy email exist") {
                   
                     console.log(response.data.email,"Handling 'alredy email exist'");
-                    dispatch(addUser_status(response.data.success));
-                    dispatch(addemail(response.data.email));
-                    dispatch(addDriver_status(response.data.status));
-                    dispatch(addDriver_data(response.data.data));
-                    navigate('/signin_selection', { state: { modal: 'OTP verify' } });
+
+                    if(response.data.status==='Driver not approval'){
+                        navigate("/waitingModal")
+                        
+                    }else{
+
+                        dispatch(addUser_status(response.data.success));
+                        dispatch(addemail(response.data.email));
+                        dispatch(addDriver_status(response.data.status));
+                        dispatch(addDriver_data(response.data.data));
+                        navigate('/signin_selection', { state: { modal: 'OTP verify' } });
+                    }
+                   
 
                 } else if (successMessage === "new user") {
 
@@ -98,12 +106,15 @@ const useAuthentication = () => {
                     }else if (user_status==='alredy email exist' && role === 'Drive'){
 
                         if (driver_status ==="Driver data success"){
+
+                            console.log("yes it is working ")
                             const data={
                                 email:email
                             }
                             Signin(data,signin_urls,null,"Driver")
 
                         }else if(driver_status==="Driver not approval"){
+                             navigate("/waitingModal")
 
                         }else if (driver_status==="Driver data is None"){
                             navigate('/vehicle_doc')
@@ -168,14 +179,11 @@ const useAuthentication = () => {
                         navigate('/vehicle_doc')
                     }
                     
-
-
                 }else {
 
                     toast.warning(response.data.error&&response.data.error.email ? "Email already exist":"Phone number already exists" )
 
                 }
-                // dispatch(addsignup_data(response.data.user_data))
 
             }else if (response.status===400){
                 console.log(response.data, 'signup response');
@@ -214,16 +222,13 @@ const useAuthentication = () => {
             } else if( role === "Driver") {
 
               console.log(response.data.token)
-              const token = response.data
+              const token = response.data.token
               Cookies.set("DriverTokens",JSON.stringify(token), { expires: 7 });
               const value = jwtDecode(token.access);
               dispatch(addDriver_token(value));
-              dispatch(addUser_status(null))
-              dispatch(addrole(null))
-              dispatch(addemail(null))
-              Get_data(driver, null);
+              Get_data(Driver_data_urls,email,"driver");
               toast.success("Login successfully");
-              navigate("/userhome");
+              navigate("/driver_home");
 
             }else{
 
@@ -232,13 +237,15 @@ const useAuthentication = () => {
               Cookies.set("userTokens",JSON.stringify(token), { expires: 7 });
               const value = jwtDecode(token.access);
               dispatch(addToken_data(value));
-              dispatch(addUser_status(null))
-              dispatch(addrole(null))
-              dispatch(addemail(null))
               Get_data(user_data_url, null);
               toast.success("Login successfully");
               navigate("/userhome");
+
             }
+
+            dispatch(addUser_status(null))
+            dispatch(addrole(null))
+            dispatch(addemail(null))
           }
         } catch (error) {
           console.log(error, "Signin");

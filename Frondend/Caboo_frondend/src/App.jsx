@@ -21,6 +21,8 @@ import OtpForm from "./Components/Authentication/OtpFrom";
 import Vehicle_doc from "./Pages/Authentication/Vehicle_doc";
 import AdminPrivatRoute from "./AdminPrivatRoute";
 import Admin_Signin from "./Pages/Authentication/Admin_Signin";
+import Driver_home from "./Pages/Driver/Driver_home";
+import Driver_PrivatRoute from "./Driver_PrivatRoute";
 
 
 const App = () => {
@@ -45,18 +47,11 @@ const App = () => {
               <Route path="/Driver_list" element={<Driver_list />} />
               <Route path="/Documents" element={<Documents />} />
 
-              
-
-
-
+            
               <Route path='/vehicle_doc' element={<Vehicle_doc /> } />
               <Route path='/waitingModal' element={<WaitingModal /> } />
 
-
-
-
-
-
+              <Route path="/driver_home" element={<Driver_PrivatRoute> <Driver_home /> </ Driver_PrivatRoute>} />
 
             </Routes>
           </BrowserRouter>

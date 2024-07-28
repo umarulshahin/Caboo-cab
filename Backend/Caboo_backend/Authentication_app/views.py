@@ -29,15 +29,16 @@ def Email_validate(request):
                     result=OTP_sender(data["email"])
                     
                     if result == "success":
-                        
+                        print(data)
                         if data['role']=="Drive" :
                         
                             driver=DriverData.objects.filter(customuser=user.id).first()
-                            
-                            if driver and driver.is_active==True:
+                            print(driver.status)
+                            if driver and driver.status=='active':
+                                
                                 return Response({"success": "alredy email exist",'status':"Driver data success", "email": data['email']})
                             
-                            elif driver and driver.is_active==False:
+                            elif driver and driver.status=='pending':
                                     
                                 return Response({"success": "alredy email exist",'status':"Driver not approval", "email": data['email']})
 
@@ -179,7 +180,6 @@ def Driver_signup(request):
         'username': data.get('customuser[username]'),
         'phone': data.get('customuser[phone]'),
         'profile': files.get('profile') ,
-        'is_active':False 
     }
     
     # Check if CustomUser with provided email exists
