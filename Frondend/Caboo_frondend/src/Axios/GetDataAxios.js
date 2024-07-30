@@ -40,7 +40,6 @@ const refreshToken = async (role) => {
 
     // Store the new tokens in cookies
     if (role === 'admin') {
-      console.log('admin working')
       Cookies.set('adminTokens', JSON.stringify(newToken), { expires: 7 });
     } else if (role === 'driver') {
 
@@ -64,8 +63,6 @@ apiClient.interceptors.request.use(
     let rawToken = null;
     console.log(role)
     if (role === 'admin') {
-      console.log('admin is working')
-
       rawToken = Cookies.get('adminTokens');
     } else if (role === 'driver') {
       rawToken = Cookies.get('DriverTokens');
@@ -86,12 +83,16 @@ apiClient.interceptors.request.use(
 // Step 3: Axios response interceptor for handling token refresh
 apiClient.interceptors.response.use(
   (response) => response,
+  
   async (error) => {
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const role = originalRequest.headers['Role'];
+        const role = originalRequest.meta ? originalRequest.meta.role : null;
+        if (!role) {
+          throw new Error('Role is not defined');
+        }
         const newAccessToken = await refreshToken(role);
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);

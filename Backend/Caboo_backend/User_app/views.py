@@ -15,11 +15,14 @@ def Image_Upload(request):
     
     if request.method == "PATCH":
         image = request.FILES.get('image')
-        user_email = request.user.email
+        id = request.data.get('id')
+
+        print(id)
+
         
         if not image:
             return Response({"error": "Image file is required"}, status=400)
-        data = {"image": image, "user": user_email}
+        data = {"image": image, "id": id}
 
         serializer = ImageUploadSerializer(data=data)
         if serializer.is_valid():

@@ -83,11 +83,14 @@ class DriverSerializers(serializers.ModelSerializer):
         model = DriverData
         fields = [
             'customuser', 'aadhaar', 'vehicle_name', 'vehicle_no', 
-            'rc_img', 'license', 'insurance', 'vehicle_photo'
+            'rc_img', 'license', 'insurance', 'vehicle_photo','request'
         ]
 
     def validate(self, attrs):
         # Validation logic
+        if DriverData.objects.filter(customuser=attrs.get('customuser')).exclude():
+            return attrs
+        
         if DriverData.objects.filter(aadhaar=attrs.get('aadhaar')).exists():
             raise serializers.ValidationError({"aadhaar": "Aadhaar already exists"})
         if DriverData.objects.filter(vehicle_no=attrs.get('vehicle_no')).exists():
@@ -103,6 +106,7 @@ class DriverSerializers(serializers.ModelSerializer):
             rc_img=validated_data.get('rc_img'),
             license=validated_data.get('license'),
             insurance=validated_data.get('insurance'),
-            vehicle_photo=validated_data.get('vehicle_photo')
+            vehicle_photo=validated_data.get('vehicle_photo'),
+            request=validated_data.get('request')
         )
         return driver_data

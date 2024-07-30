@@ -91,7 +91,7 @@ def Driver_management(request):
         
         if data['status']=='active':
             
-            driver.status = data['status']
+            driver.request = data['status']
             driver.save()  
             subject = "Caboo Cab Driver Request Verification"
             message = (
@@ -100,8 +100,8 @@ def Driver_management(request):
             )
             
         elif data['status'] == 'decline':
-            
-            driver.status = data['status']
+            print(data['status'])
+            driver.request = data['status']
             driver.dicline_reason = data ['reason']
             driver.comments = data['comments']
             driver.save()  

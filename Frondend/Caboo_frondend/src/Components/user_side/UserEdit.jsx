@@ -19,7 +19,6 @@ const validationSchema = Yup.object({
 
 const UserEdit = ({ isOpen, onClose, user, onSave }) => {
   const handleSubmit = (values, { setSubmitting }) => {
-  console.log(values,"yes values")
     onSave(values);
     setSubmitting(false);
     onClose();

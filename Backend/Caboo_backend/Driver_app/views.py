@@ -13,9 +13,10 @@ def Driver_Data(request):
         
         user=CustomUser.objects.get(email=data)
         drivar=DriverData.objects.filter(customuser=user.id).prefetch_related('customuser')
-        serializer=DriverDataSerializer(drivar,many=True)
-        print(serializer)
-        return Response(serializer.data)
-     
     except :
-                 return Response({"error":"driver data not done "})
+        return Response({"error":"driver data not done "})
+
+    serializer=DriverDataSerializer(drivar,many=True)
+    return Response(serializer.data)
+     
+    

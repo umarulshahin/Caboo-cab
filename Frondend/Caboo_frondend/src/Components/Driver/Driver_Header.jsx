@@ -8,6 +8,7 @@ import { addDriver_data, addDriver_token } from "../../Redux/DriverSlice";
 import { backendUrl } from "../../Utils/Constanse"; 
 
 const Driver_Header = () => {
+  
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,14 +25,7 @@ const Driver_Header = () => {
     }
   }, [data]);
   
-  useEffect(()=>{
-    const token = Cookies.get('DriverTokens')
-    if (!token){
-      navigate("/");
-    }else{
-      navigate('/driver_home')
-    }
-  },[])
+ 
   const handleLogout = () => {
     dispatch(addDriver_data(null));
     dispatch(addDriver_token(null));
@@ -82,7 +76,7 @@ const Driver_Header = () => {
                <div className="relative">
                <div className="absolute right-0 flex flex-col items-center mt-8 w-48 bg-black font-bold text-white rounded-lg shadow-lg">
                  <Link
-                   to="/profile" 
+                   to="/driver_profile" 
                    className="block px-4 py-2 w-full text-center hover:bg-gray-700 transition duration-150 ease-in-out"
                  >
                    Profile
