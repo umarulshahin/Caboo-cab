@@ -6,7 +6,7 @@ const Driver_PrivatRoute = ({children}) => {
 
     const driver=Cookies.get('DriverTokens')
     
-    return driver ?  children : < Navigate to="/driver_home" /> ;
+    return driver ?  children : < Navigate to="/" /> ;
 }
 
 export default Driver_PrivatRoute

@@ -1,36 +1,35 @@
 
-import axios from 'axios'
-import Cookies from "js-cookie"
 import { useDispatch } from 'react-redux'
 import { addDriver_list, addUsers_list } from '../Redux/AdminSlice'
 import { get_Driver_url, get_Users_url } from '../Utils/Constanse'
 import { toast } from 'sonner'
+import AdminAxios from '../Axios/AdminAxios'
+import { useNavigate } from 'react-router-dom'
 
 const useAdmin = () => {
 
     const dispatch=useDispatch()
+    const navigate=useNavigate()
+
     const GetUsers=async(urls,role=null)=>{
 
         try{
-
-           const raw_token=Cookies.get("adminTokens")
-           const token=JSON.parse(raw_token)
            
-         const response = await axios.get(urls,{
+         const response = await AdminAxios.get(urls,{
             headers: {
-              Authorization: `Bearer ${token.access}`,
               "Content-Type": "multipart/form-data",
             },
           });
 
          if(response.status===200){
-            console.log(response.data)
-
+            console.log(response.data,)
+            console.log(role)
             if(role==="driver"){
-             dispatch(addDriver_list(response.data))
-             return
+              dispatch(addDriver_list(response.data))
+              return
 
             }else if(role==="user"){
+                console.log('yes working user')
                 dispatch(addUsers_list(response.data))
                 return
 
@@ -43,23 +42,19 @@ const useAdmin = () => {
     }
 
     const Usermanagement=async(urls,value)=>{
+        
         try{
-            const raw_token=Cookies.get("adminTokens")
-            const token=JSON.parse(raw_token)
-
-            const response= await axios.post(urls,value,{
+            const response= await AdminAxios.post(urls,value,{
                 headers:{
-                    Authorization: `Bearer ${token.access}`,
                     "Content-Type" : "multipart/form-data",
                 }
             })
 
             if (response.status===200){
 
-                console.log(response.data)
-              
+                console.log(response.data,'user managment')
                 toast.success("status successfully updated")
-
+                return
             }
         }catch(error){
             console.error(error,"Usermanagment")
@@ -67,9 +62,6 @@ const useAdmin = () => {
         }
     }
 
-    const Driver_Management= async()=>{
-         
-    }
     return {GetUsers,Usermanagement}
 }
 export default useAdmin

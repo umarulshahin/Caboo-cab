@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import Modal from '../Components/Authentication/Modal';
 import Signin_form from '../Components/Authentication/Signin_form';
 import OtpForm from '../Components/Authentication/OtpFrom';
 import { addrole } from '../Redux/AuthenticationSlice';
+import Driver_Otp from '../Components/Authentication/Driver_Otp';
 
 const Signin_selection = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const { state } = useLocation();
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     if (state?.modal) {
       openModal(state.modal);
@@ -36,6 +37,7 @@ const Signin_selection = () => {
     user: false,
   };
 
+     
   const handleOption = (content) => {
     dispatch(addrole(content));
     openModal(content);
@@ -49,6 +51,7 @@ const Signin_selection = () => {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {modalContent === 'Ride' && <Signin_form />}
         {modalContent === 'OTP verify' && <OtpForm />}
+        {modalContent === 'OTP Driver' && <Driver_Otp />}
         {modalContent === 'Drive' && <Signin_form />}
       </Modal>
       {state?.signin ? (

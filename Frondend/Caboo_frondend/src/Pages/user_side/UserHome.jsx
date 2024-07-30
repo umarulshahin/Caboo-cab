@@ -1,15 +1,12 @@
 import React, { useEffect } from 'react'
-import Header from '../../Components/Header'
 import Footer from '../../Components/Footer'
 import UserHome_main from '../../Components/user_side/UserHome_main';
 import useGetUser from '../../Hooks/useGetUser';
 import { user_data_url } from '../../Utils/Constanse';
+import User_header from '../../Components/user_side/User_header';
+
 const UserHome = () => {
-    const headprops = {
-        ride: false,
-        drive: false,
-        user: true,
-      };
+  
       const {Get_data}=useGetUser()
     
       useEffect(()=>{
@@ -18,7 +15,7 @@ const UserHome = () => {
   return (
     <div>
         <div>
-        <Header headprops={headprops} />
+          <User_header />
         </div>
         <div className='h-screen bg-black flex justify-center items-center '>
 

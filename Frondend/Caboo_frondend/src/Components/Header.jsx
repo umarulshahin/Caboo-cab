@@ -3,32 +3,14 @@ import logo from "../assets/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import { useDispatch, useSelector } from "react-redux";
-import avatar from "../assets/profile_img.png"
-import { addToken_data, addUser } from "../Redux/UserSlice";
-import { backendUrl } from "../Utils/Constanse";
-import Cookies from "js-cookie"
+
 
 const Header = (props) => {
   const { ride, drive, user } = props.headprops;
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch=useDispatch()
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [profile,setprofile]=useState('')
-  const [username,setUsername]=useState('')
-  const data = useSelector((state) => state.user_data.user_data);
-
-  useEffect(()=>{
-    
-    if(data){
-      const { profile, username, email, phone } = data[0];
-      setprofile(profile)
-      setUsername(username)
-    }
-    
   
-  },[data])
-
   const handleSignin = () => {
     navigate('/signin_selection', { state: { signin: true } });
   }
@@ -36,7 +18,6 @@ const Header = (props) => {
   const handleSignup = () => {
     navigate('/signin_selection', { state: { signin: false } });
   }
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
 
   // const user_data=useSelector((state)=>state.user_data.user_data)
@@ -47,18 +28,12 @@ const Header = (props) => {
   //     }
   // },[data])
 
-  const handleLogout=()=>{
-
-    dispatch(addUser(null))
-    dispatch(addToken_data(null))
-    Cookies.remove('userTokens')
-    navigate("/")
-  }
+  
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black">
   <div className="flex flex-wrap items-center justify-between p-4">
     <div className="flex items-center">
-    <Link to={data ? "/userhome" : "/"}>
+    <Link to="/">
     <img src={logo} alt="Logo" className="h-12" />
       </Link>
       <div className="hidden sm:flex sm:space-x-8 pl-6">
@@ -89,30 +64,8 @@ const Header = (props) => {
     <Link className="text-white font-extrabold hidden sm:block pr-6">
         Help
       </Link>
-      {/* Profile Section */}
-      {data && (
-          <div className="relative flex items-center space-x-2">
-          <img
-          src={profile ? `${backendUrl}${profile}` : avatar}
-          alt="Profile"
-            className="h-8 w-8 rounded-full object-cover cursor-pointer"
-            onClick={toggleDropdown}
-          />
-          <span className="text-white font-bold cursor-pointer" onClick={toggleDropdown}>
-            {username}
-          </span>
-        
-          {/* Dropdown Menu */}
-          {dropdownOpen && (
-            <div className="absolute right-0 mt-40 w-48 font-bold bg-white text-black rounded-sm shadow-lg">
-              <Link to="/userprofile" className="block px-4 py-2 hover:bg-gray-200">Profile</Link>
-              <Link to="/settings" className="block px-4 py-2 hover:bg-gray-200">Settings</Link>
-              <button onClick={handleLogout}  className="block w-full px-4 py-2 text-left hover:bg-gray-200">Logout</button>
-            </div>
-          )}
-        </div>
-          )}
-      {!user && (
+     
+      
         <div className="flex space-x-3">
           <button
             onClick={handleSignin}
@@ -127,8 +80,10 @@ const Header = (props) => {
             Sign up
           </button>
         </div>
-      )}
+      
     </div>
+    </div>
+
 
     <div className="block sm:hidden">
       <button onClick={() => setMenuOpen(!menuOpen)} className="text-white">
@@ -168,7 +123,6 @@ const Header = (props) => {
       </div>
     )}
   </div>
-</div>
 
   );
 };
