@@ -23,6 +23,7 @@ import AdminPrivatRoute from "./AdminPrivatRoute";
 import Admin_Signin from "./Pages/Authentication/Admin_Signin";
 import Driver_home from "./Pages/Driver/Driver_home";
 import Driver_PrivatRoute from "./Driver_PrivatRoute";
+import Driver_profile from "./Pages/Driver/Driver_profile";
 
 
 const App = () => {
@@ -53,6 +54,8 @@ const App = () => {
               <Route path='/waitingModal' element={<WaitingModal /> } />
 
               <Route path="/driver_home" element={<Driver_PrivatRoute> <Driver_home /> </ Driver_PrivatRoute>} />
+              <Route path="/driver_profile" element={<Driver_profile /> } />
+
 
             </Routes>
           </BrowserRouter>

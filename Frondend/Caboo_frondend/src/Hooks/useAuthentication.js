@@ -324,12 +324,18 @@ const useAuthentication = () => {
                 data = errorData.vehicle_no[0];
             }
 
-            if (data === "driver data with this aadhaar already exists."){
+            if (data === "Aadhaar already exists"){
+
+                toast.error("aadhaar already exists.")
+                return
+                
+            }else if (data === "driver data with this aadhaar already exists."){
 
                 toast.error("aadhaar already exists.")
                 return
                 
             }
+
             if(data === "Vehicle Number already exists"){
 
                 console.log("yes working")

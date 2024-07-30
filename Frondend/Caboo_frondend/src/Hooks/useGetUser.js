@@ -16,7 +16,7 @@ const useGetUser = () => {
 
   const Get_data = async (urls, value = null, role = null) => {
 
-
+    console.log(role)
     try {
       const response = await apiClient.get(urls, {
         params: { id: value },
@@ -50,12 +50,13 @@ const useGetUser = () => {
   };
 
   
-  const img_validate = async (file) => {
+  const img_validate = async (file,id) => {
 
     if (file) {
      
       const formData = new FormData();
       formData.append("image", file);
+      formData.append("id",id)
       try {
         const response = await UserAxios.patch(img_upload_url, formData, {
           headers: {

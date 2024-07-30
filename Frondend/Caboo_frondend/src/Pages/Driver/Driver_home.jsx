@@ -10,17 +10,16 @@ const Driver_home = () => {
  const driver = useSelector((state) => state.driver_data.driver_data);
 
  useEffect(() => {
-  // Retrieve the message from localStorage
   const message = localStorage.getItem('loginMessage');
 
   if (message) {
-    // Display the message using toast
     toast.success(message);
 
-    // Clean up: Remove the message from localStorage
     localStorage.removeItem('loginMessage');
   }
 }, []);
+
+
 
   return (
     <div>

@@ -29,7 +29,6 @@ const Documents_page = () => {
                    status : "active"
      };
     Usermanagement(DriverManagement_url, value);
-    navigate('/Driver_list')
 
   };
 
@@ -60,7 +59,6 @@ const Documents_page = () => {
     }
 
     Usermanagement(DriverManagement_url, value);
-    navigate('/Driver_list')
 
   };
 

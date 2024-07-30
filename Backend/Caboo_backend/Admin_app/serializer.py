@@ -24,6 +24,7 @@ class DriverDataSerializer(serializers.ModelSerializer):
                   'insurance',
                   'vehicle_photo',
                   'customuser',
-                  'status',
+                  'request',
                   'dicline_reason',
-                  'comments','id']
+                  'comments',
+                  'id']

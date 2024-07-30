@@ -11,7 +11,9 @@ const Drivers_list_page = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     GetUsers(get_Driver_url, "driver");
+    
   }, []);
 
   const User_list = useSelector((state) => state.admin_data.Driver_list || []);
@@ -60,20 +62,20 @@ const Drivers_list_page = () => {
                     <td className="py-3 px-4">
                       <span
                         className={`font-bold ${
-                          data.status === 'active'
+                          data.request === 'active'
                             ? 'text-green-600'
-                            : data.status === 'pending'
+                            : data.request === 'pending'
                             ? 'text-orange-500'
-                            : data.status === 'decline'
+                            : data.request === 'decline'
                             ? 'text-red-600'
                             : ''
                         }`}
                       >
-                        {data.status === 'active'
+                        {data.request === 'active'
                           ? 'Active'
-                          : data.status === 'pending'
+                          : data.request === 'pending'
                           ? 'Pending'
-                          : data.status === 'decline'
+                          : data.request === 'decline'
                           ? 'Decline'
                           : 'Unknown'}
                       </span>

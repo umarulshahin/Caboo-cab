@@ -5,10 +5,9 @@ from  Authentication_app.models import *
 
 class ImageUploadSerializer(serializers.Serializer):
     image = serializers.ImageField()
-    user = serializers.EmailField()
-    
+    id = serializers.IntegerField()    
     def create(self, validated_data):
-        user = CustomUser.objects.filter(email=validated_data["user"]).first()
+        user = CustomUser.objects.filter(id=validated_data["id"]).first()
         if user:
             user.profile = validated_data["image"]
             user.save()

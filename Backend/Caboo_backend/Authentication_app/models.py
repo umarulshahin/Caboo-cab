@@ -59,7 +59,7 @@ class OtpStorage(models.Model):
 
 class DriverData(models.Model):
     
-    customuser = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    customuser = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     aadhaar = models.CharField(max_length=15, blank=False, unique=True)
     vehicle_name = models.CharField(max_length=100, blank=False)
     vehicle_no = models.CharField(max_length=15, blank=False)
@@ -67,6 +67,6 @@ class DriverData(models.Model):
     license = models.ImageField(upload_to=upload_vehicle_image, blank=False, max_length=250)
     insurance = models.ImageField(upload_to=upload_vehicle_image, blank=False, max_length=250)
     vehicle_photo = models.ImageField(upload_to=upload_vehicle_image, blank=False, max_length=250)
-    status = models.CharField(max_length=20,default="pending")
+    request = models.CharField(max_length=20,default="pending")
     dicline_reason = models.CharField(max_length=150,default="No reason provided")
     comments = models.TextField(default='No comments provided')

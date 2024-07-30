@@ -33,12 +33,12 @@ def Email_validate(request):
                         if data['role']=="Drive" :
                         
                             driver=DriverData.objects.filter(customuser=user.id).first()
-                            print(driver.status)
-                            if driver and driver.status=='active':
+                            print(driver)
+                            if driver and driver.request =='active':
                                 
                                 return Response({"success": "alredy email exist",'status':"Driver data success", "email": data['email']})
                             
-                            elif driver and driver.status=='pending':
+                            elif driver and driver.request =='pending':
                                     
                                 return Response({"success": "alredy email exist",'status':"Driver not approval", "email": data['email']})
 
@@ -172,9 +172,7 @@ def Token_view(request):
 def Driver_signup(request):
     data = request.data
     files = request.FILES
-    print(data)
     
-   
     custom_user_data = {
         'email': data.get('customuser[email]'),
         'username': data.get('customuser[username]'),
@@ -210,12 +208,19 @@ def Driver_signup(request):
         'rc_img': files.get('rc_img'),
         'license': files.get('license'),
         'insurance': files.get('insurance'),
-        'vehicle_photo': files.get('vehicle_Photo')
+        'vehicle_photo': files.get('vehicle_Photo'),
+        'request':'pending'
     }
 
-    # Serialize and create Driver_data
-    driver_serializer = DriverSerializers(data=driver_data)
+    try:
+        driver_instance = DriverData.objects.get(customuser=custom_user)
+        driver_serializer = DriverSerializers(driver_instance, data=driver_data, partial=True)
+        
+    except DriverData.DoesNotExist:
+        driver_serializer = DriverSerializers(data=driver_data)
+
     if driver_serializer.is_valid():
-        driver_serializer.save()  # Save Driver_data instance
+        driver_serializer.save()  
+        
         return Response({"success": "Driver successfully created","data":driver_serializer.data}, status=status.HTTP_201_CREATED)
     return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
