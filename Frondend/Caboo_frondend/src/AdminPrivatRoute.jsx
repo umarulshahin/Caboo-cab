@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom'
 const AdminPrivatRoute = ({children}) => {
     
     const admin=Cookies.get('adminTokens')
-        return admin ? < Navigate to="/userhome" /> : children ;
+        return admin ? < Navigate to="/admin_home" /> : children ;
 
     
 

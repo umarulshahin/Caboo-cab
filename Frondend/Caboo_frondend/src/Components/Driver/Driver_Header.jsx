@@ -23,7 +23,15 @@ const Driver_Header = () => {
       setUsername(username);
     }
   }, [data]);
-
+  
+  useEffect(()=>{
+    const token = Cookies.get('DriverTokens')
+    if (!token){
+      navigate("/");
+    }else{
+      navigate('/driver_home')
+    }
+  },[])
   const handleLogout = () => {
     dispatch(addDriver_data(null));
     dispatch(addDriver_token(null));
@@ -37,7 +45,7 @@ const Driver_Header = () => {
     <div className="fixed top-0 left-0 w-full z-50 bg-black">
     <div className="flex flex-wrap items-center justify-between p-4">
       <div className="flex items-center space-x-8">
-      <Link to={data ? "/userhome" : "/"}>
+      <Link to='/driver_home'>
       <img src={logo} alt="Logo" className="h-12" />
         </Link>
 
@@ -71,11 +79,28 @@ const Driver_Header = () => {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute right-0 mt-40 w-48 bg-white text-black rounded-sm shadow-lg">
-                  <Link to="" className="block px-4 py-2 hover:bg-gray-200">Profile</Link>
-                  <Link to="" className="block px-4 py-2 hover:bg-gray-200">Settings</Link>
-                  <button onClick={handleLogout} className="block w-full px-4 py-2 text-left hover:bg-gray-200">Logout</button>
-                </div>
+               <div className="relative">
+               <div className="absolute right-0 flex flex-col items-center mt-8 w-48 bg-black font-bold text-white rounded-lg shadow-lg">
+                 <Link
+                   to="/profile" 
+                   className="block px-4 py-2 w-full text-center hover:bg-gray-700 transition duration-150 ease-in-out"
+                 >
+                   Profile
+                 </Link>
+                 <Link
+                   to="/settings" 
+                   className="block px-4 py-2 w-full text-center hover:bg-gray-700 transition duration-150 ease-in-out"
+                 >
+                   Settings
+                 </Link>
+                 <button
+                   onClick={handleLogout}
+                   className="block px-4 py-2 w-full text-center bg-red-600 hover:bg-red-700 text-white transition duration-150 ease-in-out"
+                 >
+                   Logout
+                 </button>
+               </div>
+             </div>
               )}
             </div>
           )}

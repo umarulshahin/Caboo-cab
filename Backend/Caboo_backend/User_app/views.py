@@ -38,7 +38,7 @@ def GetUser(request):
     return Response(serializer.data)
 
     
-@api_view(["POST"])
+@api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
 def ProfilUpdate(request):
     

@@ -50,7 +50,14 @@ const useAuthentication = () => {
                         dispatch(addemail(response.data.email));
                         dispatch(addDriver_status(response.data.status));
                         dispatch(addDriver_data(response.data.data));
-                        navigate('/signin_selection', { state: { modal: 'OTP verify' } });
+                        console.log(role)
+                        if(role==='Drive'){
+                            navigate('/signin_selection', { state: { modal: 'OTP Driver' } });
+
+                        }else{
+                            navigate('/signin_selection', { state: { modal: 'OTP verify' } });
+
+                        }
                     }
                    
 
@@ -58,7 +65,13 @@ const useAuthentication = () => {
 
                     dispatch(addUser_status(response.data.success));
                     dispatch(addemail(response.data.email));
-                    navigate('/signin_selection', { state: { modal: 'OTP verify' } });
+                    if(role==='Drive'){
+                        navigate('/signin_selection', { state: { modal: 'OTP Driver' } });
+
+                    }else{
+                        navigate('/signin_selection', { state: { modal: 'OTP verify' } });
+
+                    }
 
                 } else if (successMessage === "user is not active") {
                     toast.warning("Your account is blocked");
@@ -88,7 +101,6 @@ const useAuthentication = () => {
             });
 
             if(response.status===200){
-                console.log(response.data,"otp varification ")
 
                 if(response.data.success){
                     
@@ -107,7 +119,6 @@ const useAuthentication = () => {
 
                         if (driver_status ==="Driver data success"){
 
-                            console.log("yes it is working ")
                             const data={
                                 email:email
                             }
@@ -119,12 +130,7 @@ const useAuthentication = () => {
                         }else if (driver_status==="Driver data is None"){
                             navigate('/vehicle_doc')
                         }
-                        // data={
-                        //     email:email.email
-                        // }
-                        // Signin(data,signin_urls)
-                       
-
+                    
                     }
 
                 }else if (response.data.error){
@@ -141,7 +147,7 @@ const useAuthentication = () => {
        
     }
          
-      // Signup api call
+      //..................... Signup api call.....................
 
      const Signup_validation=async(values,url)=>{
 
@@ -196,7 +202,8 @@ const useAuthentication = () => {
         }
      }
 
-                // Sign in Api call
+                // ...................... Sign in Api call ............................
+
            
      const Signin = async (data, urls, seterrormessage = null,role=null) => {
     
@@ -217,7 +224,7 @@ const useAuthentication = () => {
               dispatch(addadmin_token(value));
               Get_data(admin_data_url,value.user_id,role);
               toast.success("Login successfully");
-              navigate("/admin_home");
+              navigate("/admin_home",{replace:true});
     
             } else if( role === "Driver") {
 
@@ -227,8 +234,13 @@ const useAuthentication = () => {
               const value = jwtDecode(token.access);
               dispatch(addDriver_token(value));
               Get_data(Driver_data_urls,email,"driver");
-              toast.success("Login successfully");
-              navigate("/driver_home");
+              const message = 'Login successfully';
+              localStorage.setItem('loginMessage', message);
+
+               window.open('/driver_home', '_blank', 'noopener,noreferrer');
+
+              navigate('/')
+
 
             }else{
 
@@ -246,6 +258,7 @@ const useAuthentication = () => {
             dispatch(addUser_status(null))
             dispatch(addrole(null))
             dispatch(addemail(null))
+            dispatch(addDriver_status(null))
           }
         } catch (error) {
           console.log(error, "Signin");
@@ -260,14 +273,13 @@ const useAuthentication = () => {
       };
 
 
-         // Driver Creation Api Call
+         //...................Driver Creation Api Call......................
 
       const DriverCreation = async (values, url) => {
 
         try {
             const formData = new FormData();
         
-            // Append fields to formData
             Object.keys(values).forEach(key => {
                 if (values[key] instanceof File) {
                     formData.append(key, values[key]);

@@ -34,8 +34,9 @@ const App = () => {
           <Toaster position="bottom-center" richColors/>
             <Routes>
 
-              <Route path="/" element={<PrivatRoute><LandingPage /></PrivatRoute>} />
-              <Route path="/signin_selection" element={<PrivatRoute><Signin_selection /></PrivatRoute>} />
+              <Route path="/" element={<LandingPage />} />
+
+              <Route path="/signin_selection" element={<Signin_selection />} />
               <Route path="/signup" element={<PrivatRoute><Signup /></PrivatRoute>} />
               <Route path="/userhome" element={ <PrivatRoute_user><UserHome /></PrivatRoute_user> } />
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>

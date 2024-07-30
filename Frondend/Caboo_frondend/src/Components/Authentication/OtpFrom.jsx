@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { email_validate_url, Otpverify_url } from '../../Utils/Constanse'; // Ensure you have the correct URL for resending OTP
 import Cookies from "js-cookie";
 import useAuthentication from '../../Hooks/useAuthentication';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const OtpForm = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -14,16 +14,17 @@ const OtpForm = () => {
   const { Otp_verification, Emailvalidation } = useAuthentication();
   const email = useSelector((state) => state.Authentication.email);
   const role = useSelector((state) => state.Authentication.role);
-
-
-  console.log(role)
-  console.log(email)
+  const navigate=useNavigate()
 
   useEffect(() => {
-    const user_token = Cookies.get("User_Tokens");
-    if (user_token) {
-      Navigate(-1);
-    }
+    const userToken = Cookies.get('userTokens');
+    
+    // Determine if the user or driver is already logged in
+    console.log(userToken)
+    if ( userToken) {
+      navigate('/userhome');
+    } 
+
 
     let interval;
     if (isButtonDisabled) {

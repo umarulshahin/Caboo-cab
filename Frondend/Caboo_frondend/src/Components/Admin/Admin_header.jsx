@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import avatar from "../../assets/profile_img.png"
 import { backendUrl } from "../../Utils/Constanse";
 import Cookies from "js-cookie"
-import { addadmin_data, addadmin_token } from "../../Redux/AdminSlice";
+import { addadmin_data, addadmin_token, addDriver_list, addUsers_list } from "../../Redux/AdminSlice";
 
 const Admin_header = (props) => {
     const { ride, drive, user } = props.headprops;
@@ -37,6 +37,8 @@ const Admin_header = (props) => {
   
       dispatch(addadmin_data(null))
       dispatch(addadmin_token(null))
+      dispatch(addUsers_list(null))
+      dispatch(addDriver_list(null))
       Cookies.remove('adminTokens')
       navigate("/admin")
     }

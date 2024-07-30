@@ -6,7 +6,7 @@ import {
   get_Driver_url,
 } from "../../Utils/Constanse";
 import Sidebar_admin from "./Sidebar_admin";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ImageModal from "./ImageModal";
 import DeclineModal from "./DeclineModal";
 
@@ -16,7 +16,7 @@ const Documents_page = () => {
   const { Usermanagement, GetUsers } = useAdmin();
   const [selectedImage, setSelectedImage] = useState(null);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-
+  const navigate=useNavigate()
   useEffect(() => {
 
     GetUsers(get_Driver_url, "driver");
@@ -29,6 +29,8 @@ const Documents_page = () => {
                    status : "active"
      };
     Usermanagement(DriverManagement_url, value);
+    navigate('/Driver_list')
+
   };
 
   const openImageModal = (imageSrc) => {
@@ -58,7 +60,7 @@ const Documents_page = () => {
     }
 
     Usermanagement(DriverManagement_url, value);
-    
+    navigate('/Driver_list')
 
   };
 
