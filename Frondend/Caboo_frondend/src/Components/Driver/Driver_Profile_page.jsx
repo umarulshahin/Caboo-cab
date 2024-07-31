@@ -46,7 +46,7 @@ const Driver_Profile_page = () => {
         return;
       } else {
         reader.onload = (e) => {
-          img_validate(file, id);
+          img_validate(file, id,'driver',email);
         };
         reader.readAsDataURL(file);
       }
@@ -63,18 +63,13 @@ const Driver_Profile_page = () => {
 
   const handleSave = (updatedData) => {
     updatedData["id"] = id;
-    ProfilUpdate(updatedData, profileUpdate_url);
+    ProfilUpdate(updatedData, profileUpdate_url,'driver',email);
   };
 
   const toggleDocuments = () => {
     setShowDocuments(!showDocuments);
   };
-
-//   useEffect(() => {
-//     if (email) {
-//       Get_data(Driver_data_urls, email, "driver");
-//     }
-//   }, [email, Get_data]);
+  
 
   return (
     <div className="flex min-h-screen mt-16 bg-gray-100 justify-center">

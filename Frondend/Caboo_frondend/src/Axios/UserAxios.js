@@ -10,11 +10,16 @@ const UserAxios = axios.create({
     });
     
     // Step 2: Function to refresh the access token
-    const refreshToken = async () => {
+    const refreshToken = async (role) => {
         try {
         // Get the refresh token from cookies 
-        const rawToken = Cookies.get('userTokens');
-        
+        let rawToken=null
+        if(role==='driver'){
+            rawToken = Cookies.get('DriverTokens');
+        }else{
+           rawToken = Cookies.get('userTokens');
+
+        }
         if (!rawToken) {
             throw new Error('No token available');
         }
@@ -23,16 +28,20 @@ const UserAxios = axios.create({
         if (!token.refresh) {
             throw new Error('No refresh token available');
         }
-    
+        console.log(rawToken.refresh)
         // Request a new access token using the refresh token
         const response = await axios.post(`${backendUrl}/Api/token/refresh/`, {
             refresh: token.refresh
         });
     
         const newToken = response.data;
-    
-        // Store the new tokens in cookies
-                   Cookies.set('userTokens', JSON.stringify(newToken), { expires: 7 });
+            if(role='driver'){
+                Cookies.set('DriverTokens', JSON.stringify(newToken), { expires: 7 });
+
+            }else{
+                Cookies.set('userTokens', JSON.stringify(newToken), { expires: 7 });
+
+            }
     
         return newToken.access; // Return the new access token
         } catch (error) {
@@ -44,7 +53,14 @@ const UserAxios = axios.create({
     // Step 3: Axios request interceptor
     UserAxios.interceptors.request.use(
         (config) => {
-        const rawToken = Cookies.get('userTokens');
+        const role = config.meta ? config.meta.role : null;
+        let rawToken=null
+        if(role==='driver'){
+            rawToken = Cookies.get('DriverTokens');
+        }else{
+          rawToken = Cookies.get('userTokens');
+
+        }
         
         if (rawToken) {
             const token = JSON.parse(rawToken);
@@ -64,7 +80,9 @@ const UserAxios = axios.create({
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-            const newAccessToken = await refreshToken();
+
+            const role = originalRequest.meta ? originalRequest.meta.role : null;
+            const newAccessToken = await refreshToken(role);
             originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
             return UserAxios(originalRequest);
             } catch (err) {

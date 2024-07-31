@@ -42,7 +42,7 @@ const UserProfile_main = () => {
         return;
       } else {
         reader.onload = (e) => {
-          img_validate(file);
+          img_validate(file,id);
         };
         reader.readAsDataURL(file);
       }
