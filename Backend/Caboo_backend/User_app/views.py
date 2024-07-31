@@ -45,9 +45,9 @@ def GetUser(request):
 @permission_classes([IsAuthenticated])
 def ProfilUpdate(request):
     
-    id = request.user.id
-    user=CustomUser.objects.get(id=id)
-    
+    user_id=request.data.get('id')
+    user=CustomUser.objects.get(id=user_id)
+    print(user,'user')
     if user :
         serializer =UserSerializer(user,request.data,partial=True)
         if serializer.is_valid():
