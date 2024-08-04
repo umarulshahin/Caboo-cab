@@ -15,7 +15,6 @@ const useGetUser = () => {
   const navigate = useNavigate();
 
   const Get_data = async (urls, value = null, role = null) => {
-
     try {
       const response = await apiClient.get(urls, {
         params: { id: value },
@@ -25,15 +24,14 @@ const useGetUser = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       if (response.status === 200) {
+
         console.log(response.data, "get user ");
         if (role === "admin") {
 
           dispatch(addadmin_data(response.data));
         } else if (role === 'driver') {
-
-          console.log(response.data)
 
           dispatch(addDriver_data(response.data));
         } else {
@@ -41,6 +39,7 @@ const useGetUser = () => {
         }
       }
     } catch (error) {
+
       console.error('Error fetching data:', error.response ? error.response.data : error.message);
     }
   };

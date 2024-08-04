@@ -33,7 +33,7 @@ def Image_Upload(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])    
 def GetUser(request):
-    
+    print("yes it is working")
     user = request.user
     data=CustomUser.objects.filter(email=user)
     serializer=UserSerializer(data,many=True)
