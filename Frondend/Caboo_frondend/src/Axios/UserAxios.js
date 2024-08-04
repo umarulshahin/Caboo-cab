@@ -28,17 +28,17 @@ const UserAxios = axios.create({
         if (!token.refresh) {
             throw new Error('No refresh token available');
         }
-        console.log(rawToken.refresh)
         // Request a new access token using the refresh token
         const response = await axios.post(`${backendUrl}/Api/token/refresh/`, {
             refresh: token.refresh
         });
     
         const newToken = response.data;
-            if(role='driver'){
+            if(role==='driver'){
                 Cookies.set('DriverTokens', JSON.stringify(newToken), { expires: 7 });
 
             }else{
+
                 Cookies.set('userTokens', JSON.stringify(newToken), { expires: 7 });
 
             }
@@ -75,8 +75,10 @@ const UserAxios = axios.create({
     // Step 3: Axios response interceptor for handling token refresh
     UserAxios.interceptors.response.use(
         (response) => response,
+        
         async (error) => {
         const originalRequest = error.config;
+
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
