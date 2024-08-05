@@ -13,21 +13,23 @@ const UserHome_main = () => {
     googleMapsApiKey: import.meta.env.VITE_google_map_api_key,
     libraries,
   });
-
   const autoCompleteRef1 = useRef(null);
   const inputRef1 = useRef(null);
   const autoCompleteRef2 = useRef(null);
   const inputRef2 = useRef(null);
 
-  const [location, setLocation] = useState("");
-  const [destination, setDestination] = useState("");
-  const [loadingLocation, setLoadingLocation] = useState(false); // New state for loading
-
   const options = {
     componentRestrictions: { country: "in" },
-    fields: ["address_components", "geometry", "icon", "name"],
-    types: ["address"],
+    fields: ["address_components", "geometry", "icon", "name", "formatted_address", "place_id", "types"],
+    types: ["geocode"],
   };
+
+  const [location, setLocation] = useState("");
+  const [destination, setDestination] = useState("");
+  const [locationCoords, setLocationCoords] = useState({ lat: null, lng: null });
+  const [destinationCoords, setDestinationCoords] = useState({ lat: null, lng: null });
+  const [loadingLocation, setLoadingLocation] = useState({ location: false, destination: false });
+  const [updateMap, setUpdateMap] = useState(false); // New state for handling map update
 
   const initialValues = {
     location: "",
@@ -42,14 +44,14 @@ const UserHome_main = () => {
   const onSubmit = (values, { setSubmitting, resetForm }) => {
     console.log("Form data:", values);
     setSubmitting(false);
-    resetForm();
-    setLocation(values.location);
-    setDestination(values.destination);
+    setUpdateMap(true); // Set flag to update map
+    console.log("Location Coords:", locationCoords);
+    console.log("Destination Coords:", destinationCoords);
   };
 
   const getCurrentLocation = (setFieldValue, field) => {
     if (navigator.geolocation) {
-      setLoadingLocation(true); // Start loading
+      setLoadingLocation((prevState) => ({ ...prevState, [field]: true }));
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -57,11 +59,15 @@ const UserHome_main = () => {
           const latlng = { lat: latitude, lng: longitude };
 
           geocoder.geocode({ location: latlng }, (results, status) => {
-            setLoadingLocation(false); // Stop loading
+            setLoadingLocation((prevState) => ({ ...prevState, [field]: false }));
             if (status === "OK") {
               if (results[0]) {
-                console.log(results[0]);
                 setFieldValue(field, results[0].formatted_address);
+                if (field === "location") {
+                  setLocationCoords({ lat: latitude, lng: longitude });
+                } else {
+                  setDestinationCoords({ lat: latitude, lng: longitude });
+                }
               } else {
                 console.log("No results found");
               }
@@ -71,7 +77,7 @@ const UserHome_main = () => {
           });
         },
         (error) => {
-          setLoadingLocation(false); // Stop loading
+          setLoadingLocation((prevState) => ({ ...prevState, [field]: false }));
           console.log(error);
         }
       );
@@ -79,8 +85,7 @@ const UserHome_main = () => {
       console.log("Geolocation is not supported by this browser.");
     }
   };
-  console.log(location,"home")
-  console.log(destination)
+
   return (
     <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center p-4">
       <div className="flex flex-col bg-white shadow-lg rounded-md w-full lg:w-1/3 p-6 mb-4 lg:mb-0 lg:mr-4">
@@ -102,8 +107,11 @@ const UserHome_main = () => {
                   );
                   autoCompleteRef1.current.addListener("place_changed", () => {
                     const place = autoCompleteRef1.current.getPlace();
-                    console.log("Selected place:1", place);
-                    setFieldValue("location", place.name);
+                    setFieldValue("location", place.formatted_address);
+                    setLocationCoords({
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng(),
+                    });
                   });
                 }
                 if (inputRef2.current) {
@@ -113,8 +121,11 @@ const UserHome_main = () => {
                   );
                   autoCompleteRef2.current.addListener("place_changed", () => {
                     const place = autoCompleteRef2.current.getPlace();
-                    console.log("Selected place:2", place.name);
-                    setFieldValue("destination", place.name);
+                    setFieldValue("destination", place.formatted_address);
+                    setDestinationCoords({
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng(),
+                    });
                   });
                 }
               }
@@ -140,7 +151,7 @@ const UserHome_main = () => {
                       className="absolute inset-y-0 right-2 flex items-center"
                       title="Use current location"
                     >
-                      {loadingLocation ? (
+                      {loadingLocation.location ? (
                         <FaSpinner className="text-gray-400 w-5 h-5 animate-spin" />
                       ) : (
                         <FaLocationArrow className="text-gray-400 w-5 h-5" />
@@ -172,7 +183,7 @@ const UserHome_main = () => {
                       className="absolute inset-y-0 right-2 flex items-center"
                       title="Use current location"
                     >
-                      {loadingLocation ? (
+                      {loadingLocation.destination ? (
                         <FaSpinner className="text-gray-400 w-5 h-5 animate-spin" />
                       ) : (
                         <FaLocationArrow className="text-gray-400 w-5 h-5" />
@@ -199,6 +210,9 @@ const UserHome_main = () => {
                     onClick={() => {
                       setFieldValue("location", "");
                       setFieldValue("destination", "");
+                      setLocationCoords({ lat: null, lng: null });
+                      setDestinationCoords({ lat: null, lng: null });
+                      setUpdateMap(false); // Reset the update flag
                     }}
                     className="px-4 py-2 text-black border border-black font-bold rounded-md hover:bg-black hover:text-white w-full"
                   >
@@ -211,7 +225,10 @@ const UserHome_main = () => {
         </Formik>
       </div>
       <div className="flex-grow h-[500px] w-full lg:w-2/3 bg-white rounded-md overflow-hidden">
-        <MapComponent location={location} destination={destination} />
+        <MapComponent
+          locationCoords={updateMap ? locationCoords : { lat: null, lng: null }}
+          destinationCoords={updateMap ? destinationCoords : { lat: null, lng: null }}
+        />
       </div>
     </div>
   );

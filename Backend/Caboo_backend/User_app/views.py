@@ -16,9 +16,6 @@ def Image_Upload(request):
     if request.method == "PATCH":
         image = request.FILES.get('image')
         id = request.data.get('id')
-
-        print(id)
-
         
         if not image:
             return Response({"error": "Image file is required"}, status=400)
@@ -33,7 +30,7 @@ def Image_Upload(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])    
 def GetUser(request):
-    print("yes it is working")
+    
     user = request.user
     data=CustomUser.objects.filter(email=user)
     serializer=UserSerializer(data,many=True)
@@ -47,7 +44,6 @@ def ProfilUpdate(request):
     
     user_id=request.data.get('id')
     user=CustomUser.objects.get(id=user_id)
-    print(user,'user')
     if user :
         serializer =UserSerializer(user,request.data,partial=True)
         if serializer.is_valid():
