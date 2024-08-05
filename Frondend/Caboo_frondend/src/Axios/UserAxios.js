@@ -3,7 +3,6 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { backendUrl } from '../Utils/Constanse';
 
-
 const UserAxios = axios.create({
         baseURL: backendUrl, // Replace with your actual base URL
         timeout: 10000, // Optional: set a timeout for requests
@@ -11,6 +10,7 @@ const UserAxios = axios.create({
     
     // Step 2: Function to refresh the access token
     const refreshToken = async (role) => {
+        console.log(role)
         try {
         // Get the refresh token from cookies 
         let rawToken=null
@@ -61,12 +61,10 @@ const UserAxios = axios.create({
           rawToken = Cookies.get('userTokens');
 
         }
-        
         if (rawToken) {
             const token = JSON.parse(rawToken);
             config.headers['Authorization'] = `Bearer ${token.access}`;
         }
-
         return config;
         },
         (error) => Promise.reject(error)
