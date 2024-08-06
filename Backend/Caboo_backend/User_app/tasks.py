@@ -11,4 +11,3 @@ def send_email_task(self, subject, message, from_email, recipient_list):
     except Exception as e:
         self.retry(exc=e)
         return "fails"
-

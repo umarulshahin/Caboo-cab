@@ -5,6 +5,10 @@ import { FiFlag, FiMapPin } from "react-icons/fi";
 import { FaLocationArrow, FaSpinner } from "react-icons/fa";
 import { useLoadScript } from "@react-google-maps/api";
 import MapComponent from "../../Pages/user_side/Map";
+import { useDispatch, useSelector } from "react-redux";
+import { addCharges, addDistance, addPlaces } from "../../Redux/RideSlice";
+import VehicleCard from "./VehicleCard";
+import { toast } from "sonner";
 
 const libraries = ["places"];
 
@@ -17,15 +21,17 @@ const UserHome_main = () => {
   const inputRef1 = useRef(null);
   const autoCompleteRef2 = useRef(null);
   const inputRef2 = useRef(null);
-
+  const dispatch=useDispatch()
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const charges = useSelector((state)=>state.ride_data.charges)
+  const distance = useSelector((state)=>state.ride_data.distance)
+  
   const options = {
     componentRestrictions: { country: "in" },
     fields: ["address_components", "geometry", "icon", "name", "formatted_address", "place_id", "types"],
     types: ["geocode"],
   };
 
-  const [location, setLocation] = useState("");
-  const [destination, setDestination] = useState("");
   const [locationCoords, setLocationCoords] = useState({ lat: null, lng: null });
   const [destinationCoords, setDestinationCoords] = useState({ lat: null, lng: null });
   const [loadingLocation, setLoadingLocation] = useState({ location: false, destination: false });
@@ -36,17 +42,33 @@ const UserHome_main = () => {
     destination: "",
   };
 
-  const validationSchema = Yup.object({
-    location: Yup.string().required("Location is required"),
-    destination: Yup.string().required("Destination is required"),
+  const validationSchema = Yup.object().shape({
+    location: Yup.string()
+      .required("Location is required")
+      .test(
+        "not-equal-to-destination",
+        "Location and Destination cannot be the same",
+        function (value) {
+          return value !== this.parent.destination;
+        }
+      ),
+    destination: Yup.string()
+      .required("Destination is required")
+      .test(
+        "not-equal-to-location",
+        "Destination and Location cannot be the same",
+        function (value) {
+          return value !== this.parent.location;
+        }
+      ),
   });
 
   const onSubmit = (values, { setSubmitting, resetForm }) => {
     console.log("Form data:", values);
     setSubmitting(false);
-    setUpdateMap(true); // Set flag to update map
-    console.log("Location Coords:", locationCoords);
-    console.log("Destination Coords:", destinationCoords);
+    setUpdateMap(true); 
+
+  
   };
 
   const getCurrentLocation = (setFieldValue, field) => {
@@ -86,6 +108,15 @@ const UserHome_main = () => {
     }
   };
 
+  const handleRide=(values)=>{
+    console.log(values,"test")
+    if(values){
+
+    }else{
+      toast.warning("Please select a vehicle option to proceed")
+    }
+  }
+  
   return (
     <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center p-4">
       <div className="flex flex-col bg-white shadow-lg rounded-md w-full lg:w-1/3 p-6 mb-4 lg:mb-0 lg:mr-4">
@@ -130,6 +161,8 @@ const UserHome_main = () => {
                 }
               }
             }, [isLoaded, setFieldValue]);
+
+         
 
             return (
               <Form className="w-full">
@@ -196,23 +229,53 @@ const UserHome_main = () => {
                     className="text-red-500 text-xs mt-1 ml-10"
                   />
                 </div>
+                {distance && charges &&(
+                  <div>
+
+                  <div className="flex space-x-3">
+                  <div className="bg-black w-1/2 text-white h-[100px] rounded-lg flex flex-col justify-center items-center">
+                         <span className="font-bold text-sm">Total Distance </span>
+                         <span className="font-bold text-3xl pt-2">{distance.distance.text}</span>
+                  </div>
+                  <div className="bg-black w-1/2 text-white h-[100px] rounded-lg flex flex-col justify-center items-center">
+                         <span className="font-bold  text-sm">Total Duration</span>
+                         <span className="font-bold text-3xl pt-2">{distance.duration.text}</span>
+                  </div>
+                </div>
+                  <div className="mt-4">
+                         <VehicleCard handleRide={setSelectedVehicle} />
+                  </div>
+                </div>
+              )}
 
                 <div className="flex gap-4 mt-4">
-                  <button
+                  {!distance && !charges && (<button
                     type="submit"
                     disabled={isSubmitting}
                     className="px-4 py-2 bg-black text-white font-bold rounded-md w-full"
                   >
                     {isSubmitting ? "Submitting..." : "See price"}
-                  </button>
+                  </button>)}
+
+                { distance && charges && (  <button
+                    type="submit"
+                    onClick={()=>handleRide(selectedVehicle)}
+                    className="px-4 py-2 bg-green-600 text-white font-bold rounded-md w-full"
+                  >Confirm ride</button>)}
+                  
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={()=>{
                       setFieldValue("location", "");
                       setFieldValue("destination", "");
                       setLocationCoords({ lat: null, lng: null });
                       setDestinationCoords({ lat: null, lng: null });
-                      setUpdateMap(false); // Reset the update flag
+                      setUpdateMap(false); 
+                      dispatch(addCharges(null))
+                      dispatch(addPlaces(null))
+                      dispatch(addDistance(null))
+                      setSelectedVehicle(null)
+
                     }}
                     className="px-4 py-2 text-black border border-black font-bold rounded-md hover:bg-black hover:text-white w-full"
                   >
@@ -228,7 +291,7 @@ const UserHome_main = () => {
         <MapComponent
           locationCoords={updateMap ? locationCoords : { lat: null, lng: null }}
           destinationCoords={updateMap ? destinationCoords : { lat: null, lng: null }}
-        />
+          />
       </div>
     </div>
   );
