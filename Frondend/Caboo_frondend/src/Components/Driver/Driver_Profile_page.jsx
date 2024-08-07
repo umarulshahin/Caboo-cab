@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import profile_img_placeholder from "../../assets/profile_img.png";
 import useGetUser from "../../Hooks/useGetUser";
 import { useSelector } from "react-redux";
-import { backendUrl, Driver_data_urls } from "../../Utils/Constanse";
+import { backendUrl, driver_signup_url, Driver_status_url } from "../../Utils/Constanse";
 import { faEdit, faCamera, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserEdit from "../user_side/UserEdit";
 import { profileUpdate_url } from "../../Utils/Constanse";
 import Vehicle_documents from "./Vehicle_documents";
+import useDriver from "../../Hooks/useDriver";
 
 const Driver_Profile_page = () => {
   const [profile_img, setProfileImage] = useState("");
@@ -21,18 +22,20 @@ const Driver_Profile_page = () => {
   const data = useSelector((state) => state.driver_data.driver_data);
   const { ProfilUpdate, Get_data } = useGetUser();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  console.log(data);
+  const [status, setStatus] = useState(false);
+  const { Driver_status } = useDriver();
 
   useEffect(() => {
     if (data && data.length > 0) {
       const { profile, username, email, phone, id, referral_code } = data[0].customuser || {};
+      const { current_Status } = data[0] || {};
       setProfileImage(profile);
       setEmail(email || ""); // Ensure email is not undefined
       setPhone(phone);
       setUsername(username);
       setId(id);
       setReferralCode(referral_code || "");
+      setStatus(current_Status);
     }
   }, [data]);
 
@@ -46,7 +49,7 @@ const Driver_Profile_page = () => {
         return;
       } else {
         reader.onload = (e) => {
-          img_validate(file, id,'driver',email);
+          img_validate(file, id, 'driver', email);
         };
         reader.readAsDataURL(file);
       }
@@ -63,13 +66,20 @@ const Driver_Profile_page = () => {
 
   const handleSave = (updatedData) => {
     updatedData["id"] = id;
-    ProfilUpdate(updatedData, profileUpdate_url,'driver',email);
+    ProfilUpdate(updatedData, profileUpdate_url, 'driver', email);
   };
 
   const toggleDocuments = () => {
     setShowDocuments(!showDocuments);
   };
-  
+
+  const handleToggle = () => {
+    const updatedData = {
+      ...data[0],
+      current_Status: !data[0].current_Status
+    };
+    Driver_status(Driver_status_url, updatedData);
+  };
 
   return (
     <div className="flex min-h-screen mt-16 bg-gray-100 justify-center">
@@ -77,11 +87,7 @@ const Driver_Profile_page = () => {
         <h1 className="text-3xl text-gray-800 font-bold mb-6">Account Info</h1>
         <div className="relative mb-6">
           <img
-            src={
-              profile_img
-                ? `${backendUrl}${profile_img}`
-                : profile_img_placeholder
-            }
+            src={profile_img ? `${backendUrl}${profile_img}` : profile_img_placeholder}
             alt="User Profile"
             className="h-40 w-40 rounded-full object-cover border-4 border-gray-300"
           />
@@ -94,6 +100,29 @@ const Driver_Profile_page = () => {
               onChange={handleImageChange}
             />
           </label>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="relative w-14 h-6 my-5 select-none flex flex-row">
+            <input
+              id="check-apple"
+              type="checkbox"
+              className="absolute opacity-0 w-full h-full"
+              checked={status}
+              onChange={handleToggle}
+            />
+            <label
+              htmlFor="check-apple"
+              className={`absolute top-0 left-0 w-full h-full rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+                status ? 'bg-gradient-to-b from-green-400 to-green-500' : 'bg-gradient-to-b from-gray-400 to-gray-200'
+              }`}
+            ></label>
+            <div
+              className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 ease-in-out ${
+                status ? 'transform translate-x-8' : ''
+              }`}
+            ></div>
+          </div>
+          <span className="font-bold text-black text-base">{status ? "Online" : "Offline"}</span>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -116,9 +145,7 @@ const Driver_Profile_page = () => {
               </div>
             </div>
             <div className="flex flex-col">
-              <label className="text-gray-600 font-semibold mb-1">
-                Referral Code
-              </label>
+              <label className="text-gray-600 font-semibold mb-1">Referral Code</label>
               <div className="bg-gray-100 p-3 rounded-lg border border-gray-300">
                 <span className="text-gray-800">user1234{referralCode}</span>
               </div>

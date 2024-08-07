@@ -2,7 +2,7 @@ import axios from "axios";
 import { backendUrl } from "../Utils/Constanse";
 import Cookies from 'js-cookie'
 
-const DriverAxios = axios.createcreate({
+const DriverAxios = axios.create({
     baseURL: backendUrl, // Replace with your actual base URL
     timeout: 10000, // Optional: set a timeout for requests
 });
@@ -12,7 +12,7 @@ const refreshToken = async () => {
     try {
     // Get the refresh token from cookies 
 
-    const rawToken = Cookies.get("adminTokens");
+    const rawToken = Cookies.get("DriverTokens");
     
     if (!rawToken) {
         throw new Error('No token available');
@@ -31,7 +31,7 @@ const refreshToken = async () => {
     const newToken = response.data;
 
     // Store the new tokens in cookies
-    Cookies.set('adminTokens', JSON.stringify(newToken), { expires: 7 });
+    Cookies.set('DriverTokens', JSON.stringify(newToken), { expires: 7 });
 
     return newToken.access; // Return the new access token
     } catch (error) {
@@ -43,7 +43,7 @@ const refreshToken = async () => {
 // Step 3: Axios request interceptor
 DriverAxios.interceptors.request.use(
     (config) => {
-    const rawToken = Cookies.get("adminTokens");
+    const rawToken = Cookies.get("DriverTokens");
     
     if (rawToken) {
         const token = JSON.parse(rawToken);

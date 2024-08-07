@@ -35,6 +35,7 @@ urlpatterns = [
     
   path('driver_signup/',Driver_signup,name="driver_signup"),
   path('driver_data/',Driver_Data,name="driver_data"),
+  path('Driverstatus/',Driver_Status,name='Driverstatus')
 
   
 ]
