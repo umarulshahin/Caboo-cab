@@ -19,16 +19,17 @@ urlpatterns = [
     path('emailvalidate/',Email_validate,name='emailvalidate'),
     path('otpverify/',OTP_validate,name='otpverify'),
     path('image_uploade/',Image_Upload,name="image_uploade"),
-    path("getuser/",GetUser,name="getuser"),
-    path("profilupdate/",ProfilUpdate,name="profilupdate"),
+    path('getuser/',GetUser,name='getuser'),
+    path('profilupdate/',ProfilUpdate,name='profilupdate'),
+    path('rideManagement/',Ride_management,name='rideManagement'),
   
   
   #*.....................Admin Api .........................
   
-  path('getAdmin/',Get_admin,name="getAdmin"),
-  path('getUsers/',Get_users,name="getUsers"),
+  path('getAdmin/',Get_admin,name='getAdmin'),
+  path('getUsers/',Get_users,name='getUsers'),
   path('getDriver/',Get_Drivers,name='getDrivers'),
-  path('statusManagement/',Status_management,name="statusManagement"),
+  path('statusManagement/',Status_management,name='statusManagement'),
   path('Drivermanagement/',Driver_management,name="Drivermanagment"),
   
     #*.....................Driver Api .........................

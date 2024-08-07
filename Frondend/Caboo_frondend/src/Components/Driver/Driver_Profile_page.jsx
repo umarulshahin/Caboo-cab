@@ -24,6 +24,9 @@ const Driver_Profile_page = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [status, setStatus] = useState(false);
   const { Driver_status } = useDriver();
+  const [location,setlocation]=useState({ latitude: null, longitude: null })
+  const [isFetchingLocation, setIsFetchingLocation] = useState(true);
+
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -36,7 +39,9 @@ const Driver_Profile_page = () => {
       setId(id);
       setReferralCode(referral_code || "");
       setStatus(current_Status);
+      setIsFetchingLocation(current_Status)
     }
+    console.log("yes working")
   }, [data]);
 
   const handleImageChange = (event) => {
@@ -73,12 +78,50 @@ const Driver_Profile_page = () => {
     setShowDocuments(!showDocuments);
   };
 
+  useEffect(()=>{
+    console.log(isFetchingLocation)
+    if(isFetchingLocation){
+    const locationFetcher=()=>{
+          console.log(location,"location")
+          if(navigator.geolocation){
+              navigator.geolocation.getCurrentPosition(
+                (position)=>{
+                  setlocation({
+                    latitude:position.coords.latitude,
+                    longitude:position.coords.latitude,
+                  });
+                },
+                (error)=>{
+                  console.error('Error fetching location:', error)
+                }
+
+              )
+
+          }else{
+            console.error('Geolocation is not supported by this browser.');
+
+          }
+
+    }
+
+    locationFetcher()
+
+    const intervalid = setInterval(locationFetcher,10000)
+    return ()=> clearInterval(intervalid)
+  }
+
+  
+  },[isFetchingLocation])
+
   const handleToggle = () => {
+    console.log(isFetchingLocation)
     const updatedData = {
       ...data[0],
       current_Status: !data[0].current_Status
     };
     Driver_status(Driver_status_url, updatedData);
+    setIsFetchingLocation(!data[0].current_Status)
+
   };
 
   return (

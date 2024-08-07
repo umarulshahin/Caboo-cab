@@ -44,7 +44,7 @@ const MapComponent = ({ locationCoords, destinationCoords }) => {
       dispatch(addDistance(null));
       dispatch(addPlaces(null));
     }
-  }, [locationCoords, destinationCoords]);
+  }, [locationCoords, destinationCoords, dispatch]);
 
   useEffect(() => {
     if (!locationCoords.lat && !destinationCoords.lat) {
@@ -56,7 +56,7 @@ const MapComponent = ({ locationCoords, destinationCoords }) => {
           },
           (error) => {
             console.error("Error getting the current position: ", error);
-            alert("Unable to retrieve your location. Please ensure location services are enabled.");
+            toast.error("Unable to retrieve your location. Please ensure location services are enabled.");
           },
           { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
         );
