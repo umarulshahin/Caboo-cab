@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     
     'django_celery_results',
     "django_celery_beat",
+    
+    'channels',
          
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -192,7 +194,15 @@ EMAIL_HOST_USER = 'akkushahin666@gmail.com'
 EMAIL_HOST_PASSWORD = 'lwuqpkonixghxuhp'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
  
+ # channels
  
+ASGI_APPLICATION = "Caboo_backend.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
  
 # celery 
 

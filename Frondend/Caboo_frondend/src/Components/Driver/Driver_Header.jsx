@@ -5,7 +5,8 @@ import Cookies from "js-cookie";
 import logo from "../../assets/Logo.png";
 import avatar from "../../assets/profile_img.png";
 import { addDriver_data, addDriver_token } from "../../Redux/DriverSlice";
-import { backendUrl } from "../../Utils/Constanse"; 
+import { backendUrl, Driver_status_url } from "../../Utils/Constanse"; 
+import useDriver from "../../Hooks/useDriver";
 
 const Driver_Header = () => {
   
@@ -16,6 +17,9 @@ const Driver_Header = () => {
   const [profile, setProfile] = useState('');
   const [username, setUsername] = useState('');
   const data = useSelector((state) => state.driver_data.driver_data);
+  const {Driver_status}=useDriver()
+
+  
 
   useEffect(() => {
     if (data && data[0]) {
@@ -26,12 +30,28 @@ const Driver_Header = () => {
   }, [data]);
   
  
-  const handleLogout = () => {
-    dispatch(addDriver_data(null));
-    dispatch(addDriver_token(null));
-    Cookies.remove('DriverTokens');
-    navigate("/");
+  const handleLogout = async () => {
+    try{
+      const updatedData = {
+        ...data[0],
+        current_Status: !data[0].current_Status
+      };
+      await  Driver_status(Driver_status_url, updatedData);
+
+      dispatch(addDriver_data(null));
+      dispatch(addDriver_token(null));
+      Cookies.remove('DriverTokens');
+      navigate("/");
+
+    }catch(error){
+    console.error("Error during logout process:", error);
+
+    }
+    
+  
   };
+
+
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 

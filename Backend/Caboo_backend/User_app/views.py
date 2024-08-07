@@ -52,3 +52,10 @@ def ProfilUpdate(request):
         return Response({"error":serializer.errors})
         
     return Response({"error":"User data not get"})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def Ride_management(request):
+    data=request.data
+    print(data,'ride management')
+    return Response({'success':"request done"})

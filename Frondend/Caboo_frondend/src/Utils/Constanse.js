@@ -32,4 +32,6 @@ export const DriverManagement_url="http://127.0.0.1:8000/Api/Drivermanagement/";
 
 export const Driver_data_urls = "http://127.0.0.1:8000/Api/driver_data/";
 
-export const Driver_status_url = "http://127.0.0.1:8000/Api/Driverstatus/"
+export const Driver_status_url = "http://127.0.0.1:8000/Api/Driverstatus/";
+
+export const Ride_management_url = "http://127.0.0.1:8000/Api/rideManagement/";

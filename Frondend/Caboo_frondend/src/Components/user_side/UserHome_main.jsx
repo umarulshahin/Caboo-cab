@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCharges, addDistance, addPlaces } from "../../Redux/RideSlice";
 import VehicleCard from "./VehicleCard";
 import { toast } from "sonner";
+import useRide from "../../Hooks/useRide";
+import { Ride_management_url } from "../../Utils/Constanse";
+import RideWaitingmodal from "./RideWaitingmodal";
 
 const libraries = ["places"];
 
@@ -23,8 +26,14 @@ const UserHome_main = () => {
   const inputRef2 = useRef(null);
   const dispatch=useDispatch()
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [places,setplaces]= useState(null)
   const charges = useSelector((state)=>state.ride_data.charges)
   const distance = useSelector((state)=>state.ride_data.distance)
+  const place_code = useSelector((state)=>state.ride_data.places)
+  const {RideRequest}=useRide()
+  const [modalOpen, setModalOpen] = useState(false);
+
+
   
   const options = {
     componentRestrictions: { country: "in" },
@@ -65,6 +74,7 @@ const UserHome_main = () => {
 
   const onSubmit = (values, { setSubmitting, resetForm }) => {
     console.log("Form data:", values);
+    setplaces(values)
     setSubmitting(false);
     setUpdateMap(true); 
 
@@ -112,15 +122,30 @@ const UserHome_main = () => {
     console.log(values,"test")
     if(values){
 
+      const data={
+        type:values.type,
+        price:values.price,
+        distance:distance,
+        place_code:place_code,
+        places:places
+      }
+      
+      console.log(data,"ride data ")
+      RideRequest(Ride_management_url,data)
+      handleOpenModal()
+
     }else{
       toast.warning("Please select a vehicle option to proceed")
     }
   }
   
+  const handleOpenModal = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
+
   return (
-    <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center p-4">
+    <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center p-10 mt-10">
       <div className="flex flex-col bg-white shadow-lg rounded-md w-full lg:w-1/3 p-6 mb-4 lg:mb-0 lg:mr-4">
-        <span className="font-bold text-3xl text-blue-500 text-center mb-10">
+        <span className="font-bold text-3xl text-blue-500 text-center mb-10 p-4 mt-6">
           Request a ride, hop in, and <br />enjoy the journey.
         </span>
         <Formik
@@ -232,14 +257,14 @@ const UserHome_main = () => {
                 {distance && charges &&(
                   <div>
 
-                  <div className="flex space-x-3">
-                  <div className="bg-black w-1/2 text-white h-[100px] rounded-lg flex flex-col justify-center items-center">
+                  <div className="flex space-x-8 ">
+                  <div className="bg-black w-1/2 text-white h-[90px] rounded-lg flex flex-col justify-center items-center">
                          <span className="font-bold text-sm">Total Distance </span>
-                         <span className="font-bold text-3xl pt-2">{distance.distance.text}</span>
+                         <span className="font-bold text-2xl pt-2">{distance.distance.text}</span>
                   </div>
-                  <div className="bg-black w-1/2 text-white h-[100px] rounded-lg flex flex-col justify-center items-center">
+                  <div className="bg-black w-1/2 text-white h-[90px] rounded-lg flex flex-col justify-center items-center">
                          <span className="font-bold  text-sm">Total Duration</span>
-                         <span className="font-bold text-3xl pt-2">{distance.duration.text}</span>
+                         <span className="font-bold text-2xl pt-2">{distance.duration.text}</span>
                   </div>
                 </div>
                   <div className="mt-4">
@@ -260,6 +285,7 @@ const UserHome_main = () => {
                 { distance && charges && (  <button
                     type="submit"
                     onClick={()=>handleRide(selectedVehicle)}
+                    
                     className="px-4 py-2 bg-green-600 text-white font-bold rounded-md w-full"
                   >Confirm ride</button>)}
                   
@@ -292,6 +318,9 @@ const UserHome_main = () => {
           locationCoords={updateMap ? locationCoords : { lat: null, lng: null }}
           destinationCoords={updateMap ? destinationCoords : { lat: null, lng: null }}
           />
+      </div>
+      <div>
+        <RideWaitingmodal open={modalOpen} onClose={handleCloseModal} />
       </div>
     </div>
   );
