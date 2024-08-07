@@ -70,3 +70,4 @@ class DriverData(models.Model):
     request = models.CharField(max_length=20,default="pending")
     dicline_reason = models.CharField(max_length=150,default="No reason provided")
     comments = models.TextField(default='No comments provided')
+    current_Status = models.BooleanField(blank=False,default=False)
