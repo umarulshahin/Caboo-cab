@@ -6,7 +6,8 @@ from rest_framework import status
 from .models import *
 from rest_framework.permissions import IsAuthenticated
 from  Authentication_app.models import *
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
         
         
 @api_view(["PATCH"])
@@ -53,9 +54,42 @@ def ProfilUpdate(request):
         
     return Response({"error":"User data not get"})
 
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def Ride_management(request):
+#     data = request.data
+#     # print(data, 'ride management')
+    
+#     channel_layer = get_channel_layer()
+#     message = {
+#         'type': 'driver_location',
+#         "location": {"latitude": 40.7128, "longitude": -74.0060}
+#     }
+#     async_to_sync(channel_layer.group_send)(
+#         'driver_location_room',  
+#         message
+#     )
+    
+#     return Response({'success': "request done"})
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Ride_management(request):
-    data=request.data
-    print(data,'ride management')
-    return Response({'success':"request done"})
+    data = request.data
+    print(data, 'ride management')
+    try:
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'driver_location_room',
+            {
+                "location":{"latitude": 40.7128, "longitude": -74.0060}
+            }
+        )
+        
+        return Response({'success': "request done"})
+    except Exception as e:
+        print('error',e)
+        return Response({"error":'somthing is wrong'},status=500)
+   

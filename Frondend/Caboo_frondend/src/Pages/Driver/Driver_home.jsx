@@ -4,11 +4,14 @@ import Footer from '../../Components/Footer'
 import useGetUser from '../../Hooks/useGetUser'
 import { useSelector } from 'react-redux'
 import { toast } from 'sonner'
+import useDriverWebSocket from '../../Socket/DriverSocket'
 
 const Driver_home = () => {
+
+  useDriverWebSocket()
+
  const {Get_data}=useGetUser()
  const driver = useSelector((state) => state.driver_data.driver_data);
-
  useEffect(() => {
   const message = localStorage.getItem('loginMessage');
 
@@ -17,6 +20,7 @@ const Driver_home = () => {
 
     localStorage.removeItem('loginMessage');
   }
+
 }, []);
 
 
@@ -28,7 +32,7 @@ const Driver_home = () => {
 
         </div>
         <div className='h-screen bg-black'>
-
+         
         </div>
         <div>
             <Footer />

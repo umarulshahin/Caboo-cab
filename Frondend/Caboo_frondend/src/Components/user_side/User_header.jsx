@@ -15,7 +15,7 @@ const User_header = () => {
   const [profile,setprofile]=useState('')
   const [username,setUsername]=useState('')
   const data = useSelector((state) => state.user_data.user_data);
-
+  console.log(data)
   useEffect(()=>{
     
     if(data){
@@ -25,18 +25,8 @@ const User_header = () => {
     }
     
   },[data])
-
-
+console.log(profile,"profile")
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
-
-  // const user_data=useSelector((state)=>state.user_data.user_data)
-
-  // useEffect(()=>{
-  //     if(!data){
-  //       navigate('/signin_selection', { state: { modal: 'ride' } })
-  //     }
-  // },[data])
 
   const handleLogout=()=>{
 

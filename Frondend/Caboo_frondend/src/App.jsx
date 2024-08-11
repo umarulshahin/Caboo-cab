@@ -26,8 +26,8 @@ import Driver_PrivatRoute from "./Driver_PrivatRoute";
 import Driver_profile from "./Pages/Driver/Driver_profile";
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
-
 const App = () => {
+  
   return (
     <div>
       <Provider store={appStore}>
