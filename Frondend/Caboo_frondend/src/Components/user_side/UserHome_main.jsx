@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import useRide from "../../Hooks/useRide";
 import { Ride_management_url } from "../../Utils/Constanse";
 import RideWaitingmodal from "./RideWaitingmodal";
+import useWebSocket from "../../Socket/Socket";
 
 const libraries = ["places"];
 
@@ -32,7 +33,7 @@ const UserHome_main = () => {
   const place_code = useSelector((state)=>state.ride_data.places)
   const {RideRequest}=useRide()
   const [modalOpen, setModalOpen] = useState(false);
-
+  const { sendMessage } = useWebSocket();
 
   
   const options = {
@@ -45,12 +46,10 @@ const UserHome_main = () => {
   const [destinationCoords, setDestinationCoords] = useState({ lat: null, lng: null });
   const [loadingLocation, setLoadingLocation] = useState({ location: false, destination: false });
   const [updateMap, setUpdateMap] = useState(false); // New state for handling map update
-
   const initialValues = {
     location: "",
     destination: "",
   };
-
   const validationSchema = Yup.object().shape({
     location: Yup.string()
       .required("Location is required")
@@ -73,6 +72,7 @@ const UserHome_main = () => {
   });
 
   const onSubmit = (values, { setSubmitting, resetForm }) => {
+
     console.log("Form data:", values);
     setplaces(values)
     setSubmitting(false);
@@ -82,6 +82,7 @@ const UserHome_main = () => {
   };
 
   const getCurrentLocation = (setFieldValue, field) => {
+
     if (navigator.geolocation) {
       setLoadingLocation((prevState) => ({ ...prevState, [field]: true }));
       navigator.geolocation.getCurrentPosition(
@@ -129,9 +130,7 @@ const UserHome_main = () => {
         place_code:place_code,
         places:places
       }
-      
-      console.log(data,"ride data ")
-      RideRequest(Ride_management_url,data)
+      sendMessage(data)
       handleOpenModal()
 
     }else{
@@ -143,9 +142,9 @@ const UserHome_main = () => {
   const handleCloseModal = () => setModalOpen(false);
 
   return (
-    <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center p-10 mt-10">
+    <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center m-10">
       <div className="flex flex-col bg-white shadow-lg rounded-md w-full lg:w-1/3 p-6 mb-4 lg:mb-0 lg:mr-4">
-        <span className="font-bold text-3xl text-blue-500 text-center mb-10 p-4 mt-6">
+        <span className="font-bold text-3xl text-blue-500 text-center mb-10 p-10 mt-6">
           Request a ride, hop in, and <br />enjoy the journey.
         </span>
         <Formik
@@ -313,7 +312,7 @@ const UserHome_main = () => {
           }}
         </Formik>
       </div>
-      <div className="flex-grow h-[500px] w-full lg:w-2/3 bg-white rounded-md overflow-hidden">
+      <div className="flex-grow h-full w-full mx-20 py-36 lg:w-2/3 bg-white rounded-md overflow-hidden">
         <MapComponent
           locationCoords={updateMap ? locationCoords : { lat: null, lng: null }}
           destinationCoords={updateMap ? destinationCoords : { lat: null, lng: null }}
