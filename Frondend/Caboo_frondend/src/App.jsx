@@ -25,6 +25,8 @@ import Driver_home from "./Pages/Driver/Driver_home";
 import Driver_PrivatRoute from "./Driver_PrivatRoute";
 import Driver_profile from "./Pages/Driver/Driver_profile";
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import Ride from "./Pages/Driver/Ride";
+import UserRide from "./Pages/user_side/userRide";
 
 const App = () => {
   
@@ -43,6 +45,7 @@ const App = () => {
               <Route path="/userhome" element={ <PrivatRoute_user><UserHome /></PrivatRoute_user> } />
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
               <Route path="/otpverification" element={<OtpForm />} />
+              <Route path="/userRide" element={<UserRide />}/>
 
               <Route path="/admin" element={<AdminPrivatRoute><Admin_Signin /></AdminPrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />
@@ -56,7 +59,7 @@ const App = () => {
 
               <Route path="/driver_home" element={<Driver_PrivatRoute> <Driver_home /> </ Driver_PrivatRoute>} />
               <Route path="/driver_profile" element={<Driver_profile /> } />
-
+              <Route path="/Ride" element={<Ride />} />
 
             </Routes>
           </BrowserRouter>
