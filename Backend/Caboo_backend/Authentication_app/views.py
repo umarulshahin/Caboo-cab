@@ -29,11 +29,11 @@ def Email_validate(request):
                     result=OTP_sender(data["email"])
                     
                     if result == "success":
-                        print(data)
+                        
                         if data['role']=="Drive" :
                         
                             driver=DriverData.objects.filter(customuser=user.id).first()
-                            print(driver)
+                            
                             if driver and driver.request =='active':
                                 
                                 return Response({"success": "alredy email exist",'status':"Driver data success", "email": data['email']})

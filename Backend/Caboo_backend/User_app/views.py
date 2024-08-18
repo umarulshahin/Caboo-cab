@@ -79,6 +79,7 @@ def ProfilUpdate(request):
 def Ride_management(request):
     data = request.data
     print(data, 'ride management')
+    
     try:
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(

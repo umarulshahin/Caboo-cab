@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addRideDriverdetails } from '../Redux/RideSlice';
+import { useNavigate } from 'react-router-dom';
 
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
     const user = useSelector((state) => state.user_data.token_data);
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     
     useEffect(() => {
         if (!user.user_id) {
@@ -22,6 +26,12 @@ const useUserWebSocket = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log('Message received:', data);
+            if (data.type==='ride_accepted'){
+               
+                dispatch(addRideDriverdetails(data))
+                // navigate('/userRide')
+
+            }
         };
 
         ws.onerror = (error) => {
@@ -41,7 +51,7 @@ const useUserWebSocket = () => {
 
     const sendMessage = (data) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
-            console.log('Sending message:', data);
+            console.log('Sending message:',data);
             socket.send(JSON.stringify({ userRequest: data }));
         } else {
             console.error('Cannot send message, WebSocket is not open');

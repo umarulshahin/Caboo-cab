@@ -4,11 +4,9 @@ import Footer from '../../Components/Footer'
 import useGetUser from '../../Hooks/useGetUser'
 import { useSelector } from 'react-redux'
 import { toast } from 'sonner'
-import useDriverWebSocket from '../../Socket/DriverSocket'
 
 const Driver_home = () => {
 
-  useDriverWebSocket()
 
  const {Get_data}=useGetUser()
  const driver = useSelector((state) => state.driver_data.driver_data);

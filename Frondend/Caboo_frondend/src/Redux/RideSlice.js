@@ -9,6 +9,11 @@ const RideSlice=createSlice({
         distance:null,
         charges:null,
         places:null,
+        clintDetails:null,
+        driverRideDetails:null,
+        rideLocations:null,
+        rideDetails:null,
+        rideDriverdetails:null
 
     },
     reducers:{
@@ -20,10 +25,29 @@ const RideSlice=createSlice({
         },
         addPlaces:(state,action)=>{
             state.places=action.payload
+        },
+        addClint:(state,action)=>{
+            state.clintDetails=action.payload
+        },
+        addDriverRide:(state,action)=>{
+            console.log('yes driver ride is working ')
+            state.driverRideDetails=action.payload
+        },
+        addRideLocations:(state,action)=>{
+            console.log('yes ride location is working')
+            state.rideLocations=action.payload
+        },
+        addRideDetails:(state,action)=>{
+            state.rideDetails=action.payload
+        },
+        addRideDriverdetails:(state,action)=>{
+            state.rideDriverdetails=action.payload
         }
+
+
     }
 })
 
-export const{addCharges,addDistance,addPlaces}=RideSlice.actions
+export const{addCharges,addDistance,addPlaces,addClint,addDriverRide,addRideLocations,addRideDetails,addRideDriverdetails}=RideSlice.actions;
 
 export default RideSlice.reducer

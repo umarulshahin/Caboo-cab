@@ -7,9 +7,10 @@ import avatar from "../../assets/profile_img.png";
 import { addDriver_data, addDriver_token } from "../../Redux/DriverSlice";
 import { backendUrl, Driver_status_url } from "../../Utils/Constanse"; 
 import useDriver from "../../Hooks/useDriver";
+import RideRequestModal from "./RequestModal";
+import useDriverWebSocket from "../../Socket/DriverSocket";
 
 const Driver_Header = () => {
-  
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -17,9 +18,8 @@ const Driver_Header = () => {
   const [profile, setProfile] = useState('');
   const [username, setUsername] = useState('');
   const data = useSelector((state) => state.driver_data.driver_data);
-  const {Driver_status}=useDriver()
-
-  
+  const { Driver_status } = useDriver();
+  const { showModal, modalUserData, handleAcceptRide, handleDecline } = useDriverWebSocket();
 
   useEffect(() => {
     if (data && data[0]) {
@@ -28,45 +28,41 @@ const Driver_Header = () => {
       setUsername(username);
     }
   }, [data]);
-  
- 
+
   const handleLogout = async () => {
-    try{
+    try {
       const updatedData = {
         ...data[0],
         current_Status: !data[0].current_Status
       };
-      await  Driver_status(Driver_status_url, updatedData);
+      await Driver_status(Driver_status_url, updatedData);
 
       dispatch(addDriver_data(null));
       dispatch(addDriver_token(null));
       Cookies.remove('DriverTokens');
       navigate("/");
-
-    }catch(error){
-    console.error("Error during logout process:", error);
-
+    } catch (error) {
+      console.error("Error during logout process:", error);
     }
-    
-  
   };
-
-
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
+
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black">
-    <div className="flex flex-wrap items-center justify-between p-4">
-      <div className="flex items-center space-x-8">
-      <Link to='/driver_home'>
-      <img src={logo} alt="Logo" className="h-12" />
-        </Link>
+      <div className="flex flex-wrap items-center justify-between p-4">
+        <div className="flex items-center space-x-8">
+          <Link to='/driver_home'>
+            <img src={logo} alt="Logo" className="h-12" />
+          </Link>
 
-          {/* Links */}
           <div className="hidden sm:flex space-x-6">
+          <Link to="/home" className="text-white font-extrabold hover:text-yellow-500">
+              Home
+            </Link>
             <Link to="/ride_request" className="text-white font-extrabold hover:text-yellow-500">
-              Ride Request
+              Ride
             </Link>
             <Link to="/about" className="text-white font-extrabold hover:text-yellow-500">
               About
@@ -93,28 +89,28 @@ const Driver_Header = () => {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-               <div className="relative">
-               <div className="absolute right-0 flex flex-col items-center mt-8 w-48 bg-black font-bold text-white rounded-lg shadow-lg">
-                 <Link
-                   to="/driver_profile" 
-                   className="block px-4 py-2 w-full text-center hover:bg-gray-700 transition duration-150 ease-in-out"
-                 >
-                   Profile
-                 </Link>
-                 <Link
-                   to="/settings" 
-                   className="block px-4 py-2 w-full text-center hover:bg-gray-700 transition duration-150 ease-in-out"
-                 >
-                   Settings
-                 </Link>
-                 <button
-                   onClick={handleLogout}
-                   className="block px-4 py-2 w-full text-center bg-red-600 hover:bg-red-700 text-white transition duration-150 ease-in-out"
-                 >
-                   Logout
-                 </button>
-               </div>
-             </div>
+                <div className="relative">
+                  <div className="absolute right-0 flex flex-col items-center mt-8 w-48 bg-black font-bold text-white rounded-lg shadow-lg">
+                    <Link
+                      to="/driver_profile"
+                      className="block px-4 py-2 w-full text-center hover:bg-gray-700 transition duration-150 ease-in-out"
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="block px-4 py-2 w-full text-center hover:bg-gray-700 transition duration-150 ease-in-out"
+                    >
+                      Settings
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block px-4 py-2 w-full text-center bg-red-600 hover:bg-red-700 text-white transition duration-150 ease-in-out"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           )}
@@ -144,8 +140,11 @@ const Driver_Header = () => {
         {menuOpen && (
           <div className="w-full block sm:hidden">
             <div className="flex flex-col items-center space-y-2 pt-4">
-              <Link to="/ride_request" className="text-white font-extrabold hover:text-yellow-500" onClick={() => setMenuOpen(false)}>
-                Ride Request
+              <Link to="/#" className="text-white font-extrabold hover:text-yellow-500" onClick={() => setMenuOpen(false)}>
+              Home
+              </Link>
+              <Link to="/ride" className="text-white font-extrabold hover:text-yellow-500" onClick={() => setMenuOpen(false)}>
+                Ride 
               </Link>
               <Link to="/about" className="text-white font-extrabold hover:text-yellow-500" onClick={() => setMenuOpen(false)}>
                 About
@@ -157,6 +156,16 @@ const Driver_Header = () => {
           </div>
         )}
       </div>
+
+      {/* Ride Request Modal */}
+      {showModal && (
+        <RideRequestModal
+        show={showModal}
+        onAccept={handleAcceptRide}
+        onDecline={handleDecline}
+        userData ={modalUserData}
+      />
+      )}
     </div>
   );
 };

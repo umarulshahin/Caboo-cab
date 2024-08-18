@@ -83,7 +83,7 @@ const MapComponent = ({ locationCoords, destinationCoords }) => {
             const result = response.rows[0].elements[0];
             if (result.status === 'OK') {
               const distanceInKm = result.distance.value / 1000;
-
+              console.log(result,'result')
               if (distanceInKm >= 150) {
                 toast.error("We're sorry, but this area is currently out of service. Please choose a different location.");
                 setRoute([]);
@@ -101,6 +101,7 @@ const MapComponent = ({ locationCoords, destinationCoords }) => {
                   "location": locationCoords,
                   "destination": destinationCoords,
                 }));
+
                 dispatch(addDistance(result));
                 setValidRoute(true);
 
