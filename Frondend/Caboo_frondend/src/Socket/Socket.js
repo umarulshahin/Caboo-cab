@@ -29,7 +29,7 @@ const useUserWebSocket = () => {
             if (data.type==='ride_accepted'){
                
                 dispatch(addRideDriverdetails(data))
-                // navigate('/userRide')
+                navigate('/userRide')
 
             }
         };

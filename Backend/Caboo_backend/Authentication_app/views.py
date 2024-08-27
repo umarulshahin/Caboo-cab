@@ -180,16 +180,17 @@ def Driver_signup(request):
         'profile': files.get('profile') ,
     }
     
-    # Check if CustomUser with provided email exists
     try:
         print(custom_user_data)
         custom_user = CustomUser.objects.get(email=custom_user_data['email'])
+        
         # Update existing CustomUser
         custom_user_serializer = CustomUserSerializer(custom_user, data=custom_user_data, partial=True)
         if custom_user_serializer.is_valid():
             custom_user_serializer.save()
         else:
             return Response(custom_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
     except CustomUser.DoesNotExist:
         # Create new CustomUser if it doesn't exist
         custom_user_serializer = CustomUserSerializer(data=custom_user_data)
@@ -198,7 +199,6 @@ def Driver_signup(request):
         else:
             return Response(custom_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Add customuser id to driver data
     
     driver_data = {
         'customuser': custom_user.id,

@@ -5,6 +5,7 @@ from channels.db import database_sync_to_async
 import json
 from math import radians, sin, cos, sqrt, atan2
 import random
+import asyncio
 
 class LocationConsumer(AsyncJsonWebsocketConsumer):
     drivers_location = {}
@@ -15,45 +16,82 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
     driver_count = set()
     user_id = 0
     
-    @database_sync_to_async
-    def Ride_Acceptance(self, data):
-        from .models import TripDetails
-        from Authentication_app.models import CustomUser
-
+    @sync_to_async
+    def Save_trip(self,tripdata):
+        from .serializer import TripSerializer
+        
+        serializer = TripSerializer(data=tripdata)
+        if serializer.is_valid():
+            serializer.save()
+            
+            return serializer.data
+        else:
+            print(serializer.errors)
+            return None
+    
+    @sync_to_async
+    def Get_driverdata(self, data):
+        print(data, 'call is coming get driver data')
+        from Authentication_app.models import CustomUser, DriverData
+        
+        try:
+            return list(DriverData.objects.filter(customuser=data).prefetch_related('customuser'))
+        except Exception as e:
+            print(f"error get driver {e}")
+            return None
+            
+    @sync_to_async
+    def serialize_driver_data(self, driver):
+        print(driver, 'call is coming serializer')
+        from Driver_app.serializer import DriverDataSerializer
+        
+        return DriverDataSerializer(driver, many=True).data
+    
+    async def Ride_Acceptance(self, data):
         try:
             userData = LocationConsumer.user_data['userRequest']
             user_id = LocationConsumer.user_id
-            user = CustomUser.objects.get(id=user_id)
-            driver = CustomUser.objects.get(id=data['driver_id'])
             
             OTP = str(random.randint(1000, 9999))
 
-            if user and driver:
-                # Storing trip details in the database
-                TripDetails.objects.create(
-                    user=user,
-                    driver=driver,
-                    location=userData['places']['location'],
-                    destination=userData['places']['destination'],
-                    distance=userData['distance']['distance']['text'],
-                    duration=userData['distance']['duration']['text'],
-                    amount=userData['price'],
-                    tripOTP=OTP,
-                    status='pending'
-                )
-                
-                # Return OTP and trip details to send to the user
-                return {
-                    'success': True,
-                    'OTP': OTP,
+            if user_id and data:
+                tripdata = {
+                    'user': user_id,
+                    'driver': data['driver_id'],
+                    'location': userData['places']['location'],
+                    'destination': userData['places']['destination'],
+                    'distance': userData['distance']['distance']['text'],
+                    'duration': userData['distance']['duration']['text'],
+                    'amount': userData['price'],
+                    'tripOTP': OTP,
+                    'status': 'pending'
                 }
+
+                save_trip = await self.Save_trip(tripdata)
+                print(save_trip, 'tripdata')
+
+                if save_trip:
+                    driverdata = await self.Get_driverdata(save_trip['driver'])
+                    print(driverdata, 'driver data is working')
+
+                    if driverdata:
+                        print(driverdata, 'driver data')
+                        driver = await self.serialize_driver_data(driverdata)
+                        
+                        return {
+                            'trip_data': save_trip,
+                            'driver_data': driver
+                        }
+                    else:
+                        print('No driver data found')
+                else:
+                    print('Failed to save trip')
             else:
                 print('Ride Acceptance Error: User or Driver is None')
-                return {'success': False, 'error': 'User or Driver is None'}
 
         except Exception as e:
             print(f"Ride Acceptance Error: {e}")
-            return {'success': False, 'error': str(e)}
+            return None
         
     @database_sync_to_async
     def save_driver_location(self, Driver_id, Location):
@@ -106,18 +144,20 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             elif 'rideRequestResponse' in data:
                 if data['rideRequestResponse'] == 'accepted':
                     result = await self.Ride_Acceptance(data)
-                   
-                    if result['success']:
-                        # Notify the user after ride acceptance
+                    print(result,'result')
+
+                    if result:
+                        
                         await self.channel_layer.group_send(
-                            f'user_{LocationConsumer.user_id}',  # Use the stored user_id
+                            f'user_{LocationConsumer.user_id}', 
                             {
                                 'type': 'notify_user',
-                                'driver_id': data['driver_id'],
                                 'user_data': data,
-                                'otp': result
+                                'tripdata' : result
                             }
                         )
+                    else:
+                        print("error result is empty")
 
                                 
                 elif data['rideRequestResponse'] == 'declined':
@@ -144,6 +184,8 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         print('handle driver location is working')
         driver_id = data.get('id')
         location = data.get('Driverlocation')
+        
+        
         
         if driver_id and location:
             await self.save_driver_location(driver_id, location)
@@ -249,7 +291,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         print(event, "notify user is working")
         await self.send(text_data=json.dumps({
             'type': 'ride_accepted',
-            'OTP': event['otp']['OTP'],
-            'data': event['user_data']
+            'data': event
         }))
 

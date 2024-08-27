@@ -42,8 +42,8 @@ console.log(profile,"profile")
     <Link to="/userhome" >
     <img src={logo} alt="Logo" className="h-12" />
       </Link>
-      <div className="hidden sm:flex sm:space-x-8 pl-6">
-       
+      <div className="hidden sm:flex sm:space-x-8 pl-20">
+       <Link to='/userRide' className="text-white font-extrabold hidden sm:block  ">Ride</Link>
       </div>
     </div>
 

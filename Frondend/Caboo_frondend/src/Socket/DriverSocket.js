@@ -59,6 +59,7 @@ const useDriverWebSocket = () => {
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            console.log('yes driver side request reached ')
 
             if (data.type === 'location_request') {
                 if (!isRequestInProgress) {
@@ -102,12 +103,14 @@ const useDriverWebSocket = () => {
         };
     }, [driver.user_id]);
 
+  
+        
     const handleLocationRequest = (ws) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const { latitude, longitude } = position.coords;
-                    console.log(latitude, longitude, "location from user");
+                    const { latitude, longitude, accuracy } = position.coords;
+                    console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Accuracy: ${accuracy} meters`);
                     setDriverlocation({lat:latitude,lng:longitude})
                     ws.send(JSON.stringify({
                         requestType: 'sendLocation',
@@ -277,7 +280,7 @@ const useDriverWebSocket = () => {
                     driverDtails : driverdetails
                 }));
 
-                navigate('/Ride')
+                navigate('/ride')
      
             } catch (error) {
                 console.error('Error handling driver location:', error);

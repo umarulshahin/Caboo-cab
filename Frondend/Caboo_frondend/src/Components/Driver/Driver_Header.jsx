@@ -30,6 +30,7 @@ const Driver_Header = () => {
   }, [data]);
 
   const handleLogout = async () => {
+    console.log('yes working')
     try {
       const updatedData = {
         ...data[0],
@@ -58,10 +59,10 @@ const Driver_Header = () => {
           </Link>
 
           <div className="hidden sm:flex space-x-6">
-          <Link to="/home" className="text-white font-extrabold hover:text-yellow-500">
+          <Link to="/driver_home" className="text-white font-extrabold hover:text-yellow-500">
               Home
             </Link>
-            <Link to="/ride_request" className="text-white font-extrabold hover:text-yellow-500">
+            <Link to="/ride" className="text-white font-extrabold hover:text-yellow-500">
               Ride
             </Link>
             <Link to="/about" className="text-white font-extrabold hover:text-yellow-500">

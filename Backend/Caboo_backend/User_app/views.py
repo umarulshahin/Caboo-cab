@@ -77,6 +77,7 @@ def ProfilUpdate(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Ride_management(request):
+    
     data = request.data
     print(data, 'ride management')
     
