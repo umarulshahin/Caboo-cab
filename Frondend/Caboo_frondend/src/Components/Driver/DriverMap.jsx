@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, Polyline, Marker, useLoadScript } from '@react-google-maps/api';
 import { useSelector } from 'react-redux';
-import { FaMapMarkerAlt, FaFlag, FaClock, FaRoad, FaDollarSign, FaKey } from 'react-icons/fa'; 
+import { toast } from "sonner";
+
 import destination_icon from "../../assets/destination.png";
 import location_icon from "../../assets/location.png";
-import { toast } from "sonner";
+import key from '../../assets/key.png';
+import pickup from '../../assets/pickup.png';
+import dropoff from '../../assets/dropoff.png';
+import money from '../../assets/money.png';
+import time from '../../assets/time.png';
+import distancee from '../../assets/distance.png';
 
 const mapContainerStyle = {
   height: '100%',
@@ -12,8 +18,8 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: 40.7128, // Default center latitude
-  lng: -74.0060, // Default center longitude
+  lat: 40.7128,
+  lng: -74.0060,
 };
 
 const pickupIcon = {
@@ -36,13 +42,13 @@ const DriverMap = () => {
 
   const data = useSelector((state) => state.ride_data.rideLocations);
   const ridedetails = useSelector((state)=>state.ride_data.rideDetails)
-  
+
   const starting = data?.driver;
   const ending = data?.client;
-  const { distance, duration, places, price } = ridedetails.userRequest;
+  const { distance, duration, places, price } = ridedetails ? ridedetails.userRequest : {};
 
   const [directions, setDirections] = useState(null);
-  const [zoomLevel, setZoomLevel] = useState(13); // Start with a high zoom level for better focus
+  const [zoomLevel, setZoomLevel] = useState(13);
 
   useEffect(() => {
     if (isLoaded && starting && ending) {
@@ -60,9 +66,7 @@ const DriverMap = () => {
             lat: point.lat(),
             lng: point.lng(),
           })));
-
-          // Adjust zoom level based on the path length
-          setZoomLevel(14); // Set to a lower zoom level to show the entire route
+          setZoomLevel(14);
         } else {
           console.error(`Directions request failed due to ${status}`);
           toast.error("Unable to retrieve directions. Please try again.");
@@ -74,50 +78,55 @@ const DriverMap = () => {
   const handlePinChange = (e) => {
     const value = e.target.value;
     if (value.length === 4) {
-      // Auto-submit or move to the next step
       console.log("PIN entered:", value);
     }
   };
 
   return (
-    <div className='flex flex-row h-screen p-10'>
+    <div className='flex flex-col md:flex-row h-screen p-6 md:p-10 space-y-4 md:space-y-0 md:space-x-4'>
       {/* Left side with ride details */}
-      <div className='w-1/2 h-1/2 p-4 bg-gray-100 font-bold flex flex-col justify-between'>
+      <div className='w-full md:w-1/2 h-fit bg-blue-50 rounded-md p-4 font-bold flex flex-col justify-between'>
         <div>
           <h2 className='text-2xl font-bold mb-6'>Ride Details</h2>
-          <div className='flex items-center mb-4 shadow-xl rounded-md p-2'>
-            <FaMapMarkerAlt className='text-gray-700 mr-2' />
+
+          <div className='flex items-center mb-4 shadow-xl rounded-md p-4 bg-white'>
+            <img src={pickup} alt="Pickup" className='w-6 h-6 mr-2' /> {/* Custom icon */}
             <div>
-              <p>{places.location}</p>
+              <p>{places?.location}</p>
             </div>
           </div>
-          <div className='flex items-center mb-4 shadow-xl rounded-md p-2'>
-            <FaFlag className='text-gray-700 mr-2' />
+
+          <div className="flex items-center mb-4 shadow-xl rounded-md p-4 bg-white">
+            <img src={dropoff} alt="Dropoff" className='w-6 h-6 mr-2' /> {/* Custom icon */}
             <div>
-              <p>{places.destination}</p>
+              <p>{places?.destination}</p>
             </div>
           </div>
-          <div className='flex items-center mb-4 shadow-xl rounded-md p-2'>
-            <FaClock className='text-gray-700 mr-2' />
+
+          <div className='flex items-center mb-4 shadow-xl rounded-md p-4 bg-white'>
+            <img src={time} alt="Time" className='w-6 h-6 mr-2' /> {/* Custom icon */}
             <div>
-              <label className='block text-gray-700'>{distance.duration.text}</label>
+              <p>{distance.duration?.text}</p>
             </div>
           </div>
-          <div className='flex items-center mb-4 shadow-xl rounded-md p-2'>
-            <FaRoad className='text-gray-700 mr-2' />
+
+          <div className='flex items-center mb-4 shadow-xl rounded-md p-4 bg-white'>
+            <img src={distancee} alt="Distance" className='w-6 h-6 mr-2' /> {/* Custom icon */}
             <div>
-              <p>{distance.distance.text}</p> {/* Distance in text */}
+              <p>{distance.distance?.text}</p>
             </div>
           </div>
-          <div className='flex items-center mb-4 shadow-xl rounded-md p-2'>
-            <FaDollarSign className='text-gray-700 mr-2' />
+
+          <div className='flex items-center mb-4 shadow-xl rounded-md p-4 bg-white'>
+            <img src={money} alt="Price" className='w-6 h-6 mr-2' /> {/* Custom icon */}
             <div>
-              <label className='block text-gray-700'>Price</label>
+              <label className='block text-gray-700'></label>
               <p>₹ {(price * 0.9).toFixed(2)}</p>
             </div>
           </div>
-          <div className='flex items-center mb-4 shadow-xl rounded-md p-2'>
-            <FaKey className='text-gray-700 mr-2 mt-7' />
+
+          <div className='flex items-center mb-4 shadow-xl rounded-md p-4 bg-white'>
+            <img src={key} alt="Key" className='w-6 h-6 mr-2 mt-7' /> {/* Custom icon */}
             <div>
               <label className='block text-black mb-2'>Enter the PIN to Confirm the ride</label>
               <input
@@ -129,7 +138,8 @@ const DriverMap = () => {
             </div>
           </div>
         </div>
-        <div className='flex justify-between'>
+
+        <div className='flex justify-center space-x-2'>
           <button className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'>
             Cancel Ride
           </button>
@@ -140,8 +150,8 @@ const DriverMap = () => {
       </div>
 
       {/* Right side with the map */}
-      <div className='w-1/2 h-[500px] shadow-2xl'>
-        <div className='h-full rounded-lg' style={mapContainerStyle}>
+      <div className='w-full md:w-1/2 h-[400px] md:h-[610px] rounded-md shadow-2xl bg-blue-100'>
+        <div className='h-full' style={mapContainerStyle}>
           {isLoaded && (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}

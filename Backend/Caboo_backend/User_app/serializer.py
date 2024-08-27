@@ -21,3 +21,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields=['username', 'email', 'phone', 'profile','id']
         read_only_fields = ['id']
         
+class TripSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = TripDetails
+        fields = ['user', 'driver' , 'location', 'destination', 'distance', 'duration', 'amount', 'orderId','tripOTP', 'status', 'dataTime' ]

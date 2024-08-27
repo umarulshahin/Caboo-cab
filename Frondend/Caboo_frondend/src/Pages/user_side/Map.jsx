@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { GoogleMap, Polyline, useLoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker, Polyline, useLoadScript } from "@react-google-maps/api";
 import current_icon from "../../assets/current.png";
 import destination_icon from "../../assets/destination.png";
 import location_icon from "../../assets/location.png";
@@ -83,7 +83,6 @@ const MapComponent = ({ locationCoords, destinationCoords }) => {
             const result = response.rows[0].elements[0];
             if (result.status === 'OK') {
               const distanceInKm = result.distance.value / 1000;
-              console.log(result,'result')
               if (distanceInKm >= 150) {
                 toast.error("We're sorry, but this area is currently out of service. Please choose a different location.");
                 setRoute([]);
@@ -160,18 +159,20 @@ const MapComponent = ({ locationCoords, destinationCoords }) => {
   }
 
   if (!isLoaded) {
-    return <div className="spinner relative w-15 h-15">
-      <svg viewBox="25 25 50 50" className="circular absolute inset-0 m-auto">
-        <circle
-          cx="50"
-          cy="50"
-          r="20"
-          fill="none"
-          strokeWidth="3"
-          className="path"
-        ></circle>
-      </svg>
-    </div>
+    return (
+      <div className="spinner relative w-15 h-15">
+        <svg viewBox="25 25 50 50" className="circular absolute inset-0 m-auto">
+          <circle
+            cx="50"
+            cy="50"
+            r="20"
+            fill="none"
+            strokeWidth="3"
+            className="path"
+          ></circle>
+        </svg>
+      </div>
+    );
   }
 
   return (
