@@ -25,7 +25,7 @@ class TripSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TripDetails
-        fields = ['user', 'driver' , 'location', 'destination', 'distance', 'duration', 'amount', 'orderId','tripOTP', 'status', 'dataTime' ]
+        fields = ['id','user', 'driver' , 'location', 'destination', 'distance', 'duration', 'amount', 'orderId','tripOTP', 'status', 'dataTime' ]
         
 class OTPValidationSerializer(serializers.Serializer):
     tripOTP = serializers.CharField()

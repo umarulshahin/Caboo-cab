@@ -39,7 +39,11 @@ const useUserWebSocket = () => {
                 navigate('/userRide')
 
 
+            }else if (data.type.trim() === 'Trip complete'){
+                console.log("yes payment is working ")
+                navigate('/paymentModal')
             }
+
         };
 
         ws.onerror = (error) => {

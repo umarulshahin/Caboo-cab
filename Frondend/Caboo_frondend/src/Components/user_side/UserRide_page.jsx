@@ -134,10 +134,13 @@ const UserRide_page = () => {
 
                     </div>
                     </>:
-                    <div className='flex justify-center p-4'>
+                    <div className='flex flex-col justify-center items-center p-4'>
                       <span className='text-2xl font-bold text-blue-500'>
-                              Your safety is our top priority . <br />
-                              Have a nice journey !
+                              Your safety is our top priority. <br />
+                      </span>
+                      <span className='text-2xl font-bold text-blue-500' >
+                      Have a nice journey !
+
                       </span>
                     </div>
                  

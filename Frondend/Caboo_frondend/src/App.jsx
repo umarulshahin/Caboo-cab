@@ -27,6 +27,7 @@ import Driver_profile from "./Pages/Driver/Driver_profile";
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import Ride from "./Pages/Driver/Ride";
 import UserRide from "./Pages/user_side/userRide";
+import PaymentModal from "./Components/user_side/PaymentModal";
 
 const App = () => {
   
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
               <Route path="/otpverification" element={<OtpForm />} />
               <Route path="/userRide" element={<UserRide />}/>
+              <Route path="/paymentModal" element={<PaymentModal />}/>
 
               <Route path="/admin" element={<AdminPrivatRoute><Admin_Signin /></AdminPrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />

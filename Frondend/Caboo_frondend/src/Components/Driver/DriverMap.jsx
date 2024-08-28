@@ -12,7 +12,7 @@ import dropoff from '../../assets/dropoff.png';
 import money from '../../assets/money.png';
 import time from '../../assets/time.png';
 import distancee from '../../assets/distance.png';
-import { addOTPvalidation } from '../../Redux/RideSlice';
+import Ride_finish_modal from './Ride_finish_modal';
 
 const mapContainerStyle = {
   height: '100%',
@@ -45,21 +45,19 @@ const DriverMap = () => {
 
   const data = useSelector((state) => state.ride_data.rideLocations);
   const ridedetails = useSelector((state)=>state.ride_data.rideDetails);
-  const dispatch = useDispatch()
-  console.log(data,'data ride')
-
-  let starting = data?.driver;
-  let ending = data?.client;
-  const { distance, duration, places, price,place_code } = ridedetails ? ridedetails.userRequest : {};
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [directions, setDirections] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(13);
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputRefs = useRef([]);
   
-  const { OTP_confirm } = useDriverWebSocket()
-  
+  const { OTP_confirm,Ride_completion } = useDriverWebSocket()
+
+  let starting = data?.driver;
+  let ending = data?.client;
+  const { distance, duration, places, price,place_code } = ridedetails ? ridedetails.userRequest : {};
+
   const otpvalidation = useSelector((state)=>state.ride_data.otpValidation);
 
     console.log(otpvalidation,'otp validation')
@@ -68,9 +66,6 @@ const DriverMap = () => {
     starting = place_code.location
     ending = place_code.destination
   }
-
-
-
 
   useEffect(() => {
     if (isLoaded && starting && ending) {
@@ -98,12 +93,11 @@ const DriverMap = () => {
   }, [isLoaded, starting, ending]);
 
   const handleChange = (target, index) => {
-    if (/^\d$/.test(target.value)) { // Ensures only digits are entered
+    if (/^\d$/.test(target.value)) { 
       const newOtp = [...otp];
       newOtp[index] = target.value;
       setOtp(newOtp);
   
-      // Automatically move to the next input if not the last
       if (index < 3) {
         inputRefs.current[index + 1].focus();
       }
@@ -132,17 +126,23 @@ const DriverMap = () => {
     if(otp.length===4){
       const con_otp = otp.join('')
       console.log(con_otp,'user otp')
-      const result=OTP_confirm(con_otp)
-
-      // console.log(result,'result')
-
+      OTP_confirm(con_otp)
     }
   }
 
-  const handlefinishride= ()=>{
-    dispatch(addOTPvalidation(null))
+  const handlefinishRide= ()=>{
+    // setIsModalOpen(false);
+    Ride_completion()
+    
   }
+  
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <div className='flex flex-col md:flex-row  p-6 md:p-10 space-y-4 md:space-y-0 md:space-x-4'>
       {/* Left side with ride details */}
@@ -218,14 +218,21 @@ const DriverMap = () => {
         </>): 
 
         (<div className='flex justify-center items-center   space-x-6 bg-white shadow-xl p-4 rounded-md'>
-          <p>Finish when you've reached your destination</p>
-          <button onClick={handlefinishride} className='bg-black border border-black text-white px-4 py-2 rounded hover:bg-white hover:text-black '>
-            Finish the Ride
+          <p className='text-base'>Finish when you've reached your destination !</p>
+          <button onClick={openModal} className='bg-black border border-black text-lg font-semibold text-white px-4 py-2 rounded-md hover:bg-white hover:text-black '>
+            Finish the ride
           </button>
         </div>
           )
-          
-                }
+                } 
+        </div>
+        <div>
+          <Ride_finish_modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onConfirm={handlefinishRide}
+          amount={(price * 0.9).toFixed(2)}
+           />
         </div>
 
       </div>

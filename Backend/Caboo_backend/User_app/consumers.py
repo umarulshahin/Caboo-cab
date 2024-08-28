@@ -15,7 +15,29 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
     drivers_distance = []
     driver_count = set()
     user_id = 0
+    trip_id = None
     
+    @sync_to_async
+    def Trip_update(self,data):
+        from .serializer import TripSerializer
+        from .models import TripDetails
+        try:
+            status={
+                "status":data
+            }
+            print(LocationConsumer.trip_id,'trip id ')
+            trip = TripDetails.objects.filter(id=LocationConsumer.trip_id).first()
+            print(trip,'trip data')
+            serializer = TripSerializer(trip,status,partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return "successfully update"
+            else:
+                print('Trip update error :',serializer.errors)
+        except Exception as e:
+        
+           print(f"error {e}")
+
     @sync_to_async
     def otp_validate(self,data):
         from .serializer import OTPValidationSerializer
@@ -41,10 +63,12 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         serializer = TripSerializer(data=tripdata)
         if serializer.is_valid():
             serializer.save()
-            
+            print(serializer.data,'trip data')
+            LocationConsumer.trip_id=serializer.data['id']
+            print(LocationConsumer.trip_id,'trip id')
             return serializer.data
         else:
-            print(serializer.errors)
+            print(serializer.errors ,'yes this error is working')
             return None
     
     @sync_to_async
@@ -60,7 +84,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             
     @sync_to_async
     def serialize_driver_data(self, driver):
-        print(driver, 'call is coming serializer')
+        
         from Driver_app.serializer import DriverDataSerializer
         
         return DriverDataSerializer(driver, many=True).data
@@ -84,16 +108,14 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     'tripOTP': OTP,
                     'status': 'pending'
                 }
-
+                
+                print(tripdata,'tripdata ')
                 save_trip = await self.Save_trip(tripdata)
-                print(save_trip, 'tripdata')
 
                 if save_trip:
                     driverdata = await self.Get_driverdata(save_trip['driver'])
-                    print(driverdata, 'driver data is working')
 
                     if driverdata:
-                        print(driverdata, 'driver data')
                         driver = await self.serialize_driver_data(driverdata)
                         
                         return {
@@ -201,10 +223,9 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     await self.channel_layer.group_send(
                             f'user_{LocationConsumer.user_id}', 
                             {
-                                'type': 'OTP_success',
+                                'type': 'SuccessNotification',
+                                'status': 'OTP_success',
                                 'message': 'OTP validation succeeded. Trip is confirmed.',
-
-                                
                             }
                         )
                     
@@ -213,11 +234,11 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                        f'driver_{id}',
                        {
                         
-                        'type' : 'OTP_success',
+                        'type' : 'SuccessNotification',
+                        'status': 'OTP_success',
                         'message': 'OTP validation succeeded. You can start the trip.',
 
-                       }
-                       
+                       }  
                     )
                     
                 elif 'error' in result:
@@ -225,12 +246,24 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     await self.channel_layer.group_send(
                        f'driver_{id}',
                        {
-                        
                         'type' : 'OTP_faild'
-
-                       }
-                       
+                       } 
                     )
+                    
+            elif 'ride_complete' in data:
+                
+                result = await self.Trip_update("complete")
+                if result == 'successfully update':
+                    print(result,'ride completed')
+                    
+                    await self.channel_layer.group_send(
+                            f'user_{LocationConsumer.user_id}', 
+                            {
+                                'type': 'SuccessNotification',
+                                'status': 'Trip complete',
+                                'message': 'Trip complete succesfully.',
+                            }
+                        )
                 
             else:
                 print(f"Received unknown data format: {data}")
@@ -347,7 +380,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         }))
     
     async def notify_user(self, event):
-        print(event, "notify user is working")
+        
         await self.send(text_data=json.dumps({
             'type': 'ride_accepted',
             'data': event
@@ -362,8 +395,10 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             
         }))
     
-    async def OTP_success(self, event):
+    async def SuccessNotification(self, event):
+        
+        print(event,'yes this working success')
         await self.send(text_data=json.dumps({
-            'type': event['type'],
+            'type': event['status'],
             'message': event['message'],
         }))
