@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import MapComponent from '../../Pages/user_side/Map'
 import { backendUrl } from '../../Utils/Constanse'
-import destination_icon from "../../assets/destination.png";
-import location_icon from "../../assets/location.png";
-import key from '../../assets/key.png';
 import pickup from '../../assets/pickup.png';
 import dropoff from '../../assets/dropoff.png';
 import money from '../../assets/money.png';
 import time from '../../assets/time.png';
 import distancee from '../../assets/distance.png';
+import useUserWebSocket from '../../Socket/Socket';
+import { addOTPvalidation } from '../../Redux/RideSlice';
 
 const UserRide_page = () => {
     const [locationCoords, setLocationCoords] = useState(null);
@@ -17,13 +16,19 @@ const UserRide_page = () => {
     const [driverData, setDriverData] = useState({});
     const [rideData, setRideData] = useState({});
     const ridedriver = useSelector((state) => state.ride_data.rideDriverdetails);
-    console.log(ridedriver, 'ride details');
+    const otpvalidation = useSelector((state)=>state.ride_data.otpValidation);
+
+    const dispatch = useDispatch()
+    useUserWebSocket()
 
     useEffect(() => {
         const { driverLocation, clientLocation } = ridedriver ? ridedriver.data.user_data.driverdata : {};
-        setLocationCoords({ lat: clientLocation.lat, lng: clientLocation.lng });
-        setDestinationCoords({ lat: driverLocation.lat, lng: driverLocation.lng });
-
+        if(otpvalidation!=='OTP_success'){
+            console.log('yes working')
+            setLocationCoords({ lat: clientLocation.lat, lng: clientLocation.lng });
+            setDestinationCoords({ lat: driverLocation.lat, lng: driverLocation.lng });
+        }
+       
         const { profile, username } = ridedriver ? ridedriver.data.tripdata.driver_data[0].customuser : {};
         const { vehicle_name, vehicle_no } = ridedriver ? ridedriver.data.tripdata.driver_data[0] : {};
 
@@ -46,7 +51,25 @@ const UserRide_page = () => {
             tripOtp: tripOTP,
         });
     }, [ridedriver]);
+          
+    useEffect(() => {
+      
+      const ride_places = ridedriver ? ridedriver.data.user_data.ride_data.userRequest.place_code:"";
 
+      if (otpvalidation === 'OTP_success' && ride_places) {
+        const location = ride_places ? ride_places.location:"";
+        const destination = ride_places ? ride_places.destination:"";
+
+        setLocationCoords({ lat: location.lat, lng: location.lng });
+        setDestinationCoords({ lat: destination.lat, lng: destination.lng });
+
+      }
+  }, [otpvalidation,ridedriver]);
+  
+  const handleRidecancel=()=>{
+    dispatch(addOTPvalidation(null))
+
+  }
     return (
         <div className='flex flex-row  p-10 space-x-4'>
             <div className='py-4 w-1/2 shadow-2xl bg-blue-50 flex flex-col items-center justify-center'>
@@ -100,14 +123,26 @@ const UserRide_page = () => {
                         <img src={money} alt="Amount" className='w-6 h-6 mr-2 ' /> {/* Money icon */}
                         <p className='font-bold'>₹ {rideData.amount}</p>
                     </div>
+                    { otpvalidation !== 'OTP_success' ? 
+                      <>
                     <div className='flex items-center justify-center  mb-4 shadow-xl rounded-md p-4 space-x-4  bg-white'>
                          <p className='font-semibold text-xl '> OTP :</p>
                         <p className='font-bold text-2xl'>{rideData.tripOtp}</p>
                     </div>
                     <div className='flex justify-center py-3'>
-                    <button className='bg-red-600 text-white py-2 px-6 font-bold text-xl rounded-md shadow-xl'>Cancel Ride</button>
+                    <button onClick={handleRidecancel} className='bg-red-600 text-white py-2 px-6 font-bold text-xl rounded-md shadow-xl'>Cancel Ride</button>
 
                     </div>
+                    </>:
+                    <div className='flex justify-center p-4'>
+                      <span className='text-2xl font-bold text-blue-500'>
+                              Your safety is our top priority . <br />
+                              Have a nice journey !
+                      </span>
+                    </div>
+                 
+                    
+                    }
                 </div>
             </div>
             <div className='w-1/2 rounded-lg shadow-2xl'>

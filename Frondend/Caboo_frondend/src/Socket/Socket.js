@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addRideDriverdetails } from '../Redux/RideSlice';
+import { addOTPvalidation, addRideDriverdetails } from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
 
 const useUserWebSocket = () => {
@@ -30,6 +30,14 @@ const useUserWebSocket = () => {
                
                 dispatch(addRideDriverdetails(data))
                 navigate('/userRide')
+
+            }else if (data.type.trim() === 'OTP_success'){
+
+                console.log('yes otp success working asdfasdfsad')
+                dispatch(addOTPvalidation('OTP_success'))
+
+                navigate('/userRide')
+
 
             }
         };

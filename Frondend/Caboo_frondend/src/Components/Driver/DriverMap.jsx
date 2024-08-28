@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { GoogleMap, Polyline, Marker, useLoadScript } from '@react-google-maps/api';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "sonner";
 import useDriverWebSocket from '../../Socket/DriverSocket';
 
@@ -12,6 +12,7 @@ import dropoff from '../../assets/dropoff.png';
 import money from '../../assets/money.png';
 import time from '../../assets/time.png';
 import distancee from '../../assets/distance.png';
+import { addOTPvalidation } from '../../Redux/RideSlice';
 
 const mapContainerStyle = {
   height: '100%',
@@ -44,7 +45,7 @@ const DriverMap = () => {
 
   const data = useSelector((state) => state.ride_data.rideLocations);
   const ridedetails = useSelector((state)=>state.ride_data.rideDetails);
-  
+  const dispatch = useDispatch()
   console.log(data,'data ride')
 
   let starting = data?.driver;
@@ -58,6 +59,7 @@ const DriverMap = () => {
   const inputRefs = useRef([]);
   
   const { OTP_confirm } = useDriverWebSocket()
+  
   const otpvalidation = useSelector((state)=>state.ride_data.otpValidation);
 
     console.log(otpvalidation,'otp validation')
@@ -137,6 +139,10 @@ const DriverMap = () => {
     }
   }
 
+  const handlefinishride= ()=>{
+    dispatch(addOTPvalidation(null))
+  }
+
   return (
     <div className='flex flex-col md:flex-row  p-6 md:p-10 space-y-4 md:space-y-0 md:space-x-4'>
       {/* Left side with ride details */}
@@ -213,7 +219,7 @@ const DriverMap = () => {
 
         (<div className='flex justify-center items-center   space-x-6 bg-white shadow-xl p-4 rounded-md'>
           <p>Finish when you've reached your destination</p>
-          <button onClick={handleConfirmride} className='bg-black border border-black text-white px-4 py-2 rounded hover:bg-white hover:text-black '>
+          <button onClick={handlefinishride} className='bg-black border border-black text-white px-4 py-2 rounded hover:bg-white hover:text-black '>
             Finish the Ride
           </button>
         </div>

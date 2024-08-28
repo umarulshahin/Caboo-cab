@@ -45,7 +45,6 @@ const RideSlice=createSlice({
             state.rideDriverdetails=action.payload
         },
         addOTPvalidation:(state,action)=>{
-            console.log(action.payload,'pyload is working')
             state.otpValidation=action.payload
         }
 
