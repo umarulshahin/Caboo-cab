@@ -305,7 +305,6 @@ const useDriverWebSocket = () => {
     
 
     const OTP_confirm= async(value)=>{
-           console.log(value,'confirm otp values')
            if(value){
             const data={
                 'otp' : value,
@@ -316,9 +315,15 @@ const useDriverWebSocket = () => {
                 Otp_data : data
     
                }))
-           }
-          
+           }         
+    }
 
+    const Ride_completion=()=>{
+        console.log('yes ride complete')
+        socketRef.current.send(JSON.stringify({
+            requestType: 'ride complete',
+            ride_complete: 'success'
+        }))
     }
 
     return {
@@ -326,7 +331,7 @@ const useDriverWebSocket = () => {
         modalUserData,
         handleAcceptRide,
         OTP_confirm,
-
+        Ride_completion,
 
         handleDecline: () => {
             if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
