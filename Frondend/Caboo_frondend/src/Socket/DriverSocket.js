@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import notificationSound from '../assets/notification.wav';
 import { useLoadScript } from "@react-google-maps/api";
-import { addDriverRide, addRideDetails, addRideLocations } from '../Redux/RideSlice';
+import { addDriverRide, addOTPvalidation, addRideDetails, addRideLocations } from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const libraries = ["places"];
 const apiKey = import.meta.env.VITE_google_map_api_key;
@@ -54,12 +55,13 @@ const useDriverWebSocket = () => {
             } else {
                 console.error('WebSocket is not open. Unable to send decline message.');
             }
-            // clearTimeout(declineTimeout);
+            clearTimeout(declineTimeout);
         };
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log('yes driver side request reached ')
+            console.log(data,'yes driver side request reached ')
+            console.log(data.type,'data type ')
 
             if (data.type === 'location_request') {
                 if (!isRequestInProgress) {
@@ -80,14 +82,23 @@ const useDriverWebSocket = () => {
                     console.warn("Audio play was blocked:", error);
                 });
 
-                // const timeout = setTimeout(() => {
-                //     if (!respondedRef.current) {
-                //         console.warn("No action taken, automatically declining the request.");
-                //         handleDecline();
-                //     }
-                // }, 10000);
+                const timeout = setTimeout(() => {
+                    if (!respondedRef.current) {
+                        console.warn("No action taken, automatically declining the request.");
+                        handleDecline();
+                    }
+                }, 10000);
 
-                // setDeclineTimeout(timeout);
+                setDeclineTimeout(timeout);
+            }else if(data.type.trim() === "otp validation faild"){
+                console.log('yes working')
+                toast.error('OTP invalid try again .')
+
+            }else if (data.type.trim() === 'OTP_success'){
+                console.log('yes otp validation is working')
+                dispatch(addOTPvalidation('OTP_success'))
+                navigate('/ride')
+
             }
         };
 
@@ -99,7 +110,7 @@ const useDriverWebSocket = () => {
             if (ws.readyState === WebSocket.OPEN) {
                 ws.close();
             }
-            // clearTimeout(declineTimeout);
+            clearTimeout(declineTimeout);
         };
     }, [driver.user_id]);
 
@@ -288,17 +299,33 @@ const useDriverWebSocket = () => {
         } else {
             console.error('WebSocket is not open or location data is missing.');
         }
-         // clearTimeout(declineTimeout);
+         clearTimeout(declineTimeout);
 
     };
     
 
+    const OTP_confirm= async(value)=>{
+           console.log(value,'confirm otp values')
+           if(value){
+            const data={
+                'otp' : value,
+                'driver_id' : driver.user_id
+            }
+             socketRef.current.send(JSON.stringify({
+                requestType: 'otp_confirm',
+                Otp_data : data
+    
+               }))
+           }
+          
 
+    }
 
     return {
         showModal,
         modalUserData,
         handleAcceptRide,
+        OTP_confirm,
 
 
         handleDecline: () => {

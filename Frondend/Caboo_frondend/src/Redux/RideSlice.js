@@ -13,7 +13,8 @@ const RideSlice=createSlice({
         driverRideDetails:null,
         rideLocations:null,
         rideDetails:null,
-        rideDriverdetails:null
+        rideDriverdetails:null,
+        otpValidation:null
 
     },
     reducers:{
@@ -42,12 +43,25 @@ const RideSlice=createSlice({
         },
         addRideDriverdetails:(state,action)=>{
             state.rideDriverdetails=action.payload
+        },
+        addOTPvalidation:(state,action)=>{
+            console.log(action.payload,'pyload is working')
+            state.otpValidation=action.payload
         }
 
 
     }
 })
 
-export const{addCharges,addDistance,addPlaces,addClint,addDriverRide,addRideLocations,addRideDetails,addRideDriverdetails}=RideSlice.actions;
+export const{addCharges,
+    addDistance,
+    addPlaces,
+    addClint,
+    addDriverRide,
+    addRideLocations,
+    addRideDetails,
+    addRideDriverdetails,
+    addOTPvalidation
+    }=RideSlice.actions;
 
 export default RideSlice.reducer

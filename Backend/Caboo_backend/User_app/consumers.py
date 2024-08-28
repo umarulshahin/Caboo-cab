@@ -17,6 +17,24 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
     user_id = 0
     
     @sync_to_async
+    def otp_validate(self,data):
+        from .serializer import OTPValidationSerializer
+        
+        otp_data ={
+            'tripOTP':data['Otp_data']['otp'],
+            'driver' : data['Otp_data']['driver_id']
+        }
+        print(otp_data,'otp_data')
+        serializer= OTPValidationSerializer(data=otp_data)
+        
+        if serializer.is_valid():
+            return serializer.validated_data
+        
+        else:
+            return {'error':serializer.errors}
+        
+        
+    @sync_to_async
     def Save_trip(self,tripdata):
         from .serializer import TripSerializer
         
@@ -158,6 +176,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         )
                     else:
                         print("error result is empty")
+       
 
                                 
                 elif data['rideRequestResponse'] == 'declined':
@@ -173,6 +192,46 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         )
                     else:
                         print(LocationConsumer.user_id, 'user id')
+                        
+            elif 'Otp_data' in data:
+                result = await self.otp_validate(data)
+                
+                if 'tripOTP' in result and 'driver' in result:
+                    
+                    await self.channel_layer.group_send(
+                            f'user_{LocationConsumer.user_id}', 
+                            {
+                                'type': 'OTP_success',
+                                'message': 'OTP validation succeeded. Trip is confirmed.',
+
+                                
+                            }
+                        )
+                    
+                    id=data['Otp_data']['driver_id']
+                    await self.channel_layer.group_send(
+                       f'driver_{id}',
+                       {
+                        
+                        'type' : 'OTP_success',
+                        'message': 'OTP validation succeeded. You can start the trip.',
+
+                       }
+                       
+                    )
+                    
+                elif 'error' in result:
+                    id=data['Otp_data']['driver_id']
+                    await self.channel_layer.group_send(
+                       f'driver_{id}',
+                       {
+                        
+                        'type' : 'OTP_faild'
+
+                       }
+                       
+                    )
+                
             else:
                 print(f"Received unknown data format: {data}")
         except json.JSONDecodeError:
@@ -294,3 +353,17 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             'data': event
         }))
 
+
+    async def OTP_faild(self,event):
+        
+        await self.send(text_data=json.dumps({
+            
+            'type' : 'otp validation faild '
+            
+        }))
+    
+    async def OTP_success(self, event):
+        await self.send(text_data=json.dumps({
+            'type': event['type'],
+            'message': event['message'],
+        }))

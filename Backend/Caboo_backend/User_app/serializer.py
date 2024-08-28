@@ -26,3 +26,16 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = TripDetails
         fields = ['user', 'driver' , 'location', 'destination', 'distance', 'duration', 'amount', 'orderId','tripOTP', 'status', 'dataTime' ]
+        
+class OTPValidationSerializer(serializers.Serializer):
+    tripOTP = serializers.CharField()
+    driver = serializers.IntegerField()
+
+    def validate(self, data):
+        tripOTP = data.get('tripOTP')
+        driver = data.get('driver')
+
+        if not TripDetails.objects.filter(tripOTP=tripOTP, driver=driver).exists():
+            raise serializers.ValidationError("Invalid OTP or driver.")
+        
+        return data
