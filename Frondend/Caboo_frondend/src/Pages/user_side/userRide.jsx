@@ -11,7 +11,7 @@ const UserRide = () => {
   
   // State for managing active tab
   const [selectedTab, setSelectedTab] = useState('Current Ride');
-
+  
 
   return (
     <div className='min-h-screen'>

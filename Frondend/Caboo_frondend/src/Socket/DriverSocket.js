@@ -23,7 +23,7 @@ const useDriverWebSocket = () => {
     const [Driverlocation,setDriverlocation] = useState(null)
     const dispatch=useDispatch()
     const navigate = useNavigate()
-
+    
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: apiKey,
         libraries,
@@ -97,7 +97,6 @@ const useDriverWebSocket = () => {
             }else if (data.type.trim() === 'OTP_success'){
                 console.log('yes otp validation is working')
                 dispatch(addOTPvalidation('OTP_success'))
-                navigate('/ride')
 
             }
         };
@@ -288,7 +287,8 @@ const useDriverWebSocket = () => {
                     driver_id: driver.user_id,
                     rideRequestResponse: 'accepted',
                     driverdata: driverData,
-                    driverDtails : driverdetails
+                    driverDtails : driverdetails,
+                    ride_data : modalUserData
                 }));
 
                 navigate('/ride')

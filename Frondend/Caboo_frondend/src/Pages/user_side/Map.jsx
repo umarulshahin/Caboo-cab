@@ -40,6 +40,7 @@ const MapComponent = ({ locationCoords, destinationCoords }) => {
 
   useEffect(() => {
     if (!locationCoords.lat || !destinationCoords.lat) {
+
       dispatch(addCharges(null));
       dispatch(addDistance(null));
       dispatch(addPlaces(null));

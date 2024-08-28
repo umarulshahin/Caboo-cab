@@ -6,6 +6,7 @@ import avatar from "../../assets/profile_img.png"
 import { addToken_data, addUser } from "../../Redux/UserSlice";
 import { backendUrl } from "../../Utils/Constanse";
 import Cookies from "js-cookie"
+import useUserWebSocket from "../../Socket/Socket";
 
 const User_header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const User_header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profile,setprofile]=useState('')
   const [username,setUsername]=useState('')
+  useUserWebSocket()
   const data = useSelector((state) => state.user_data.user_data);
   console.log(data)
   useEffect(()=>{
