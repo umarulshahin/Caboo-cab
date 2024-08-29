@@ -8,18 +8,18 @@ import money from '../../assets/money.png';
 import time from '../../assets/time.png';
 import distancee from '../../assets/distance.png';
 import useUserWebSocket from '../../Socket/Socket';
-import { addOTPvalidation } from '../../Redux/RideSlice';
+import RideCancelModal from './RideCancelModal';
 
 const UserRide_page = () => {
     const [locationCoords, setLocationCoords] = useState(null);
     const [destinationCoords, setDestinationCoords] = useState(null);
     const [driverData, setDriverData] = useState({});
     const [rideData, setRideData] = useState({});
+    const [showCancelModal, setShowCancelModal] = useState(false);
+
     const ridedriver = useSelector((state) => state.ride_data.rideDriverdetails);
     const otpvalidation = useSelector((state)=>state.ride_data.otpValidation);
-
-    const dispatch = useDispatch()
-    useUserWebSocket()
+    const {Canceltrip}=useUserWebSocket()
 
     useEffect(() => {
         const { driverLocation, clientLocation } = ridedriver ? ridedriver.data.user_data.driverdata : {};
@@ -66,10 +66,16 @@ const UserRide_page = () => {
       }
   }, [otpvalidation,ridedriver]);
   
-  const handleRidecancel=()=>{
-    dispatch(addOTPvalidation(null))
+  const handleCancelRide=()=>{
+    setShowCancelModal(false);
+    Canceltrip()
+    console.log('yes cancel function working')
 
   }
+  const handleCancelModalClose = () => {
+    setShowCancelModal(false);
+
+  };
     return (
         <div className='flex flex-row  p-10 space-x-4'>
             <div className='py-4 w-1/2 shadow-2xl bg-blue-50 flex flex-col items-center justify-center'>
@@ -130,8 +136,14 @@ const UserRide_page = () => {
                         <p className='font-bold text-2xl'>{rideData.tripOtp}</p>
                     </div>
                     <div className='flex justify-center py-3'>
-                    <button onClick={handleRidecancel} className='bg-red-600 text-white py-2 px-6 font-bold text-xl rounded-md shadow-xl'>Cancel Ride</button>
-
+                    <button         onClick={() => setShowCancelModal(true)}
+                         className='bg-red-600 text-white py-2 px-6 font-bold text-xl rounded-md shadow-xl'>Cancel Ride</button>
+                        {showCancelModal && (
+                                <RideCancelModal
+                                  onConfirm={handleCancelRide}
+                                  onCancel={handleCancelModalClose}
+                                />
+                              )}
                     </div>
                     </>:
                     <div className='flex flex-col justify-center items-center p-4'>

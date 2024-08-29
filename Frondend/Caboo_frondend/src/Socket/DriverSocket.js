@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import notificationSound from '../assets/notification.wav';
 import { useLoadScript } from "@react-google-maps/api";
-import { addDriverRide, addOTPvalidation, addRideDetails, addRideLocations } from '../Redux/RideSlice';
+import { addClint, addDriverRide, addOTPvalidation, addRideDetails, addRideDriverdetails, addRideLocations } from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -98,6 +98,9 @@ const useDriverWebSocket = () => {
                 console.log('yes otp validation is working')
                 dispatch(addOTPvalidation('OTP_success'))
 
+            }else if (data.type === 'Payment verification'){
+                
+                navigate('/paymentconfirm')
             }
         };
 
@@ -319,11 +322,29 @@ const useDriverWebSocket = () => {
     }
 
     const Ride_completion=()=>{
-        console.log('yes ride complete')
         socketRef.current.send(JSON.stringify({
             requestType: 'ride complete',
             ride_complete: 'success'
         }))
+    }
+
+    const Paymentconfirm=()=>{
+
+
+        dispatch(addClint(null))
+        dispatch(addDriverRide(null))
+        dispatch(addRideLocations(null))
+        dispatch(addRideDetails(null))
+        dispatch(addRideDriverdetails(null))
+        dispatch(addOTPvalidation(null))
+
+        socketRef.current.send(JSON.stringify({
+            requestType : "payment received ",
+            'payment received' : 'cashinhand'
+
+        }))
+
+        navigate('/driver_home')
     }
 
     return {
@@ -332,6 +353,7 @@ const useDriverWebSocket = () => {
         handleAcceptRide,
         OTP_confirm,
         Ride_completion,
+        Paymentconfirm,
 
         handleDecline: () => {
             if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
@@ -344,7 +366,7 @@ const useDriverWebSocket = () => {
                     driver_id: driver.user_id,
                     rideRequestResponse: 'declined',
                 }));
-                // clearTimeout(declineTimeout);
+                clearTimeout(declineTimeout);
             } else {
                 console.error('WebSocket is not open. Unable to send decline message.');
             }

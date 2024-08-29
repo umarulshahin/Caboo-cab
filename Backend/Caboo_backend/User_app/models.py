@@ -25,6 +25,7 @@ class TripDetails(models.Model):
     orderId = models.CharField(max_length=12, unique=True, blank=True)
     tripOTP = models.CharField(max_length=10,blank=False)
     status = models.CharField(max_length=20,blank=False)
+    payment_type = models.CharField(max_length=50,blank=True)
     dataTime = models.DateTimeField(default=timezone.now)
      
     def save(self, *args, **kwargs):

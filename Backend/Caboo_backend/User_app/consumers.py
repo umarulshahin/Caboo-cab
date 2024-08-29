@@ -15,20 +15,30 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
     drivers_distance = []
     driver_count = set()
     user_id = 0
+    driver_id = 0
     trip_id = None
     
     @sync_to_async
     def Trip_update(self,data):
         from .serializer import TripSerializer
         from .models import TripDetails
+        print(data,'trip updation is working')
         try:
-            status={
-                "status":data
-            }
+        
+            if 'payment_type' in data:
+                update_data = {
+                    "payment_type" : data['payment_type'],
+                    "status":data['status']
+                }
+            else:
+                update_data={
+                    "status":data
+                }
+                
             print(LocationConsumer.trip_id,'trip id ')
             trip = TripDetails.objects.filter(id=LocationConsumer.trip_id).first()
             print(trip,'trip data')
-            serializer = TripSerializer(trip,status,partial=True)
+            serializer = TripSerializer(trip,update_data,partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return "successfully update"
@@ -97,6 +107,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             OTP = str(random.randint(1000, 9999))
 
             if user_id and data:
+                LocationConsumer.driver_id=data['driver_id']
                 tripdata = {
                     'user': user_id,
                     'driver': data['driver_id'],
@@ -175,7 +186,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             if 'Driverlocation' in data:
                 await self.handle_driver_location(data)
                 
-            elif 'userRequest' in data:
+            elif 'userRequest' in data and 'type' in data['userRequest']:
                 LocationConsumer.drivers_distance.clear()
                 LocationConsumer.drivers_location.clear()
                 LocationConsumer.drivers.clear()
@@ -230,6 +241,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         )
                     
                     id=data['Otp_data']['driver_id']
+                    LocationConsumer.driver_id = id
                     await self.channel_layer.group_send(
                        f'driver_{id}',
                        {
@@ -264,7 +276,40 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                 'message': 'Trip complete succesfully.',
                             }
                         )
+                    
+            elif 'userRequest' in data and 'payment_type' in data['userRequest']:
+                                
+                    id = LocationConsumer.driver_id
+                    print(id , 'driver id ')
+                    await self.channel_layer.group_send(
+                       f'driver_{id}',
+                       {
+                        
+                        'type' : 'SuccessNotification',
+                        'status': 'Payment verification',
+                        'message': data,
+                        
+                       }  
+                    )
+            elif 'payment received' in data:
                 
+                result = await self.Trip_update({'payment_type' : data['payment received'],'status': 'complete'})
+                
+                if result :
+                    print(result ,'result in payment updation ')
+                    await self.channel_layer.group_send(
+                            f'user_{LocationConsumer.user_id}', 
+                            {
+                                'type': 'SuccessNotification',
+                                'status': 'payment completed',
+                                'message': 'Trip complete successfylly',
+                            }
+                        )
+                    
+            elif 'tripcancel' in data:
+                
+                                result = await self.Trip_update("complete")
+
             else:
                 print(f"Received unknown data format: {data}")
         except json.JSONDecodeError:
