@@ -10,7 +10,6 @@ import AdminReducer from "./AdminSlice";
 import DriverReducer from "./DriverSlice";
 import AuthenticationReducer from "./AuthenticationSlice";
 import RideReducer from "./RideSlice";
-import { version } from "react";
 
 const persistConfig ={
     key:'root',
