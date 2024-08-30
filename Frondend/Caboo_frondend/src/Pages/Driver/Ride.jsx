@@ -3,6 +3,7 @@ import Driver_Header from '../../Components/Driver/Driver_Header';
 import Footer from '../../Components/Footer';
 import DriverMap from '../../Components/Driver/DriverMap';
 import { useSelector } from 'react-redux';
+import empty from '../../assets/empty.png'
 
 const Ride = () => {
   const [selected, setSelected] = useState("current ride");
@@ -49,15 +50,21 @@ const Ride = () => {
       </label>
       <span
         className={`absolute top-0 h-full w-1/2 bg-black transition-transform ${
-          selected === "Ride History" ? "transform translate-x-full" : ""
+          selected === "Ride History" ? "transform translate-x-full" : "n"
         }`}
       ></span>
     </div>
-      {ridedetails && 
+      {ridedetails ?
       <div className='w-screen  mb-10 h-[700px]'>
 
         { selected === 'current ride' ? <DriverMap /> : "Not available "}
-      </div>}
+      </div>
+      :
+      <div className='flex justify-center items-center space-x-4 '>
+        <img className='size-32' src={empty} alt="empty" />
+        <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
+      </div>
+      }
       
       <Footer />
     </div>
