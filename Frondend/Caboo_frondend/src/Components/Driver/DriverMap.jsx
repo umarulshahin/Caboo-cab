@@ -13,6 +13,7 @@ import money from '../../assets/money.png';
 import time from '../../assets/time.png';
 import distancee from '../../assets/distance.png';
 import Ride_finish_modal from './Ride_finish_modal';
+import DriverRideCancel from './DriverRideCancel';
 
 const mapContainerStyle = {
   height: '100%',
@@ -48,11 +49,12 @@ const DriverMap = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [directions, setDirections] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(13);
+  const [cancelModal,setCancelModal] =useState(false)
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputRefs = useRef([]);
   
-  const { OTP_confirm,Ride_completion } = useDriverWebSocket()
+  const { OTP_confirm,Ride_completion,RideCancel } = useDriverWebSocket()
 
   let starting = data?.driver;
   let ending = data?.client;
@@ -142,6 +144,19 @@ const DriverMap = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleshowCancelModal=()=>{
+    setCancelModal(true)
+  }
+  const handleCancelModalClose=()=>{
+    
+    setCancelModal(false)
+
+  }
+  const handleCancelRide=()=>{
+     RideCancel()
+     
+  }
   return (
     <div className='flex flex-col md:flex-row  p-6 md:p-10 space-y-4 md:space-y-0 md:space-x-4'>
       {/* Left side with ride details */}
@@ -207,9 +222,14 @@ const DriverMap = () => {
             
           </div>
           <div className='flex justify-center space-x-2'>
-          <button className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'>
+          <button onClick={handleshowCancelModal} className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'>
             Cancel Ride
           </button>
+          {cancelModal && 
+          <DriverRideCancel 
+            onConfirm={handleCancelRide}
+            onCancel={handleCancelModalClose}
+          />}
           <button onClick={handleConfirmride} className='bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600'>
             Confirm Ride
           </button>

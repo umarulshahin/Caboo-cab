@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import notificationSound from '../assets/notification.wav';
 import { useLoadScript } from "@react-google-maps/api";
-import { addClint, addDriverRide, addOTPvalidation, addRideDetails, addRideDriverdetails, addRideLocations } from '../Redux/RideSlice';
+import { addClearRide, addClint, addDriverRide, addOTPvalidation, addRideDetails, addRideDriverdetails, addRideLocations } from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -102,13 +102,8 @@ const useDriverWebSocket = () => {
                 
                 navigate('/paymentconfirm')
             }else if (data.type.trim() === "Trip cancel"){
-                dispatch(addClint(null))
-                dispatch(addDriverRide(null))
-                dispatch(addRideLocations(null))
-                dispatch(addRideDetails(null))
-                dispatch(addRideDriverdetails(null))
-                dispatch(addOTPvalidation(null))
 
+                dispatch(addClearRide(null))
                 navigate('/driver_home')
                 toast.warning("User canceled the trip. We apologize for the inconvenience.")
             }
@@ -340,23 +335,27 @@ const useDriverWebSocket = () => {
 
     const Paymentconfirm=()=>{
 
-
-        dispatch(addClint(null))
-        dispatch(addDriverRide(null))
-        dispatch(addRideLocations(null))
-        dispatch(addRideDetails(null))
-        dispatch(addRideDriverdetails(null))
-        dispatch(addOTPvalidation(null))
+        dispatch(addClearRide(null))
 
         socketRef.current.send(JSON.stringify({
             requestType : "payment received ",
             'payment received' : 'cashinhand'
 
         }))
+        navigate('/driver_home')
+        
+    }
+    
+    const RideCancel=()=>{
+       
+        dispatch(addClearRide(null))
+
+        socketRef.current.send(JSON.stringify({
+            'drivertripcancel' : 'Driver want cancel this ride'
+        }))
 
         navigate('/driver_home')
     }
-
     return {
         showModal,
         modalUserData,
@@ -364,6 +363,7 @@ const useDriverWebSocket = () => {
         OTP_confirm,
         Ride_completion,
         Paymentconfirm,
+        RideCancel,
 
         handleDecline: () => {
             if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {

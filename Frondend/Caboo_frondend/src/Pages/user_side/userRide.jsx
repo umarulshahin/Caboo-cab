@@ -5,6 +5,7 @@ import Footer from '../../Components/Footer'
 import UserRide_page from '../../Components/user_side/UserRide_page'
 import { useSelector } from 'react-redux'
 import { useState } from "react";
+import empty from '../../assets/empty.png'
 
 const UserRide = () => {
   const ridedriver = useSelector((state) => state.ride_data.rideDriverdetails);
@@ -57,10 +58,20 @@ const UserRide = () => {
       </div>
     </div>
       
-       {ridedriver && 
+       {ridedriver ? 
          <div className="w-screen  ">
-         {selectedTab === 'Current Ride' && <UserRide_page />} 
+         {selectedTab === 'Current Ride' ? <UserRide_page /> :
+         <div className='flex justify-center items-center space-x-4 '>
+         <img className='size-32' src={empty} alt="empty" />
+         <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
        </div>
+       } 
+       </div>
+       :
+       <div className='flex justify-center items-center space-x-4 '>
+        <img className='size-32' src={empty} alt="empty" />
+        <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
+      </div>
         }
        
       <Footer />
