@@ -46,6 +46,17 @@ const RideSlice=createSlice({
         },
         addOTPvalidation:(state,action)=>{
             state.otpValidation=action.payload
+        },
+        addClearRide:(state,action)=>{
+            state.distance=action.payload
+            state.charges=action.payload
+            state.places=action.payload
+            state.clintDetails=action.payload
+            state.driverRideDetails=action.payload
+            state.rideLocations=action.payload
+            state.rideDetails=action.payload
+            state.rideDriverdetails=action.payload
+            state.otpValidation=action.payload
         }
 
 
@@ -60,7 +71,8 @@ export const{addCharges,
     addRideLocations,
     addRideDetails,
     addRideDriverdetails,
-    addOTPvalidation
+    addOTPvalidation,
+    addClearRide
     }=RideSlice.actions;
 
 export default RideSlice.reducer

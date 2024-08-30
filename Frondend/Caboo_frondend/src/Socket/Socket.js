@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCharges, addClint, addDistance, addDriverRide, addOTPvalidation, addPlaces, addRideDetails, addRideDriverdetails, addRideLocations } from '../Redux/RideSlice';
+import { addCharges, addClearRide, addClint, addDistance, addDriverRide, addOTPvalidation, addPlaces, addRideDetails, addRideDriverdetails, addRideLocations } from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
 import { replace } from 'formik';
+import { toast } from 'sonner';
 
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
@@ -45,17 +46,14 @@ const useUserWebSocket = () => {
                 navigate('/paymentModal')
             }else if (data.type.trim() === "payment completed"){
                
-                dispatch(addDistance(null))
-                dispatch(addCharges(null))
-                dispatch(addClint(null))
-                dispatch(addPlaces(null))
-                dispatch(addDriverRide(null))
-                dispatch(addRideLocations(null))
-                dispatch(addRideDetails(null))
-                dispatch(addRideDriverdetails(null))
-                dispatch(addOTPvalidation(null))
-
+                dispatch(addClearRide(null))
                 navigate('/userhome', { replace: true });
+
+            }else if (data.type.trim() === 'Trip cancel'){
+                dispatch(addClearRide(null))
+                navigate('/userhome', { replace: true });
+
+                toast.warning("Driver canceled the trip. We apologize for the inconvenience.")
 
             }
 
@@ -89,23 +87,14 @@ const useUserWebSocket = () => {
          console.log('cancel socket is working')
          if (socket && socket.readyState === WebSocket.OPEN) {
 
-            dispatch(addDistance(null))
-            dispatch(addCharges(null))
-            dispatch(addClint(null))
-            dispatch(addPlaces(null))
-            dispatch(addDriverRide(null))
-            dispatch(addRideLocations(null))
-            dispatch(addRideDetails(null))
-            dispatch(addRideDriverdetails(null))
-            dispatch(addOTPvalidation(null))
+            dispatch(addClearRide(null))
 
             console.log('Sending message:');
             const data={
-                'tripcancel': 'user want cancel this trip'
+                'usertripcancel': 'user want cancel this trip'
             }
-            socket.send(JSON.stringify({ tripcancel: data }));
+            socket.send(JSON.stringify({ usertripcancel: data }));
             navigate('/userhome', { replace: true });
-
             
         } else {
             console.error('Cannot send message, WebSocket is not open');

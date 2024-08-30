@@ -306,7 +306,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                             }
                         )
                     
-            elif 'tripcancel' in data:
+            elif 'usertripcancel' in data:
                 
                 result = await self.Trip_update("canceled")
                 
@@ -323,6 +323,22 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         
                        }  
                     )
+                    
+            elif 'drivertripcancel':
+                
+                result = await self.Trip_update("canceled")
+                if result:
+                    await self.channel_layer.group_send(
+                            f'user_{LocationConsumer.user_id}', 
+                            {
+                                'type': 'SuccessNotification',
+                                'status': 'Trip cancel',
+                                'message': 'Driver want cancel this trip',
+                        
+                            }
+                        )
+                    
+                
             else:
                 print(f"Received unknown data format: {data}")
         except json.JSONDecodeError:

@@ -57,7 +57,13 @@ const Ride = () => {
       {ridedetails ?
       <div className='w-screen  mb-10 h-[700px]'>
 
-        { selected === 'current ride' ? <DriverMap /> : "Not available "}
+        { selected === 'current ride' ? <DriverMap /> : 
+        
+        <div className='flex justify-center items-center space-x-4 '>
+        <img className='size-32' src={empty} alt="empty" />
+        <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
+        
+      </div>}
       </div>
       :
       <div className='flex justify-center items-center space-x-4 '>
