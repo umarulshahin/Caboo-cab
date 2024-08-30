@@ -131,7 +131,6 @@ const DriverMap = () => {
   }
 
   const handlefinishRide= ()=>{
-    // setIsModalOpen(false);
     Ride_completion()
     
   }

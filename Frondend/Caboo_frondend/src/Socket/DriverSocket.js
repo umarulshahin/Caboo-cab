@@ -101,6 +101,16 @@ const useDriverWebSocket = () => {
             }else if (data.type === 'Payment verification'){
                 
                 navigate('/paymentconfirm')
+            }else if (data.type.trim() === "Trip cancel"){
+                dispatch(addClint(null))
+                dispatch(addDriverRide(null))
+                dispatch(addRideLocations(null))
+                dispatch(addRideDetails(null))
+                dispatch(addRideDriverdetails(null))
+                dispatch(addOTPvalidation(null))
+
+                navigate('/driver_home')
+                toast.warning("User canceled the trip. We apologize for the inconvenience.")
             }
         };
 

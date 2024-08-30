@@ -294,7 +294,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             elif 'payment received' in data:
                 
                 result = await self.Trip_update({'payment_type' : data['payment received'],'status': 'complete'})
-                
+                print(result,'trip cancel result ')
                 if result :
                     print(result ,'result in payment updation ')
                     await self.channel_layer.group_send(
@@ -308,8 +308,21 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     
             elif 'tripcancel' in data:
                 
-                                result = await self.Trip_update("complete")
-
+                result = await self.Trip_update("canceled")
+                
+                if result:
+                    id = LocationConsumer.driver_id
+                    print(id , 'driver id ')
+                    await self.channel_layer.group_send(
+                       f'driver_{id}',
+                       {
+                        
+                        'type' : 'SuccessNotification',
+                        'status': 'Trip cancel',
+                        'message': 'User want cancel this trip',
+                        
+                       }  
+                    )
             else:
                 print(f"Received unknown data format: {data}")
         except json.JSONDecodeError:
@@ -321,8 +334,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         print('handle driver location is working')
         driver_id = data.get('id')
         location = data.get('Driverlocation')
-        
-        
         
         if driver_id and location:
             await self.save_driver_location(driver_id, location)
