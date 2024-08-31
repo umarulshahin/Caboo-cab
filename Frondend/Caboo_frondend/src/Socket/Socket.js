@@ -55,6 +55,9 @@ const useUserWebSocket = () => {
 
                 toast.warning("Driver canceled the trip. We apologize for the inconvenience.")
 
+            }else if (data.type.trim() === 'User already in a ride'){
+                toast.warning("Please complete your current ride before trying again.")
+                navigate('/userRide')
             }
 
         };

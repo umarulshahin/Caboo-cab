@@ -44,7 +44,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     phone = models.CharField(max_length=10, blank=False, unique=True)
     profile = models.ImageField(upload_to=upload_profile_image, blank=False, max_length=250)
-
+    ride = models.BooleanField(default=False,blank=False)
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'

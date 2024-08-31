@@ -60,7 +60,7 @@ const App = () => {
               <Route path='/vehicle_doc' element={<Vehicle_doc /> } />
               <Route path='/waitingModal' element={<WaitingModal /> } />
 
-              <Route path="/driver_home" element={<Driver_PrivatRoute> <Driver_home /> </ Driver_PrivatRoute>} />
+              <Route path="/driver_home" element={<Driver_PrivatRoute> <Driver_home /></ Driver_PrivatRoute>} />
               <Route path="/driver_profile" element={<Driver_profile /> } />
               <Route path="/ride" element={<Ride />} />
               <Route path="/paymentconfirm" element={<PaymentConfirmModal />} />
