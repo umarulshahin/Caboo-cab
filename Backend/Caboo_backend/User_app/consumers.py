@@ -18,6 +18,40 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
     driver_id = 0
     trip_id = None
     
+    
+    @sync_to_async
+    def RideStatus(self,user):
+        from Authentication_app.models import CustomUser
+        try:
+            return CustomUser.objects.filter(id=user,ride=False).first()
+        except Exception as e:
+            print(f"Ride status error {e}")
+    
+    @sync_to_async
+    def updateRide(self,user_id,driver_id,data):
+        
+        from User_app.serializer import UserSerializer
+        from Authentication_app.models import CustomUser
+        print('yes it is working ')
+        try:
+           if user_id and driver_id:
+                user = CustomUser.objects.get(id=user_id)
+                driver = CustomUser.objects.get(id=driver_id)
+                if user and driver:
+                    
+                    userserializer=UserSerializer(user,data,partial=True)
+                    if userserializer.is_valid():
+                        userserializer.save()
+                        driverserializer=UserSerializer(driver,data,partial=True)
+                        if driverserializer.is_valid():
+                            driverserializer.save()
+                            print('yes working all fine')
+                            return True
+                
+        except Exception as e:
+            print(f"update ride error {e}")
+       
+    
     @sync_to_async
     def Trip_update(self,data):
         from .serializer import TripSerializer
@@ -35,13 +69,13 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     "status":data
                 }
                 
-            print(LocationConsumer.trip_id,'trip id ')
             trip = TripDetails.objects.filter(id=LocationConsumer.trip_id).first()
-            print(trip,'trip data')
-            serializer = TripSerializer(trip,update_data,partial=True)
+            serializer = TripSerializer(trip,data=update_data,partial=True)
             if serializer.is_valid():
                 serializer.save()
+                
                 return "successfully update"
+
             else:
                 print('Trip update error :',serializer.errors)
         except Exception as e:
@@ -73,9 +107,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         serializer = TripSerializer(data=tripdata)
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data,'trip data')
             LocationConsumer.trip_id=serializer.data['id']
-            print(LocationConsumer.trip_id,'trip id')
             return serializer.data
         else:
             print(serializer.errors ,'yes this error is working')
@@ -107,6 +139,8 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             OTP = str(random.randint(1000, 9999))
 
             if user_id and data:
+                print("yes working id data",data)
+                print(data['driver_id'],'driver id in acceptence')
                 LocationConsumer.driver_id=data['driver_id']
                 tripdata = {
                     'user': user_id,
@@ -120,19 +154,27 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     'status': 'pending'
                 }
                 
-                print(tripdata,'tripdata ')
                 save_trip = await self.Save_trip(tripdata)
 
                 if save_trip:
                     driverdata = await self.Get_driverdata(save_trip['driver'])
 
                     if driverdata:
+                        print('yes diver data is working ')
                         driver = await self.serialize_driver_data(driverdata)
-                        
-                        return {
-                            'trip_data': save_trip,
-                            'driver_data': driver
-                        }
+                        print(driver,'dirver after also working')
+                        if driver:
+                            print('yes it is working ',driver)
+                            print(LocationConsumer.driver_id,'driver id in ride updated')
+                            data={
+                                    'ride':True
+                                }
+                            result=await self.updateRide(user_id,LocationConsumer.driver_id,data)
+                            if result:
+                                return {
+                                        'trip_data': save_trip,
+                                        'driver_data': driver
+                                    }
                     else:
                         print('No driver data found')
                 else:
@@ -163,7 +205,9 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             LocationConsumer.driver_count.add(int(self.user_id))
             self.room_group_name = f'driver_{self.user_id}'
             await self.channel_layer.group_add('all_drivers', self.channel_name)
+            
         else:
+            
             LocationConsumer.user_id = self.user_id
             self.room_group_name = f'user_{self.user_id}'
             await self.channel_layer.group_add('all_users', self.channel_name)
@@ -190,8 +234,20 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 LocationConsumer.drivers_distance.clear()
                 LocationConsumer.drivers_location.clear()
                 LocationConsumer.drivers.clear()
-                await self.handle_user_request(data)
-                
+                result = await self.RideStatus(LocationConsumer.user_id)
+                if result:
+                   await self.handle_user_request(data)
+                   
+                else:
+                    
+                    await self.channel_layer.group_send(
+                            f'user_{LocationConsumer.user_id}', 
+                            {
+                                'type': 'SuccessNotification',
+                                'status': 'User already in a ride ',
+                                'message': 'User already in a ride. first finish current ride then try again .',
+                            }
+                        )
             elif 'rideRequestResponse' in data:
                 if data['rideRequestResponse'] == 'accepted':
                     result = await self.Ride_Acceptance(data)
@@ -209,9 +265,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         )
                     else:
                         print("error result is empty")
-       
-
-                                
+                  
                 elif data['rideRequestResponse'] == 'declined':
                     if LocationConsumer.drivers_distance:
                         value = list(LocationConsumer.drivers_distance.pop(0))
@@ -266,8 +320,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 
                 result = await self.Trip_update("complete")
                 if result == 'successfully update':
-                    print(result,'ride completed')
-                    
+
                     await self.channel_layer.group_send(
                             f'user_{LocationConsumer.user_id}', 
                             {
@@ -276,11 +329,11 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                 'message': 'Trip complete succesfully.',
                             }
                         )
-                    
+                
             elif 'userRequest' in data and 'payment_type' in data['userRequest']:
                                 
                     id = LocationConsumer.driver_id
-                    print(id , 'driver id ')
+                    print(id , 'driver id payment')
                     await self.channel_layer.group_send(
                        f'driver_{id}',
                        {
@@ -294,51 +347,69 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             elif 'payment received' in data:
                 
                 result = await self.Trip_update({'payment_type' : data['payment received'],'status': 'complete'})
-                print(result,'trip cancel result ')
-                if result :
-                    print(result ,'result in payment updation ')
-                    await self.channel_layer.group_send(
-                            f'user_{LocationConsumer.user_id}', 
-                            {
-                                'type': 'SuccessNotification',
-                                'status': 'payment completed',
-                                'message': 'Trip complete successfylly',
-                            }
-                        )
-                    
+                
+                if result == 'successfully update':
+                    data = {
+                    'ride':False
+                    }
+                    update = await self.updateRide(LocationConsumer.user_id,LocationConsumer.driver_id,data)
+                    if update:
+                        await self.channel_layer.group_send(
+                                f'user_{LocationConsumer.user_id}', 
+                                {
+                                    'type': 'SuccessNotification',
+                                    'status': 'payment completed',
+                                    'message': 'Trip complete successfylly',
+                                }
+                            )
+                    else:
+                        print('trip update error in payment received')
+                        
             elif 'usertripcancel' in data:
                 
                 result = await self.Trip_update("canceled")
                 
-                if result:
-                    id = LocationConsumer.driver_id
-                    print(id , 'driver id ')
-                    await self.channel_layer.group_send(
-                       f'driver_{id}',
-                       {
-                        
-                        'type' : 'SuccessNotification',
-                        'status': 'Trip cancel',
-                        'message': 'User want cancel this trip',
-                        
-                       }  
-                    )
+                if result == 'successfully update':
+                    print(result,'cancel trip is success')
+                    data = {
+                        'ride':False
+                    }
+                    update = await self.updateRide(LocationConsumer.user_id,LocationConsumer.driver_id,data)
+                    print(update,'update value is working')
+                    if update:
+                        id = LocationConsumer.driver_id
+                        print(id , 'driver id user cancel')
+                        await self.channel_layer.group_send(
+                        f'driver_{id}',
+                        {
+                            
+                            'type' : 'SuccessNotification',
+                            'status': 'Trip cancel',
+                            'message': 'User want cancel this trip',
+                            
+                        }  
+                        )
+                    else:
+                        print('trip update error user trip cancel')
                     
             elif 'drivertripcancel':
                 
                 result = await self.Trip_update("canceled")
-                if result:
-                    await self.channel_layer.group_send(
-                            f'user_{LocationConsumer.user_id}', 
-                            {
-                                'type': 'SuccessNotification',
-                                'status': 'Trip cancel',
-                                'message': 'Driver want cancel this trip',
-                        
-                            }
-                        )
-                    
-                
+                if result == 'successfully update':
+                    update = await self.updateRide(LocationConsumer.user_id,LocationConsumer.driver_id,data)
+                    print(update,'update value is working')
+                    if update:
+                        await self.channel_layer.group_send(
+                                f'user_{LocationConsumer.user_id}', 
+                                {
+                                    'type': 'SuccessNotification',
+                                    'status': 'Trip cancel',
+                                    'message': 'Driver want cancel this trip',
+                            
+                                }
+                            )
+                    else:
+                        print("error trip updation error in driver cancel")
             else:
                 print(f"Received unknown data format: {data}")
         except json.JSONDecodeError:
@@ -347,7 +418,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             print(f"Error in receive: {e}")
 
     async def handle_driver_location(self, data):
-        print('handle driver location is working')
         driver_id = data.get('id')
         location = data.get('Driverlocation')
         
@@ -359,7 +429,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 await self.all_drivers_location()
 
     async def handle_user_request(self, data):
-        print("yes handle user is working")
         
         LocationConsumer.user_data = data
         await self.channel_layer.group_send(
@@ -385,10 +454,26 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
 
     @sync_to_async
     def get_user_type(self, user_id):
+        userdata = apps.get_model('Authentication_app','CustomUser')
         DriverData = apps.get_model('Authentication_app', 'DriverData')
+        print(user_id,'user id in get user')
         try:
+            tripstatus=None
+            
             driver = DriverData.objects.filter(customuser=user_id, current_Status=True).first()
+            # print(driver,'driver id get type')
+            # if driver:
+                
+            #    tripstatus = userdata.objects.filter(email=driver.customuser,ride=False)
+               
+            # if tripstatus:
+            #         return 'driver'
+            # elif not driver and not tripstatus :
+            
+            #     return 'user'
+            
             return 'driver' if driver else 'user'
+        
         except Exception as e:
             print(f"Error in get_user_type: {e}")
             return 'user'

@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=CustomUser
-        fields=['username', 'email', 'phone', 'profile','id']
+        fields=['username', 'email', 'phone', 'profile','id','ride']
         read_only_fields = ['id']
         
 class TripSerializer(serializers.ModelSerializer):
