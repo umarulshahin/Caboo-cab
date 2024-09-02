@@ -20,14 +20,6 @@ const Header = (props) => {
   }
 
 
-  // const user_data=useSelector((state)=>state.user_data.user_data)
-
-  // useEffect(()=>{
-  //     if(!data){
-  //       navigate('/signin_selection', { state: { modal: 'ride' } })
-  //     }
-  // },[data])
-
   
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black">

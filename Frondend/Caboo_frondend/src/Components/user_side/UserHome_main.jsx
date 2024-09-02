@@ -31,7 +31,7 @@ const UserHome_main = () => {
   const charges = useSelector((state)=>state.ride_data.charges)
   const distance = useSelector((state)=>state.ride_data.distance)
   const place_code = useSelector((state)=>state.ride_data.places)
-  const {RideRequest}=useRide()
+  const user=useSelector((state=>state.user_data.token_data))
   const [modalOpen, setModalOpen] = useState(false);
   const { sendMessage } = useWebSocket();
 
@@ -120,16 +120,17 @@ const UserHome_main = () => {
   };
 
   const handleRide=(values)=>{
-    console.log(values,"test")
     if(values){
 
       const data={
+        user_id:user.user_id,
         type:values.type,
         price:values.price,
         distance:distance,
         place_code:place_code,
         places:places
       }
+      console.log(data,'user trip request data')
       sendMessage(data)
       handleOpenModal()
 

@@ -78,6 +78,8 @@ const useGetUser = () => {
             dispatch(addDriver_data(null))
             dispatch(addDriver_token(null))
             Cookies.remove('DriverTokens')
+            
+
           }else{
   
           dispatch(addUser(null))

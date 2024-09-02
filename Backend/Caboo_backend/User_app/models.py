@@ -21,7 +21,7 @@ class TripDetails(models.Model):
     destination = models.CharField(max_length=250,blank=False)
     distance = models.CharField(max_length=50,blank=False)
     duration = models.CharField(max_length=50,blank=False)
-    amount = models.IntegerField(blank=True)
+    amount = models.IntegerField(blank=True,null=True)
     orderId = models.CharField(max_length=12, unique=True, blank=True)
     tripOTP = models.CharField(max_length=10,blank=False)
     status = models.CharField(max_length=20,blank=False)
