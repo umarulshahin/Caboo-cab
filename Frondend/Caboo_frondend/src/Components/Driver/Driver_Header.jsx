@@ -9,7 +9,7 @@ import { backendUrl, Driver_status_url } from "../../Utils/Constanse";
 import useDriver from "../../Hooks/useDriver";
 import RideRequestModal from "./RequestModal";
 import useDriverWebSocket from "../../Socket/DriverSocket";
-import { addOTPvalidation } from "../../Redux/RideSlice";
+import { addDriverOTPvalidation } from "../../Redux/RideSlice";
 
 const Driver_Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -41,7 +41,7 @@ const Driver_Header = () => {
 
       dispatch(addDriver_data(null));
       dispatch(addDriver_token(null));
-      dispatch(addOTPvalidation(null))
+      dispatch(addDriverOTPvalidation(null))
       Cookies.remove('DriverTokens');
       navigate("/");
     } catch (error) {

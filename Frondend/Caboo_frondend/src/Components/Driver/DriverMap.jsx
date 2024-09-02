@@ -44,8 +44,10 @@ const DriverMap = () => {
     libraries: ['places'],
   });
 
-  const data = useSelector((state) => state.ride_data.rideLocations);
-  const ridedetails = useSelector((state)=>state.ride_data.rideDetails);
+  const data = useSelector((state) => state.ride_data.driverrideLocations);
+  const ridedetails = useSelector((state)=>state.ride_data.driverrideDetails);
+  const otpvalidation = useSelector((state)=>state.ride_data.driverotpValidation);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [directions, setDirections] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(13);
@@ -60,7 +62,6 @@ const DriverMap = () => {
   let ending = data?.client;
   const { distance, duration, places, price,place_code } = ridedetails ? ridedetails.userRequest : {};
 
-  const otpvalidation = useSelector((state)=>state.ride_data.otpValidation);
 
     console.log(otpvalidation,'otp validation')
   if (otpvalidation === 'OTP_success'  && place_code){

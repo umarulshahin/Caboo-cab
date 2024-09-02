@@ -14,7 +14,18 @@ const RideSlice=createSlice({
         rideLocations:null,
         rideDetails:null,
         rideDriverdetails:null,
-        otpValidation:null
+        otpValidation:null,
+        tripid:null,
+
+        driverclintDetails:null,
+        driver_driverRideDetails:null,
+        driverrideLocations:null,
+        driverrideDetails:null,
+        driverrideDriverdetails:null,
+        driverotpValidation:null,
+        drivertripid:null,
+        
+
 
     },
     reducers:{
@@ -31,11 +42,9 @@ const RideSlice=createSlice({
             state.clintDetails=action.payload
         },
         addDriverRide:(state,action)=>{
-            console.log('yes driver ride is working ')
             state.driverRideDetails=action.payload
         },
         addRideLocations:(state,action)=>{
-            console.log('yes ride location is working')
             state.rideLocations=action.payload
         },
         addRideDetails:(state,action)=>{
@@ -45,7 +54,11 @@ const RideSlice=createSlice({
             state.rideDriverdetails=action.payload
         },
         addOTPvalidation:(state,action)=>{
+            console.log('yes otp slice is working')
             state.otpValidation=action.payload
+        },
+        addTripId:(state,action)=>{
+            state.tripid=action.payload
         },
         addClearRide:(state,action)=>{
             state.distance=action.payload
@@ -57,6 +70,39 @@ const RideSlice=createSlice({
             state.rideDetails=action.payload
             state.rideDriverdetails=action.payload
             state.otpValidation=action.payload
+            state.tripid=action.payload
+        },
+        addDriverClint:(state,action)=>{
+            state.driverclintDetails=action.payload
+        },
+        addDriver_driverRide:(state,action)=>{
+            state.driver_driverRideDetails=action.payload
+        },
+        addDriverRideLocations:(state,action)=>{
+            state.driverrideLocations=action.payload
+        },
+        addDriverRideDetails:(state,action)=>{
+            state.driverrideDetails=action.payload
+        },
+        addDriverRideDriverdetails:(state,action)=>{
+            state.driverrideDriverdetails=action.payload
+        },
+        addDriverOTPvalidation:(state,action)=>{
+            console.log('yes otp verification is working')
+            state.driverotpValidation=action.payload
+        },
+        addDriverTripId:(state,action)=>{
+            state.drivertripid=action.payload
+        },
+        addDriverClearRide:(state,action)=>{
+            
+            state.driverclintDetails=action.payload
+            state.driverrideLocations=action.payload
+            state.driverrideDetails=action.payload
+            state.driverrideDriverdetails=action.payload
+            state.driverotpValidation=action.payload
+            state.drivertripid=action.payload
+            state.driver_driverRideDetails=action.payload
         }
 
 
@@ -72,7 +118,19 @@ export const{addCharges,
     addRideDetails,
     addRideDriverdetails,
     addOTPvalidation,
-    addClearRide
+    addClearRide,
+    addTripId,
+    
+    addDriverClint,
+    addDriver_driverRide,
+    addDriverRideLocations,
+    addDriverRideDetails,
+    addDriverRideDriverdetails,
+    addDriverOTPvalidation,
+    addDriverTripId,
+    addDriverClearRide
+
+
     }=RideSlice.actions;
 
 export default RideSlice.reducer

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import notificationSound from '../assets/notification.wav';
 import { useLoadScript } from "@react-google-maps/api";
-import { addClearRide, addClint, addDriverRide, addOTPvalidation, addRideDetails, addRideDriverdetails, addRideLocations } from '../Redux/RideSlice';
+import { addDriver_driverRide, addDriverClearRide, addDriverOTPvalidation, addDriverRideDetails, addDriverRideLocations, addDriverTripId} from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -16,7 +16,7 @@ const useDriverWebSocket = () => {
     const [responded, setResponded] = useState(false);
     const driver = useSelector((state) => state.driver_data.driver_token);
     const driverdetails = useSelector((state) => state.driver_data.driver_data);
-
+    const tripId = useSelector((state)=>state.ride_data.drivertripid)
     const [declineTimeout, setDeclineTimeout] = useState(null);
     const socketRef = useRef(null);
     const respondedRef = useRef(false);
@@ -96,16 +96,21 @@ const useDriverWebSocket = () => {
 
             }else if (data.type.trim() === 'OTP_success'){
                 console.log('yes otp validation is working')
-                dispatch(addOTPvalidation('OTP_success'))
+                
+                dispatch(addDriverOTPvalidation('OTP_success'))
+                console.log('after otp ')
 
             }else if (data.type === 'Payment verification'){
                 
                 navigate('/paymentconfirm')
             }else if (data.type.trim() === "Trip cancel"){
 
-                dispatch(addClearRide(null))
+                dispatch(addDriverClearRide(null))
                 navigate('/driver_home')
                 toast.warning("User canceled the trip. We apologize for the inconvenience.")
+            }else if (data.type.trim() === "ride_accepted"){
+               
+                dispatch(addDriverTripId(data.data['trip_id']))
             }
         };
 
@@ -113,14 +118,14 @@ const useDriverWebSocket = () => {
             console.log('WebSocket connection closed');
         };
 
-        return () => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.close();
-            }
-            clearTimeout(declineTimeout);
-        };
+        // return () => {
+        //     if (ws.readyState === WebSocket.OPEN) {
+        //         ws.close();
+        //     }
+        //     clearTimeout(declineTimeout);
+        // };
     }, [driver.user_id]);
-
+ 
   
         
     const handleLocationRequest = (ws) => {
@@ -286,9 +291,9 @@ const useDriverWebSocket = () => {
                 }
                 console.log(ridedata,'ride Data')
 
-                dispatch(addRideLocations(ridedata))
-                dispatch(addDriverRide(driverData))
-                dispatch(addRideDetails(modalUserData))
+                dispatch(addDriverRideLocations(ridedata))
+                dispatch(addDriver_driverRide(driverData))
+                dispatch(addDriverRideDetails(modalUserData))
                 // Send response message with WebSocket
                 socketRef.current.send(JSON.stringify({
                     requestType: 'rideRequestResponse',
@@ -300,14 +305,14 @@ const useDriverWebSocket = () => {
                 }));
 
                 navigate('/ride')
-     
+               
             } catch (error) {
                 console.error('Error handling driver location:', error);
             }
         } else {
             console.error('WebSocket is not open or location data is missing.');
         }
-         clearTimeout(declineTimeout);
+        clearTimeout(declineTimeout);
 
     };
     
@@ -320,7 +325,8 @@ const useDriverWebSocket = () => {
             }
              socketRef.current.send(JSON.stringify({
                 requestType: 'otp_confirm',
-                Otp_data : data
+                Otp_data : data,
+                trip_id:tripId
     
                }))
            }         
@@ -329,17 +335,19 @@ const useDriverWebSocket = () => {
     const Ride_completion=()=>{
         socketRef.current.send(JSON.stringify({
             requestType: 'ride complete',
-            ride_complete: 'success'
+            ride_complete: 'success',
+            trip_id:tripId
         }))
     }
 
     const Paymentconfirm=()=>{
 
-        dispatch(addClearRide(null))
+        dispatch(addDriverClearRide(null))
 
         socketRef.current.send(JSON.stringify({
             requestType : "payment received ",
-            'payment received' : 'cashinhand'
+            'payment received' : 'cashinhand',
+            trip_id:tripId
 
         }))
         navigate('/driver_home')
@@ -348,10 +356,12 @@ const useDriverWebSocket = () => {
     
     const RideCancel=()=>{
        
-        dispatch(addClearRide(null))
-
+        dispatch(addDriverClearRide(null))
+        console.log(tripId,'trip id ')
+       console.log(typeof(tripId),'tripid type')
         socketRef.current.send(JSON.stringify({
-            'drivertripcancel' : 'Driver want cancel this ride'
+            'drivertripcancel' : 'Driver want cancel this ride',
+            trip_id:tripId
         }))
 
         navigate('/driver_home')
@@ -376,6 +386,7 @@ const useDriverWebSocket = () => {
                     driver_id: driver.user_id,
                     rideRequestResponse: 'declined',
                 }));
+
                 clearTimeout(declineTimeout);
             } else {
                 console.error('WebSocket is not open. Unable to send decline message.');

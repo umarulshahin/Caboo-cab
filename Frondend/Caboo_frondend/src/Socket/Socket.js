@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCharges, addClearRide, addClint, addDistance, addDriverRide, addOTPvalidation, addPlaces, addRideDetails, addRideDriverdetails, addRideLocations } from '../Redux/RideSlice';
+import {  addClearRide, addOTPvalidation, addRideDriverdetails, addTripId } from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
 import { replace } from 'formik';
 import { toast } from 'sonner';
@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
     const user = useSelector((state) => state.user_data.token_data);
+    const trip_id = useSelector((state)=>state.ride_data.tripid)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     
@@ -31,6 +32,9 @@ const useUserWebSocket = () => {
             if (data.type==='ride_accepted'){
                
                 dispatch(addRideDriverdetails(data))
+                console.log(data.data.trip_id,"accept data")
+
+                dispatch(addTripId(data.data.trip_id))
                 navigate('/userRide')
 
             }else if (data.type.trim() === 'OTP_success'){
@@ -79,7 +83,9 @@ const useUserWebSocket = () => {
 
     const sendMessage = (data) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
+            data['trip_id']=trip_id
             console.log('Sending message:',data);
+
             socket.send(JSON.stringify({ userRequest: data }));
         } else {
             console.error('Cannot send message, WebSocket is not open');
@@ -92,9 +98,10 @@ const useUserWebSocket = () => {
 
             dispatch(addClearRide(null))
 
-            console.log('Sending message:');
+            console.log(trip_id,'Sending message:');
             const data={
-                'usertripcancel': 'user want cancel this trip'
+                'usertripcancel': 'user want cancel this trip',
+                'trip_id' :trip_id
             }
             socket.send(JSON.stringify({ usertripcancel: data }));
             navigate('/userhome', { replace: true });
