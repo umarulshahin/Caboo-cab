@@ -45,8 +45,8 @@ const DriverMap = () => {
   });
 
   const data = useSelector((state) => state.ride_data.driverrideLocations);
-  const ridedetails = useSelector((state)=>state.ride_data.driverrideDetails);
-  const otpvalidation = useSelector((state)=>state.ride_data.driverotpValidation);
+  const ridedetails = useSelector((state)=>state.driver_ride_data.driverrideDetails);
+  const otpvalidation = useSelector((state)=>state.driver_ride_data.driverotpValidation);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [directions, setDirections] = useState(null);

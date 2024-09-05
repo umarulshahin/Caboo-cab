@@ -8,7 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from  Authentication_app.models import *
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-        
+import razorpay
+from django.conf import settings        
+from django.db.models import *
         
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])    
@@ -55,24 +57,6 @@ def ProfilUpdate(request):
     return Response({"error":"User data not get"})
 
 
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def Ride_management(request):
-#     data = request.data
-#     # print(data, 'ride management')
-    
-#     channel_layer = get_channel_layer()
-#     message = {
-#         'type': 'driver_location',
-#         "location": {"latitude": 40.7128, "longitude": -74.0060}
-#     }
-#     async_to_sync(channel_layer.group_send)(
-#         'driver_location_room',  
-#         message
-#     )
-    
-#     return Response({'success': "request done"})
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -82,16 +66,75 @@ def Ride_management(request):
     print(data, 'ride management')
     
     try:
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            'driver_location_room',
-            {
-                "location":{"latitude": 40.7128, "longitude": -74.0060}
-            }
-        )
+        # channel_layer = get_channel_layer()
+        # async_to_sync(channel_layer.group_send)(
+        #     'driver_location_room',
+        #     {
+        #         "location":{"latitude": 40.7128, "longitude": -74.0060}
+        #     }
+        # )
         
         return Response({'success': "request done"})
     except Exception as e:
         print('error',e)
         return Response({"error":'somthing is wrong'},status=500)
    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])   
+def Payment(request):
+    
+    try:
+      data=request.data
+      amount = data
+      print(amount,'amount')
+      if int(amount) >0:
+            key_id='rzp_test_CBJeWuVVebxglq'
+            secret_key ='NTEfgFjJ4z9dxx4H5fOL1nlm'
+            print(key_id,'key id ')
+            print(secret_key,'secret key ')
+            client = razorpay.Client(auth=(key_id, secret_key))
+
+            payment = client.order.create({"amount": int(amount) * 100, 
+                                        "currency": "INR", 
+                                        "payment_capture": "1"})
+            print(payment,'payment ')
+            return Response(payment)
+      return Response({"error": "The minimum amount must be at least ₹1."},status=status.HTTP_400_BAD_REQUEST)
+     
+    except Exception as e:
+        return Response ({"error":str(e)},status=status.HTTP_400_BAD_REQUEST)
+      
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def PaymentSuccess(request):
+    
+    try:
+        print(request.data,'payment success data')
+        user_id = request.data['user'][0]['id']
+        amount = request.data['amount']
+        if user_id:
+            user=CustomUser.objects.get(id=user_id)
+            if user:
+                data={
+                    "customuser":user.id,
+                    "amount":int(amount),
+                    "reason":"Wallet recharge",
+                    "status":"add"
+                }
+                print(data,'data creation')
+                serialize = WalletSerializer(data=data)
+                if serialize.is_valid():
+                    serialize.save()
+                    total = int(user.wallet) + int(amount)
+                    
+                    userserializer = UserSerializer(user,{'wallet':total},partial=True)
+                    if userserializer.is_valid():
+                        userserializer.save()
+                    
+                        return Response({"success":serialize.data})
+                    return Response({'error':userserializer.errors})
+                return Response({'error':serialize.errors})
+            return Response({'error':"user not available"},status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(f"error from payment success {e}")
+        return Response({"error":str(e)})

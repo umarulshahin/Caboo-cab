@@ -43,8 +43,9 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
     @sync_to_async
     def updateRide(self,user_id,driver_id,data):
         
-        from User_app.serializer import UserSerializer
+        from User_app.serializer import UserSerializer,WalletSerializer
         from Authentication_app.models import CustomUser
+        from User_app.models import UserWallet
         print('yes it is working ')
         print(user_id,'user_id')
         print(driver_id,'driver_id')
@@ -53,17 +54,52 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
            if user_id and driver_id:
                 user = CustomUser.objects.get(id=user_id)
                 driver = CustomUser.objects.get(id=driver_id)
+              
                 if user and driver:
-                    
-                    userserializer=UserSerializer(user,data,partial=True)
-                    if userserializer.is_valid():
-                        userserializer.save()
-                        driverserializer=UserSerializer(driver,data,partial=True)
-                        if driverserializer.is_valid():
-                            driverserializer.save()
-                            print('yes working all fine')
-                            return True
+                    if 'wallet' in data:
+                        pay_amount = int(data['wallet'])
+                        print(pay_amount,'pay amount')
+                        data['wallet']=int(user.wallet) - int(data['wallet'])
+                        print(data,'data after updation')
+                        
+                    userserializer = UserSerializer(user, data, partial=True)
+                if userserializer.is_valid():
+                    userserializer.save()
+                else:
+                    print('User serializer error:', userserializer.errors)
+                    return False
                 
+                # Update driver data
+                ride = data.get('ride', {})
+                print(ride,'user ride status')
+                driverserializer = UserSerializer(driver,{'ride': ride}, partial=True)
+                if driverserializer.is_valid():
+                    driverserializer.save()
+                else:
+                    print('Driver serializer error:', driverserializer.errors)
+                    return False
+                
+                # Handle wallet transaction if 'wallet' is in data
+                if 'wallet' in data:
+                    print(pay_amount,'pay amount')
+
+                    wallet_data = {
+                        "customuser": user.id,
+                        "amount": pay_amount,
+                        "reason": "Trip payment",
+                        "status": "pay"
+                    }
+                    print(wallet_data,'wallet data')
+                    wallet_serializer = WalletSerializer(data=wallet_data)
+                    if wallet_serializer.is_valid():
+                        wallet_serializer.save()
+                    else:
+                        print('Wallet serializer error:', wallet_serializer.errors)
+                        return False
+                
+                print('yes working all fine')
+                return True
+                         
         except Exception as e:
             print(f"update ride error {e}")
        
@@ -287,6 +323,10 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         LocationConsumer.drivers_distance.clear()
                         LocationConsumer.driver_count.clear()
                         
+                        user_id = result['trip_data']['user']
+
+                        await asyncio.sleep(5)  
+                        
                         await self.channel_layer.group_send(
                             f'driver_{driver_id}',
                             {
@@ -295,8 +335,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                             }
                         )
                         
-                        user_id = result['trip_data']['user']
-
                         await self.channel_layer.group_send(
                             f'user_{user_id}', 
                             {
@@ -307,11 +345,13 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                             }
                         )
                         
+                        
                        
                     else:
                         print("error result is empty")
                   
                 elif data['rideRequestResponse'] == 'declined':
+                    print(LocationConsumer.drivers_distance,'decline driver distance')
                     if LocationConsumer.drivers_distance:
                         value = list(LocationConsumer.drivers_distance.pop(0))
                         await self.channel_layer.group_send(
@@ -385,9 +425,9 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             elif 'userRequest' in data and 'payment_type' in data['userRequest']:
                                 
                     trip_data = await self.get_tripdata(data['userRequest']['trip_id'])
-                    id = LocationConsumer.driver_id
-                    if trip_data:
-                        print(trip_data, 'driver id payment')
+                    print(trip_data, 'driver id payment')
+
+                    if data['userRequest']['payment_type']=='cashinhand' and trip_data:
                         await self.channel_layer.group_send(
                         f'driver_{trip_data['driver_id']}',
                         {
@@ -398,6 +438,73 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                             
                         }  
                         )
+                    elif data['userRequest']['payment_type'] =='wallet' and trip_data:
+                        
+                          print(data,'payment type')
+                          amount = data['userRequest']['amount']
+                          result = await self.Trip_update({'payment_type' : data['userRequest']['payment_type'],'status': 'complete'},data['userRequest']['trip_id'])
+                          if result == 'successfully update' and amount:
+                                data = {
+                                'ride':False,
+                                'wallet':amount
+                                }
+                                update = await self.updateRide(trip_data['user_id'],trip_data['driver_id'],data) 
+                                if update:
+                                    await self.channel_layer.group_send(
+                                        f'driver_{trip_data['driver_id']}',
+                                        {
+                                            
+                                            'type' : 'SuccessNotification',
+                                            'status': 'payment completed',
+                                            'message': data,
+                                            
+                                        }  
+                                    )       
+                                    
+                                    await asyncio.sleep(3)  
+
+                                    await self.channel_layer.group_send(
+                                        f'user_{trip_data['user_id']}', 
+                                        {
+                                            'type': 'SuccessNotification',
+                                            'status': 'payment completed',
+                                            'message': 'Trip complete successfylly',
+                                        }
+                                    )       
+                                    
+                                    
+                    elif data['userRequest']['payment_type'] =='razorpay' and trip_data:
+                        print("yes here is working")
+                        amount = data['userRequest']['amount']
+                        result = await self.Trip_update({'payment_type' : data['userRequest']['payment_type'],'status': 'complete'},data['userRequest']['trip_id'])
+                        if result == 'successfully update' and amount:
+                                data = {
+                                'ride':False,
+                                }
+                                update = await self.updateRide(trip_data['user_id'],trip_data['driver_id'],data) 
+                                if update:
+                                    await self.channel_layer.group_send(
+                                        f'driver_{trip_data['driver_id']}',
+                                        {
+                                            
+                                            'type' : 'SuccessNotification',
+                                            'status': 'payment completed ',
+                                            'message': data,
+                                            
+                                        }  
+                                    )       
+                                    
+                                    await asyncio.sleep(3)  
+
+                                    await self.channel_layer.group_send(
+                                        f'user_{trip_data['user_id']}', 
+                                        {
+                                            'type': 'SuccessNotification',
+                                            'status': 'payment completed',
+                                            'message': 'Trip complete successfylly',
+                                        }
+                                    )       
+                                
                     else:
                         print('payment reach user side error')
             elif 'payment received' in data:
@@ -471,9 +578,14 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                     'message': 'Driver want cancel this trip',
                             
                                 }
-                            )
+                            )                
                     else:
                         print("error trip updation error in driver cancel")
+                        
+            elif 'paymentdetails' in data:
+                
+                print('yes payment coming')
+
             else:
                 print(f"Received unknown data format: {data}")
         except json.JSONDecodeError:

@@ -9,7 +9,7 @@ import { backendUrl, Driver_status_url } from "../../Utils/Constanse";
 import useDriver from "../../Hooks/useDriver";
 import RideRequestModal from "./RequestModal";
 import useDriverWebSocket from "../../Socket/DriverSocket";
-import { addDriverOTPvalidation } from "../../Redux/RideSlice";
+import { addDriverOTPvalidation } from "../../Redux/DriverRideSlice";
 
 const Driver_Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);

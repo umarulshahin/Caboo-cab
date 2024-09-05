@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import profile_img_placeholder from "../../assets/profile_img.png";
 import useGetUser from "../../Hooks/useGetUser";
 import { useSelector } from "react-redux";
-import { backendUrl, driver_signup_url, Driver_status_url } from "../../Utils/Constanse";
+import { backendUrl, Driver_status_url } from "../../Utils/Constanse";
 import { faEdit, faCamera, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserEdit from "../user_side/UserEdit";
@@ -33,7 +33,7 @@ const Driver_Profile_page = () => {
       const { profile, username, email, phone, id, referral_code } = data[0].customuser || {};
       const { current_Status } = data[0] || {};
       setProfileImage(profile);
-      setEmail(email || ""); // Ensure email is not undefined
+      setEmail(email || ""); 
       setPhone(phone);
       setUsername(username);
       setId(id);

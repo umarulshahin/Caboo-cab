@@ -45,6 +45,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=10, blank=False, unique=True)
     profile = models.ImageField(upload_to=upload_profile_image, blank=False, max_length=250)
     ride = models.BooleanField(default=False,blank=False)
+    wallet = models.IntegerField(default=0,blank=True,null=True)
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'

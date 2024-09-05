@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
 import razorpay from '../../assets/razorpay.png'
-import wallet from '../../assets/wallet.png'
+import iconwallet from '../../assets/wallet.png'
 import cashinhand from '../../assets/cashinhand.png'
 import { useSelector } from 'react-redux';
 import useUserWebSocket from '../../Socket/Socket';
+import useGetUser from '../../Hooks/useGetUser';
+import useOnlinePayment from '../../Hooks/useOnlinePayment';
 
 const PaymentModal = () => {
 
     const ridedriver = useSelector((state) => state.ride_data.rideDriverdetails);
+    const userdata = useSelector((state)=>state.user_data.user_data)
     const { amount } = ridedriver ? ridedriver.data.tripdata.trip_data : {};
+    const {wallet} = userdata[0]
     const [waiting ,setWaiting] = useState(false)
     const {sendMessage}=useUserWebSocket()
+    const {showRazorpay}=useGetUser()
+    const [error,seterror] =useState('')   
 
+    const { showOnline }=useOnlinePayment()
     const handlePayment=(e)=>{
         const payment_type = e.target.value
+        let data={}
         if(payment_type === 'cashinhand'){
-            console.log('payment is cash in hand ')
-            const data = {
+            console.log('payment is cash in hand')
+            data = {
                 'payment_type' : payment_type,
 
             }
@@ -25,10 +33,29 @@ const PaymentModal = () => {
 
         }else if (payment_type === 'wallet'){
             console.log('payment is wallet')
+
+            if (parseInt(wallet)>=parseInt(amount)){
+              console.log(wallet,'wallet amount')
+              data ={
+                'payment_type' : payment_type,
+                'amount':amount
+              }
+              sendMessage(data)
+              setWaiting(true)
+            }else{
+               seterror("You do not have enough balance in your wallet.")
+            }
         }else if (payment_type === 'razorpay'){
             console.log('payment is razorpay ')
-        }
+            const data={
+              'payment_type' : payment_type,
+              user:userdata,
+              amount:amount,
+            }
 
+            showOnline(data)
+            
+        }
 
     }
 
@@ -75,9 +102,11 @@ const PaymentModal = () => {
             onClick={handlePayment}
             className="payment-option flex items-center p-2 border border-gray-300 rounded-lg w-full bg-gray-100 hover:bg-gray-200"
           >
-            <img src={wallet} alt="E-Wallet" className="w-8 h-8 mr-9" />
+            <img src={iconwallet} alt="Wallet" className="text-sm w-8 h-8 mr-9" />
             <span className="text-gray-700">E-Wallet</span>
           </button>
+          {error && <span className='text-sm text-center text-red-600'>{error}</span>}
+
           <button
             type="button"
             name='cashinhand'

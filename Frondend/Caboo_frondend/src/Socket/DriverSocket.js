@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import notificationSound from '../assets/notification.wav';
 import { useLoadScript } from "@react-google-maps/api";
-import { addDriver_driverRide, addDriverClearRide, addDriverOTPvalidation, addDriverRideDetails, addDriverRideLocations, addDriverTripId} from '../Redux/RideSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import {addDriver_driverRide, addDriverClearRide, addDriverOTPvalidation, addDriverRideDetails, addDriverRideLocations, addDriverTripId,} from '../Redux/DriverRideSlice';
 
 const libraries = ["places"];
 const apiKey = import.meta.env.VITE_google_map_api_key;
@@ -16,7 +16,7 @@ const useDriverWebSocket = () => {
     const [responded, setResponded] = useState(false);
     const driver = useSelector((state) => state.driver_data.driver_token);
     const driverdetails = useSelector((state) => state.driver_data.driver_data);
-    const tripId = useSelector((state)=>state.ride_data.drivertripid)
+    const tripId = useSelector((state)=>state.driver_ride_data.drivertripid)
     const [declineTimeout, setDeclineTimeout] = useState(null);
     const socketRef = useRef(null);
     const respondedRef = useRef(false);
@@ -43,6 +43,7 @@ const useDriverWebSocket = () => {
 
         const handleDecline = () => {
             console.log('No, ride declined');
+            clearTimeout(declineTimeout);
             setResponded(true);
             respondedRef.current = true;
             setShowModal(false);
@@ -90,6 +91,7 @@ const useDriverWebSocket = () => {
                 }, 10000);
 
                 setDeclineTimeout(timeout);
+
             }else if(data.type.trim() === "otp validation faild"){
                 console.log('yes working')
                 toast.error('OTP invalid try again .')
@@ -111,6 +113,10 @@ const useDriverWebSocket = () => {
             }else if (data.type.trim() === "ride_accepted"){
                
                 dispatch(addDriverTripId(data.data['trip_id']))
+            }else if (data.type.trim() === 'payment completed'){
+                dispatch(addDriverClearRide(null))
+                navigate('/driver_home')
+                toast.success('The ride has been successfully completed.')
             }
         };
 
@@ -118,12 +124,12 @@ const useDriverWebSocket = () => {
             console.log('WebSocket connection closed');
         };
 
-        // return () => {
-        //     if (ws.readyState === WebSocket.OPEN) {
-        //         ws.close();
-        //     }
-        //     clearTimeout(declineTimeout);
-        // };
+        return () => {
+            if (ws.readyState === WebSocket.OPEN ) {
+                ws.close();
+            }
+            clearTimeout(declineTimeout);
+        };
     }, [driver.user_id]);
  
   
@@ -271,10 +277,16 @@ const useDriverWebSocket = () => {
 
 
     const handleAcceptRide = async () => {
+        
         console.log('Yes, ride accepted');
         setResponded(true);
         respondedRef.current = true;
         setShowModal(false);
+        if (declineTimeout) {
+            clearTimeout(declineTimeout);
+            setDeclineTimeout(null); 
+            console.log("yes it's working clear time out")
+        }
     
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN && Driverlocation && modalUserData?.userRequest?.place_code?.location) {
             try {
@@ -312,7 +324,6 @@ const useDriverWebSocket = () => {
         } else {
             console.error('WebSocket is not open or location data is missing.');
         }
-        clearTimeout(declineTimeout);
 
     };
     

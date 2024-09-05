@@ -31,8 +31,8 @@ const UserEdit = ({ isOpen, onClose, user, onSave }) => {
       className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40"
     >
-      <div className="bg-white rounded-lg shadow-2xl p-6 w-full max-w-md mx-auto mt-16"> {/* Adjust mt-16 based on header height */}
-        <h2 className="text-xl font-bold mb-4">Edit Basic Info</h2>
+      <div className="bg-white rounded-lg  shadow-2xl p-6 w-full max-w-xl mx-auto mt-16"> {/* Adjust mt-16 based on header height */}
+        <h2 className="text-2xl font-bold mb-6">Edit Profile</h2>
         <Formik
           initialValues={user}
           validationSchema={validationSchema}
@@ -41,30 +41,30 @@ const UserEdit = ({ isOpen, onClose, user, onSave }) => {
           {({ isSubmitting }) => (
             <Form>
               <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Name</label>
+                <label className="block   mb-2">Name</label>
                 <Field
                   type="text"
                   name="username"
-                  className="border p-2 w-full rounded"
+                  className="border border-gray-300 font-bold p-2 w-full rounded"
                 />
                 <ErrorMessage name="username" component="div" className="text-red-500 text-sm mt-1" />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Email</label>
+                <label className="block  mb-2">Email</label>
                 <Field
                   type="email"
                   name="email"
-                  className="border p-2 w-full rounded"
+                  className="border border-gray-300  font-bold p-2 w-full rounded"
                 />
                 <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
               </div>
             
               <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Phone</label>
+                <label className="block mb-2">Phone</label>
                 <Field
                   type="text"
                   name="phone"
-                  className="border p-2 w-full rounded"
+                  className="border border-gray-300  font-bold p-2 w-full rounded"
                 />
                 <ErrorMessage name="phone" component="div" className="text-red-500 text-sm mt-1" />
               </div>
@@ -72,13 +72,13 @@ const UserEdit = ({ isOpen, onClose, user, onSave }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="border border-black text-black px-8 py-2 rounded mr-2"
+                  className="border border-black font-bold text-black px-8 py-2 rounded mr-2 hover:bg-black hover:text-white "
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-black text-white px-8 py-2 rounded"
+                  className="bg-black border border-black text-white px-8 py-2 font-bold rounded hover:bg-white hover:text-black "
                   disabled={isSubmitting}
                 >
                   Update
