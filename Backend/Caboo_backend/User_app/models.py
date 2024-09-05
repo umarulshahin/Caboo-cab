@@ -36,3 +36,12 @@ class TripDetails(models.Model):
     def generate_order_id(self):
 
         return ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
+
+
+class UserWallet(models.Model):
+    
+    customuser=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    amount = models.IntegerField(blank=False,null=False,default=0)
+    created_at = models.DateTimeField(default=timezone.now)
+    reason = models.CharField(max_length=250,null=True,blank=True)
+    status = models.CharField(max_length=50,blank=False,null=False)

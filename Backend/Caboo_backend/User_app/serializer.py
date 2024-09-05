@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from  Authentication_app.models import *
+from .models import *
 
 
 class ImageUploadSerializer(serializers.Serializer):
@@ -18,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=CustomUser
-        fields=['username', 'email', 'phone', 'profile','id','ride']
+        fields=['username', 'email', 'phone', 'profile','id','ride','wallet']
         read_only_fields = ['id']
         
 class TripSerializer(serializers.ModelSerializer):
@@ -39,3 +40,10 @@ class OTPValidationSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid OTP or driver.")
         
         return data
+    
+    
+class WalletSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = UserWallet
+        fields = ['customuser', 'amount', 'reason', 'status']

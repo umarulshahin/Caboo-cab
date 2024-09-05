@@ -3,16 +3,19 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { addToken_data, addUser } from "../Redux/UserSlice";
 import { useNavigate } from "react-router-dom";
-import {Driver_data_urls, img_upload_url,user_data_url,} from "../Utils/Constanse";
+import {Driver_data_urls, img_upload_url,PaymentSuccess_url,user_data_url,} from "../Utils/Constanse";
 import { addadmin_data } from "../Redux/AdminSlice";
 import { addDriver_data, addDriver_token } from "../Redux/DriverSlice";
 import apiClient from "../Axios/GetDataAxios";
 import UserAxios from "../Axios/UserAxios";
+import { Razorpay_url } from "../Utils/Constanse";
+
 
 const useGetUser = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
 
   const Get_data = async (urls, value = null, role = null) => {
     try {
@@ -32,9 +35,10 @@ const useGetUser = () => {
 
           dispatch(addadmin_data(response.data));
         } else if (role === 'driver') {
-
+          console.log("driver get data ")
           dispatch(addDriver_data(response.data));
         } else {
+          console.log('User get data ')
           dispatch(addUser(response.data));
         }
       }
@@ -141,8 +145,115 @@ const useGetUser = () => {
 
     }
   };
+      
+  const paymentSuccess=async(data)=>{
 
-  return { img_validate, Get_data, ProfilUpdate };
+     try{
+      console.log(data)
+      console.log(PaymentSuccess_url,'url')
+      const response = await UserAxios.post(PaymentSuccess_url,data,{
+        headers:{
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response)
+      
+      if (response.status===200){
+        console.log(response.data,'success data after payment')
+        toast.success("Your wallet successfully recharged")
+        Get_data(user_data_url, null);
+
+      }
+
+     }catch(error){
+      console.log(error,'error payment success')
+     }
+  }
+
+  const LoadScript =()=>{
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }
+
+  const showRazorpay= async(value)=>{
+
+      console.log(value,"yes it's working")
+       
+       const res = await LoadScript();
+       if (!res) {
+        alert('Razorpay SDK failed to load. Are you online?');
+        return;
+      }
+
+      try{
+        
+        const data=value['amount']
+        console.log(value)
+        const response = await UserAxios.post(Razorpay_url,data,{
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+      })
+      if(response.status === 200){
+          
+          const secretKey =import.meta.env.VITE_PUBLIC_KEY
+          const {username,phone,email} =value.user[0]
+          const {id,amount}=response.data
+          const image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD7WSqyfPcRDeODaj88BEbubp2HHXSGveBnPf78nBEXsxFjW7t1a7Wn-WVyDtOjO5Ug8I&usqp=CAU"
+
+          const options = {
+            key:secretKey, // Replace with your Razorpay Key ID
+            amount:amount, // Amount is in the smallest currency unit
+            currency: 'INR',
+            name: 'Caboo cab',
+            description: 'Test Transaction',
+            image:image,
+            order_id: id,
+            handler: function (response) {
+              
+              if ('Trip_payment' in value){
+
+              }else{
+                paymentSuccess(value)
+              }
+
+            },
+            prefill: {
+              name: username,
+              email: email,
+              contact: phone
+            },
+            notes: {
+              address: 'Corporate Office'
+            },
+            theme: {
+              color: '#3399cc'
+            }
+          };
+
+          const rzp1 = new window.Razorpay(options);
+          rzp1.open();  
+      }else if (response.status===400){
+          console.log(response.data['error'],'response')
+
+      }
+      }catch(error){
+        console.log(error,'razorpay error try catch ')
+        if (error.response.status ===400){
+          toast.warning(error.response.data.error)
+        }
+      }
+       
+       
+
+  }
+  return { img_validate, Get_data, ProfilUpdate,showRazorpay };
 };
 
 export default useGetUser;

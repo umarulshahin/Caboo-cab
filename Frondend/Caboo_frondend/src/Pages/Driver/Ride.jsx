@@ -7,7 +7,7 @@ import empty from '../../assets/empty.png'
 
 const Ride = () => {
   const [selected, setSelected] = useState("current ride");
-  const ridedetails = useSelector((state)=>state.ride_data.driverrideDetails)
+  const ridedetails = useSelector((state)=>state.driver_ride_data.driverrideDetails)
   console.log(ridedetails,'ride details')
   
   return (

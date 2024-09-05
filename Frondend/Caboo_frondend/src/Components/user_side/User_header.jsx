@@ -7,8 +7,11 @@ import { addToken_data, addUser } from "../../Redux/UserSlice";
 import { backendUrl } from "../../Utils/Constanse";
 import Cookies from "js-cookie"
 import useUserWebSocket from "../../Socket/Socket";
+import UserWallet from "./UserWallet";
+import UserProfile_main from "./UserProfile_main";
+import Footer from "../Footer";
 
-const User_header = () => {
+const User_header = ({setStatus}) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch=useDispatch()
@@ -27,7 +30,6 @@ const User_header = () => {
     }
     
   },[data])
-console.log(profile,"profile")
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const handleLogout=()=>{
@@ -35,16 +37,26 @@ console.log(profile,"profile")
     dispatch(addUser(null))
     dispatch(addToken_data(null))
     Cookies.remove('userTokens')
+    localStorage.removeItem('status')
     navigate("/")
   }
+   
+  const handleComponent=(value)=>{
+    setStatus(value)
+    setDropdownOpen(false)
+  }
+
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black">
   <div className="flex flex-wrap items-center justify-between p-4">
     <div className="flex items-center">
     <Link to="/userhome" >
     <img src={logo} alt="Logo" className="h-12" />
+    
       </Link>
       <div className="hidden sm:flex sm:space-x-8 pl-20">
+      <button onClick={()=>setStatus('home')} className="text-white font-extrabold hidden sm:block  ">Home</button>
+
        <Link to='/userRide' className="text-white font-extrabold hidden sm:block  ">Ride</Link>
       </div>
     </div>
@@ -67,14 +79,17 @@ console.log(profile,"profile")
         
           {/* Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute right-0 mt-40 w-48 font-bold bg-white text-black rounded-sm shadow-lg">
-              <Link to="/userprofile" className="block px-4 py-2 hover:bg-gray-200">Profile</Link>
-              <Link to="/settings" className="block px-4 py-2 hover:bg-gray-200">Settings</Link>
-              <button onClick={handleLogout}  className="block w-full px-4 py-2 text-left hover:bg-gray-200">Logout</button>
+            <div className="absolute flex flex-col items-center   right-0 mt-52 w-48 font-bold bg-black  text-white rounded-sm shadow-lg">
+              <button></button>
+              <button onClick={()=>handleComponent('profile')}  className="block px-4 w-full py-2 hover:bg-gray-600">Profile</button>
+              <button onClick={()=>handleComponent('wallet')} className="block w-full  px-4 py-2  hover:bg-gray-600">Wallet</button>
+              <button className="block px-4 py-2 w-full hover:bg-gray-600">Settings</button>
+              <button onClick={handleLogout}  className="block  w-full px-4 py-2 bg-red-600 hover:bg-gray-600">Logout</button>
             </div>
           )}
         </div>
-     
+        
+
     </div>
 
     <div className="block sm:hidden">
@@ -82,6 +97,7 @@ console.log(profile,"profile")
         <svg
           className="w-6 h-6"
           fill="none"
+
           stroke="currentColor"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +122,9 @@ console.log(profile,"profile")
       </div>
     )}
   </div>
+  
 </div>
+
 
   );
 };

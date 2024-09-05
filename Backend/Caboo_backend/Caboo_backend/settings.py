@@ -29,6 +29,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+env_path = BASE_DIR / '.env'
+if os.path.exists(env_path):
+    with open(env_path) as f:
+        for line in f:
+            if line.strip() and not line.startswith('#'):
+                key, value = line.strip().split('=', 1)
+                os.environ[key] = value
+
+# Now you can access the environment variables
+RAZORPAY_KEY_ID = os.environ.get('PUBLIC_KEY')
+RAZORPAY_KEY_SECRET = os.environ.get('SECRET_KEY')
 
 # Application definition
 
@@ -170,7 +181,8 @@ MEDIA_ROOT = BASE_DIR / "media"
 CORS_ALLOWED_ORIGIN_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5173'
     # Add more origins if needed
 ]
 CORS_ALLOW_METHODS = [

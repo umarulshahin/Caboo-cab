@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {  addClearRide, addOTPvalidation, addRideDriverdetails, addTripId } from '../Redux/RideSlice';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import { replace } from 'formik';
 import { toast } from 'sonner';
+import useGetUser from '../Hooks/useGetUser';
+import { user_data_url } from '../Utils/Constanse';
 
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
@@ -11,7 +13,8 @@ const useUserWebSocket = () => {
     const trip_id = useSelector((state)=>state.ride_data.tripid)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    
+    const {Get_data}=useGetUser()
+
     useEffect(() => {
         if (!user.user_id) {
             console.error("User ID is not available");
@@ -29,6 +32,7 @@ const useUserWebSocket = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log('Message received:', data);
+            
             if (data.type==='ride_accepted'){
                
                 dispatch(addRideDriverdetails(data))
@@ -51,8 +55,11 @@ const useUserWebSocket = () => {
             }else if (data.type.trim() === "payment completed"){
                
                 dispatch(addClearRide(null))
+                Get_data(user_data_url)
                 navigate('/userhome', { replace: true });
-
+                toast.success('Trip completed successfully')
+                
+                
             }else if (data.type.trim() === 'Trip cancel'){
                 dispatch(addClearRide(null))
                 navigate('/userhome', { replace: true });
@@ -111,7 +118,19 @@ const useUserWebSocket = () => {
         }
     }
 
-    return { sendMessage, Canceltrip };
+
+    const OnlinePay = async(value)=>{
+           
+        console.log(value,'value coming online pay')
+        if (socket && socket.readyState === WebSocket.OPEN) {
+  
+            socket.send(JSON.stringify({paymentdetails:value}));
+        }else {
+            console.error('Cannot send message, WebSocket is not open');
+        }
+    }
+
+    return { sendMessage, Canceltrip,OnlinePay };
 };
 
 export default useUserWebSocket;

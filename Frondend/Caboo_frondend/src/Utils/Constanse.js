@@ -35,3 +35,7 @@ export const Driver_data_urls = backendUrl+"/Api/driver_data/";
 export const Driver_status_url = backendUrl+"/Api/Driverstatus/";
 
 export const Ride_management_url = backendUrl+"/Api/rideManagement/";
+
+export const Razorpay_url = backendUrl+"/Api/payment/"
+
+export const PaymentSuccess_url = backendUrl+"/Api/paymentsucces/"

@@ -10,6 +10,7 @@ import AdminReducer from "./AdminSlice";
 import DriverReducer from "./DriverSlice";
 import AuthenticationReducer from "./AuthenticationSlice";
 import RideReducer from "./RideSlice";
+import DriverRideReducer from "./DriverRideSlice";
 
 const persistConfig ={
     key:'root',
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
     user_data:userReducer,
     admin_data:AdminReducer,
     driver_data:DriverReducer,
-    ride_data:RideReducer
+    ride_data:RideReducer,
+    driver_ride_data:DriverRideReducer
 })
 
 const PersistedReducer = persistReducer(persistConfig,rootReducer)

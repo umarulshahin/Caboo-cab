@@ -7,6 +7,7 @@ import { faEdit, faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserEdit from "./UserEdit";
 import { profileUpdate_url } from "../../Utils/Constanse";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
 const UserProfile_main = () => {
   const [profile_img, setProfileImage] = useState("");
@@ -42,7 +43,7 @@ const UserProfile_main = () => {
         return;
       } else {
         reader.onload = (e) => {
-          img_validate(file,id);
+          img_validate(file, id);
         };
         reader.readAsDataURL(file);
       }
@@ -63,14 +64,14 @@ const UserProfile_main = () => {
   };
 
   return (
-    <div className="flex min-h-screen mt-16 bg-gray-100 justify-center">
-      <div className="w-full max-w-4xl p-10 flex flex-col items-center bg-white shadow-lg rounded-lg">
-        <h1 className="text-3xl text-gray-800 font-bold mb-6">Account Info</h1>
-        <div className="relative mb-6">
+    <div className="flex w-screen min-h-screen mt-20 bg-gray-100 justify-center items-center">
+      <div className="p-12 flex flex-col items-center bg-white shadow-lg rounded-lg w-full max-w-2xl">
+        <h1 className="text-4xl text-gray-800 font-bold mb-8">Account Info</h1>
+        <div className="relative mb-8">
           <img
             src={profile_img ? `${backendUrl}${profile_img}` : profile_img_placeholder}
             alt="User Profile"
-            className="h-40 w-40 rounded-full object-cover border-4 border-gray-300"
+            className="h-48 w-48 rounded-full object-cover border-4 border-gray-300"
           />
           <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-xl rounded-full opacity-0 hover:opacity-100 cursor-pointer">
             <FontAwesomeIcon icon={faCamera} />
@@ -82,36 +83,42 @@ const UserProfile_main = () => {
             />
           </label>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-semibold mb-1">Name</label>
-              <div className="bg-gray-100 p-3 rounded-lg border border-gray-300">
-                <span className="text-gray-800">{username}</span>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-semibold mb-1">Email</label>
-              <div className="bg-gray-100 p-3 rounded-lg border border-gray-300">
-                <span className="text-gray-800">{email}</span>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-semibold mb-1">Phone</label>
-              <div className="bg-gray-100 p-3 rounded-lg border border-gray-300">
-                <span className="text-gray-800">{phone}</span>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <label className="text-gray-600 font-semibold mb-1">Referral Code</label>
-              <div className="bg-gray-100 p-3 rounded-lg border border-gray-300">
-                <span className="text-gray-800">dffe87t{referralCode}</span>
-              </div>
-            </div>
-          </div>
-          <div className="mt-6 flex justify-center">
+        <div className="bg-white pb-8 rounded-lg shadow-md w-full">
+  <div className="grid grid-cols-1 gap-4 rounded-lg">
+    <div className="flex items-center justify-between border-b border-gray-300 py-4">
+      <label className="text-gray-600 font-semibold text-lg w-1/3">Name</label>
+      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+        {username}
+      </span>
+    </div>
+
+    <div className="flex items-center justify-between border-b border-gray-300 py-4">
+      <label className="text-gray-600 font-semibold text-lg w-1/3">Email</label>
+      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+        {email}{" "}
+        <span className="text-green-600 text-base"><FontAwesomeIcon icon={faCheckCircle} className="text-base ml-2" /> verified</span>
+      </span>
+    </div>
+
+    <div className="flex items-center justify-between border-b border-gray-300 py-4">
+      <label className="text-gray-600 font-semibold text-lg w-1/3">Phone</label>
+      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+        +91 {phone}{" "}
+        <span className="text-green-600 text-base"><FontAwesomeIcon icon={faCheckCircle} /> verified</span>
+      </span>
+    </div>
+
+    <div className="flex items-center justify-between border-b border-gray-300 py-4">
+      <label className="text-gray-600 font-semibold text-lg w-1/3">Referral Code</label>
+      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+        dffe87t{referralCode}
+      </span>
+    </div>
+  </div>
+
+          <div className="mt-8 flex justify-center">
             <button
-              className="px-8 py-3 rounded-full bg-black text-white font-bold transition duration-500 hover:bg-gray-500 hover:shadow-lg hover:shadow-gray-500/50 transform hover:scale-110 active:bg-gray-700 active:duration-250 active:shadow-none active:scale-95"
+              className="px-10 py-4 rounded-full bg-black text-white font-bold transition duration-500 hover:bg-gray-500 hover:shadow-lg hover:shadow-gray-500/50 transform hover:scale-110 active:bg-gray-700 active:duration-250 active:shadow-none active:scale-95"
               onClick={handleEditClick}
             >
               <FontAwesomeIcon icon={faEdit} className="mr-2" />
