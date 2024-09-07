@@ -44,7 +44,7 @@ const DriverMap = () => {
     libraries: ['places'],
   });
 
-  const data = useSelector((state) => state.ride_data.driverrideLocations);
+  const data = useSelector((state) => state.driver_ride_data.driverrideLocations);
   const ridedetails = useSelector((state)=>state.driver_ride_data.driverrideDetails);
   const otpvalidation = useSelector((state)=>state.driver_ride_data.driverotpValidation);
 
@@ -57,9 +57,11 @@ const DriverMap = () => {
   const inputRefs = useRef([]);
   
   const { OTP_confirm,Ride_completion,RideCancel } = useDriverWebSocket()
-
+   
   let starting = data?.driver;
   let ending = data?.client;
+
+ 
   const { distance, duration, places, price,place_code } = ridedetails ? ridedetails.userRequest : {};
 
 

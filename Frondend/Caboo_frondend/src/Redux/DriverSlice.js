@@ -5,7 +5,8 @@ const DriverSlice=createSlice({
     name:"driver_data",
     initialState:{
         driver_token:null,
-        driver_data:null
+        driver_data:null,
+        driverTrips:{}
 
     },
 
@@ -20,10 +21,13 @@ const DriverSlice=createSlice({
             console.log(state,'driver data slice')
             console.log('add driver data slice')
             state.driver_data=action.payload
+        },
+        addDriverTrips:(state,action)=>{
+            state.driverTrips=action.payload
         }
     }
 })
 
-export const {addDriver_data,addDriver_token}=DriverSlice.actions;
+export const {addDriver_data,addDriver_token,addDriverTrips}=DriverSlice.actions;
 
 export default DriverSlice.reducer;

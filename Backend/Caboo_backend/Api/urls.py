@@ -24,6 +24,7 @@ urlpatterns = [
     path('rideManagement/',Ride_management,name='rideManagement'),
     path('payment/',Payment,name='payment'),
     path('paymentsucces/',PaymentSuccess,name='paymentsuccess'),
+    path('ridedetails/',Ridedetails,name='ridedetails'),
   
   #*.....................Admin Api .........................
   
@@ -37,7 +38,9 @@ urlpatterns = [
     
   path('driver_signup/',Driver_signup,name="driver_signup"),
   path('driver_data/',Driver_Data,name="driver_data"),
-  path('Driverstatus/',Driver_Status,name='Driverstatus')
+  path('Driverstatus/',Driver_Status,name='Driverstatus'),
+  path('tripdetails/',Tripdetails,name='tripdetails'),
+  
 
   
 ]

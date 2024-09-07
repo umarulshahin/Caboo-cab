@@ -36,6 +36,10 @@ export const Driver_status_url = backendUrl+"/Api/Driverstatus/";
 
 export const Ride_management_url = backendUrl+"/Api/rideManagement/";
 
-export const Razorpay_url = backendUrl+"/Api/payment/"
+export const Razorpay_url = backendUrl+"/Api/payment/";
 
-export const PaymentSuccess_url = backendUrl+"/Api/paymentsucces/"
+export const PaymentSuccess_url = backendUrl+"/Api/paymentsucces/";
+
+export const Ride_User_Data_url = backendUrl+"/Api/ridedetails/";
+
+export const Trip_driver_Data_url = backendUrl+"/Api/tripdetails/";

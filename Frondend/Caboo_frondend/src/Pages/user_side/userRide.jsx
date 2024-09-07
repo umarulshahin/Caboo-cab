@@ -6,12 +6,14 @@ import UserRide_page from '../../Components/user_side/UserRide_page'
 import { useSelector } from 'react-redux'
 import { useState } from "react";
 import empty from '../../assets/empty.png'
+import RideHistory from '../../Components/user_side/RideHistory'
 
 const UserRide = () => {
   const ridedriver = useSelector((state) => state.ride_data.rideDriverdetails);
   
   // State for managing active tab
   const [selectedTab, setSelectedTab] = useState('Current Ride');
+  const [ride,setride] = useState(true)
   
 
   return (
@@ -58,22 +60,37 @@ const UserRide = () => {
       </div>
     </div>
       
-       {ridedriver ? 
-         <div className="w-screen  ">
-         {selectedTab === 'Current Ride' ? <UserRide_page /> :
-         <div className='flex justify-center items-center space-x-4 '>
-         <img className='size-32' src={empty} alt="empty" />
-         <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
-       </div>
-       } 
-       </div>
-       :
-       <div className='flex justify-center items-center space-x-4 '>
-        <img className='size-32' src={empty} alt="empty" />
-        <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
+  <div className="w-screen">
+  {selectedTab === 'Current Ride' && (
+  ridedriver ? (
+    <UserRide_page />
+  ) : (
+    <div className="w-screen">
+      <div className="flex justify-center items-center space-x-4">
+        <img className="size-32" src={empty} alt="empty" />
+        <span className="text-3xl font-bold py-20 text-gray-400">NO RIDE AVAILABLE</span>
       </div>
-        }
-       
+    </div>
+  )
+)}
+  
+ { selectedTab === 'Ride History' &&
+ (ride ?
+  ( <RideHistory />)
+  :
+  (  
+  <div className="w-screen">
+    <div className="flex justify-center items-center space-x-4">
+      <img className="size-32" src={empty} alt="empty" />
+      <span className="text-3xl font-bold py-20 text-gray-400">NO RIDE AVAILABLE</span>
+    </div>
+  </div>
+        )
+ ) 
+ }   
+  </div>
+  
+
       <Footer />
     </div>
   );
