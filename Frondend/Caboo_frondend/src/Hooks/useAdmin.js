@@ -1,7 +1,7 @@
 
 import { useDispatch } from 'react-redux'
-import { addDriver_list, addUsers_list } from '../Redux/AdminSlice'
-import { get_Driver_url, get_Users_url } from '../Utils/Constanse'
+import { addAllTrips, addDriver_list, addUsers_list } from '../Redux/AdminSlice'
+import { Get_all_trips_url, get_Driver_url, get_Users_url } from '../Utils/Constanse'
 import { toast } from 'sonner'
 import AdminAxios from '../Axios/AdminAxios'
 import { useNavigate } from 'react-router-dom'
@@ -62,6 +62,24 @@ const useAdmin = () => {
         }
     }
 
-    return {GetUsers,Usermanagement}
+    const GetTripdata=async()=>{
+
+        try{
+            const responds = await AdminAxios.get(Get_all_trips_url,{
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            })
+            if (responds.status===200){
+                console.log(responds.data)
+                dispatch(addAllTrips(responds.data))
+            }
+            
+        }catch(error){
+            console.log(error,'get trip data')
+        }
+    }
+
+    return {GetUsers,Usermanagement,GetTripdata}
 }
 export default useAdmin

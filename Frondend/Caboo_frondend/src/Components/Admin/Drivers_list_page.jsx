@@ -17,6 +17,7 @@ const Drivers_list_page = () => {
   }, []);
 
   const User_list = useSelector((state) => state.admin_data.Driver_list || []);
+  console.log(User_list,'driver')
 
   const handleView = (data) => {
     navigate('/Documents', { state: { driver: data } });
@@ -39,7 +40,7 @@ const Drivers_list_page = () => {
                 <th className="py-3 px-4 text-left text-gray-600 font-semibold">Profile</th>
                 <th className="py-3 px-4 text-left text-gray-600 font-semibold">Name</th>
                 <th className="py-3 px-4 text-left text-gray-600 font-semibold">Phone</th>
-                <th className="py-3 px-4 text-left text-gray-600 font-semibold">Wallet</th>
+                <th className="py-3 px-4 text-left text-gray-600 font-semibold">Trip status</th>
                 <th className="py-3 px-4 text-left text-gray-600 font-semibold">Status</th>
                 <th className="py-3 px-4 text-left text-gray-600 font-semibold">Documents</th>
               </tr>
@@ -58,7 +59,7 @@ const Drivers_list_page = () => {
                     </td>
                     <td className="py-3 px-4">{data.customuser.username}</td>
                     <td className="py-3 px-4">{data.customuser.phone}</td>
-                    <td className="py-3 px-4">$1000</td>
+                    <td className= {` py-3 px-8 ${data.customuser.ride ? 'text-green-600' : 'text-red-600'}`}>{data.customuser.ride ? 'OnTrip':'idle'}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`font-bold ${

@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework import status
 from User_app.models import *
-import random
 from django.conf import settings
 from celery.result import AsyncResult
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +11,7 @@ from Driver_app.models import *
 from Authentication_app.models import *
 from Authentication_app.tasks import *
 from Authentication_app.views import *
-
+from User_app.serializer import *
 
 
 @api_view(["GET"])
@@ -32,12 +31,12 @@ def Get_admin(request):
 @permission_classes([IsAuthenticated])
 def Get_users(request):
 
-        
     users=CustomUser.objects.filter(is_staff=False)
     
     if users:
         
         serializer=UserSerializer(users,many=True)
+        print(serializer.data)
         return Response(serializer.data)
 
     return Response({"error":"somting wrong"},status=status.HTTP_400_BAD_REQUEST)
@@ -46,15 +45,20 @@ def Get_users(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def Get_Drivers(request):
-        
-    users = DriverData.objects.all().prefetch_related("customuser")
-    print(users)
-    if users:
-        
-        serializer=DriverDataSerializer(users,many=True)
-        return Response(serializer.data)
+    
+    try:
+        users = DriverData.objects.all().prefetch_related("customuser")
+        print(users)
+        if users:
+            
+            serializer=DriverDataSerializer(users,many=True)
+            return Response(serializer.data)
 
-    return Response({"error":"somting wrong"},status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error":"somting wrong"},status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        
+        return Response(f"error {e}")
+   
 
 
 @api_view(["POST"])
@@ -122,3 +126,20 @@ def Driver_management(request):
             return Response({'error': "Email sending failed. Please try again later."})
         
         return Response({'error':serializer.errors})
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def Get_AllTrips(request):
+    
+    try:
+        print('all trip working')
+        trips = TripDetails.objects.all()
+        if trips:
+            serializer = TripSerializer(trips,many=True)
+            return Response(serializer.data)
+    except Exception as e:
+        return Response(f"error {e}")
+    
+    
+    
+    

@@ -1,36 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useDriver from '../../Hooks/useDriver';
 
 const TripHistory = () => {
-    const [loading, setLoading] = useState(true);
-    const { DriverTrips } = useDriver();
-    const driver = useSelector((state) => state.driver_data.driver_token);
     const trips = useSelector((state) => state.driver_data.driverTrips);
-
-    useEffect(() => {
-        const fetchTrips = async () => {
-            if (driver.user_id) {
-                try {
-                    await DriverTrips({ id: driver.user_id });
-                } finally {
-                    setLoading(false); // Set loading to false after API call
-                }
-            }
-        };
-
-        fetchTrips();
-    }, []);
-
     const formatAddress = (address) => {
         const parts = address.split(',');
         if (parts.length > 3) {
+
             return `${parts.slice(0, 3).join(', ')}`;
         }
         return address;
     };
 
-    if (loading) {
+    if (!trips) {
         return (
             <div className="w-full px-4 py-6 text-center">
                 <h2 className="text-2xl font-bold mb-4">Loading Ride History...</h2>

@@ -7,7 +7,8 @@ const AdminSlice = createSlice({
         admin_token:{},
         admin_data:{},
         users_list:{},
-        Driver_list:{}
+        Driver_list:{},
+        allTrips:{}
     },
     reducers:{
         addadmin_token:(state,action)=>{
@@ -22,9 +23,12 @@ const AdminSlice = createSlice({
         addDriver_list:(state,action)=>{
             state.Driver_list=action.payload
         },
+        addAllTrips:(state,action)=>{
+            state.allTrips=action.payload
+        }
     }
 })
 
-export const {addadmin_data,addadmin_token,addUsers_list,addDriver_list}=AdminSlice.actions
+export const {addadmin_data,addadmin_token,addUsers_list,addDriver_list,addAllTrips}=AdminSlice.actions
 
 export default AdminSlice.reducer;
