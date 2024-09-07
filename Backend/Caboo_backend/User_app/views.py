@@ -144,7 +144,7 @@ def PaymentSuccess(request):
 def Ridedetails(request):
     user_id = request.GET.get('id')  
     
-    trips=TripDetails.objects.filter(user=user_id)
+    trips=TripDetails.objects.filter(user=user_id).order_by('-id')
     if trips:
         serializer =TripSerializer(trips,many=True)
         return Response(serializer.data)

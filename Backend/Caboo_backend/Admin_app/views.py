@@ -133,7 +133,7 @@ def Get_AllTrips(request):
     
     try:
         print('all trip working')
-        trips = TripDetails.objects.all()
+        trips = TripDetails.objects.all().order_by('-id')
         if trips:
             serializer = TripSerializer(trips,many=True)
             return Response(serializer.data)

@@ -68,7 +68,7 @@ const TripHistory = () => {
                                 <pre className="whitespace-pre-wrap">{data.dataTime || "2024-09-05"}</pre>
                             </td>
                             <td className="py-2 px-4 text-left">
-                                <button className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
+                                <button className="bg-black text-white px-4 py-1 rounded hover:bg-gray-600">
                                     More
                                 </button>
                             </td>

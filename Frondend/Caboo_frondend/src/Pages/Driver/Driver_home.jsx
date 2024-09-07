@@ -67,7 +67,12 @@ const Driver_home = () => {
     // total driver get amount
 
     const amount = trips.reduce((total, item) => {
-      return (total += item.amount);
+      if(item.status === 'completed'){
+         return (total += item.amount);
+      }else{
+        return total
+      }
+     
     }, 0);
      
     // total trip count
