@@ -74,7 +74,10 @@ const TripListing = () => {
                         })()}
                     </td>
                     <td className='py-3 px-4 '>{data.dataTime}</td>
-                    <td className="py-3 px-4 ">{data.status}</td>
+                    <td className={` py-3 px-4 ${data.status === 'pending' ? 'text-yellow-500':
+                                               data.status === 'cancelled' ? 'text-red-600':
+                                               data.status === 'completed'? 'text-green-600':'text-black'
+                    } `}>{data.status}</td>
                     <td className="py-3 px-4 ">
                         <button
                             className="px-6 py-2 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition"

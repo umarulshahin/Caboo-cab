@@ -35,7 +35,7 @@ class TripDetails(models.Model):
 
     def generate_order_id(self):
 
-        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))        
 
 
 class UserWallet(models.Model):

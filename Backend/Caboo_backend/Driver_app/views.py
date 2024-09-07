@@ -50,7 +50,7 @@ def Tripdetails(request):
     
     driver_id = request.GET.get('id')
     print(driver_id,'driver data')
-    trips=TripDetails.objects.filter(driver=driver_id)
+    trips=TripDetails.objects.filter(driver=driver_id).order_by('-id')
     if trips:
         serializer =TripSerializer(trips,many=True)
         return Response(serializer.data)
