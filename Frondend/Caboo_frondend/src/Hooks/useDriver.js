@@ -1,7 +1,8 @@
 import { useDispatch } from 'react-redux';
 import DriverAxios from '../Axios/DriverAxios';
-import { addDriver_data } from '../Redux/DriverSlice';
+import { addDriver_data, addDriverTrips,} from '../Redux/DriverSlice';
 import { toast } from 'sonner';
+import { Trip_driver_Data_url } from '../Utils/Constanse';
 
 const useDriver = () => {
     const dispatch=useDispatch()
@@ -27,8 +28,25 @@ const useDriver = () => {
             console.error("Driver status",error)
         }
     }
-
-    return {Driver_status}
+    
+    const DriverTrips=async(data)=>{
+        console.log(data['id'],'data')
+        try{
+           const response = await DriverAxios.get(Trip_driver_Data_url,{
+            params: { id: data['id'] },
+            headers:{
+              'Content-Type' : "application/json"
+            },
+           })
+           if (response.status === 200){
+            console.log(response.data,'usertrips')
+            dispatch(addDriverTrips(response.data))
+           }
+        }catch(error){
+          console.log(error,'user trips')
+        }
+      }
+    return { Driver_status,DriverTrips }
 };
 
 export default useDriver;

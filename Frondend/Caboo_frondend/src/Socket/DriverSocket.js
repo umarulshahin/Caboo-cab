@@ -301,8 +301,7 @@ const useDriverWebSocket = () => {
                     driver:{lat:driverData.driverLocation.lat,
                             lng:driverData.driverLocation.lng },
                 }
-                console.log(ridedata,'ride Data')
-
+            
                 dispatch(addDriverRideLocations(ridedata))
                 dispatch(addDriver_driverRide(driverData))
                 dispatch(addDriverRideDetails(modalUserData))

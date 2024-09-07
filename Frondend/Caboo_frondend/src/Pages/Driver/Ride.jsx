@@ -4,12 +4,13 @@ import Footer from '../../Components/Footer';
 import DriverMap from '../../Components/Driver/DriverMap';
 import { useSelector } from 'react-redux';
 import empty from '../../assets/empty.png'
+import TripHistory from '../../Components/Driver/TripHistory';
 
 const Ride = () => {
   const [selected, setSelected] = useState("current ride");
   const ridedetails = useSelector((state)=>state.driver_ride_data.driverrideDetails)
   console.log(ridedetails,'ride details')
-  
+  const [trip,settrip] = useState(true)
   return (
     <div>
       <Driver_Header />
@@ -54,23 +55,32 @@ const Ride = () => {
         }`}
       ></span>
     </div>
-      {ridedetails ?
-      <div className='w-screen  mb-10 h-[700px]'>
+    <div className=' mb-10'>
+    {selected === 'current ride' && (
+        ridedetails ? (
+            <DriverMap />
+        ) : (
+            <div className='flex justify-center items-center space-x-4'>
+                <img className='size-32' src={empty} alt="empty" />
+                <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
+            </div>
+        )
+    )}
+      {selected === 'Ride History' && (
+        trip ? (
+            <TripHistory/>
+        ) : (
+            <div className='flex justify-center items-center space-x-4'>
+                <img className='size-32' src={empty} alt="empty" />
+                <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
+            </div>
+        )
+    )}
+    </div>
 
-        { selected === 'current ride' ? <DriverMap /> : 
-        
-        <div className='flex justify-center items-center space-x-4 '>
-        <img className='size-32' src={empty} alt="empty" />
-        <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
-        
-      </div>}
-      </div>
-      :
-      <div className='flex justify-center items-center space-x-4 '>
-        <img className='size-32' src={empty} alt="empty" />
-        <span className='text-3xl font-bold py-20 text-gray-400'>NO RIDE AVAILABLE</span>
-      </div>
-      }
+
+    
+      
       
       <Footer />
     </div>

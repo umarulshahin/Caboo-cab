@@ -5,6 +5,7 @@ from User_app.models import *
 from Authentication_app.models import *
 from Driver_app.serializer import *
 from rest_framework.permissions import IsAuthenticated
+from User_app.serializer import *
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -43,4 +44,15 @@ def Driver_Status(request):
         return Response(serializer.data)
     return Response(serializer.errors)
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def Tripdetails(request):
+    
+    driver_id = request.GET.get('id')
+    print(driver_id,'driver data')
+    trips=TripDetails.objects.filter(driver=driver_id)
+    if trips:
+        serializer =TripSerializer(trips,many=True)
+        return Response(serializer.data)
+    
+    return Response("success")

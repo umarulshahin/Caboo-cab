@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from  Authentication_app.models import *
 from .models import *
+from datetime import datetime
 
 
 class ImageUploadSerializer(serializers.Serializer):
@@ -23,11 +24,15 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
         
 class TripSerializer(serializers.ModelSerializer):
-    
+    dataTime = serializers.SerializerMethodField()
+
     class Meta:
         model = TripDetails
-        fields = ['id','user', 'driver' , 'location', 'destination', 'distance', 'duration', 'amount', 'orderId','tripOTP', 'status', 'dataTime', 'payment_type' ]
-        
+        fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dataTime', 'payment_type']
+
+    def get_dataTime(self, obj):
+        # Format the datetime object to 'YYYY-MM-DD'
+        return obj.dataTime.strftime('%Y-%m-%d') if obj.dataTime else None
 class OTPValidationSerializer(serializers.Serializer):
     tripOTP = serializers.CharField()
     driver = serializers.IntegerField()

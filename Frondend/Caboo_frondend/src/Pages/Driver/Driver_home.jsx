@@ -4,6 +4,7 @@ import Footer from '../../Components/Footer'
 import useGetUser from '../../Hooks/useGetUser'
 import { useSelector } from 'react-redux'
 import { toast } from 'sonner'
+import DriverHomePage from '../../Components/Driver/DriverHomePage'
 
 const Driver_home = () => {
 
@@ -29,8 +30,8 @@ const Driver_home = () => {
            <Driver_Header />
 
         </div>
-        <div className='h-screen bg-black'>
-         
+        <div className='flex-grow bg-black h-screen'>
+         <DriverHomePage />
         </div>
         <div>
             <Footer />

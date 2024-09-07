@@ -138,3 +138,15 @@ def PaymentSuccess(request):
     except Exception as e:
         print(f"error from payment success {e}")
         return Response({"error":str(e)})
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def Ridedetails(request):
+    user_id = request.GET.get('id')  
+    
+    trips=TripDetails.objects.filter(user=user_id)
+    if trips:
+        serializer =TripSerializer(trips,many=True)
+        return Response(serializer.data)
+    
+    return Response("error")

@@ -1,9 +1,9 @@
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import { addToken_data, addUser } from "../Redux/UserSlice";
+import { addToken_data, addUser, addUserTrips } from "../Redux/UserSlice";
 import { useNavigate } from "react-router-dom";
-import {Driver_data_urls, img_upload_url,PaymentSuccess_url,user_data_url,} from "../Utils/Constanse";
+import {Driver_data_urls, img_upload_url,PaymentSuccess_url,Ride_User_Data_url,user_data_url,} from "../Utils/Constanse";
 import { addadmin_data } from "../Redux/AdminSlice";
 import { addDriver_data, addDriver_token } from "../Redux/DriverSlice";
 import apiClient from "../Axios/GetDataAxios";
@@ -249,11 +249,27 @@ const useGetUser = () => {
           toast.warning(error.response.data.error)
         }
       }
-       
-       
-
+      
   }
-  return { img_validate, Get_data, ProfilUpdate,showRazorpay };
+
+  const UserRides = async(data)=>{
+    console.log(data['id'],'data')
+    try{
+       const response = await UserAxios.get(Ride_User_Data_url,{
+        params: { id: data['id'] },
+        headers:{
+          'Content-Type' : "application/json"
+        },
+       })
+       if (response.status === 200){
+        console.log(response.data,'usertrips')
+        dispatch(addUserTrips(response.data))
+       }
+    }catch(error){
+      console.log(error,'user trips')
+    }
+  }
+  return { img_validate, Get_data, ProfilUpdate,showRazorpay,UserRides };
 };
 
 export default useGetUser;
