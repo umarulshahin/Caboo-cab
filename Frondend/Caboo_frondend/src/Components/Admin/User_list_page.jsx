@@ -20,7 +20,6 @@ const User_list_page = () => {
   const User = useSelector((state) => state.admin_data.users_list);
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(null);
-
   useEffect(() => {
     console.log("Fetching users...");
     GetUsers(get_Users_url, "user");
@@ -121,7 +120,7 @@ const User_list_page = () => {
                   </td>
                   <td className="py-3 px-4">{data.username}</td>
                   <td className="py-3 px-4">{data.phone}</td>
-                  <td className="py-3 px-4">$1000</td>
+                  <td className="py-3 px-4">₹{data.wallet}</td>
                   <td className="py-3 px-4">
                     <span
                       className={

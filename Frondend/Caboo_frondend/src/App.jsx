@@ -29,6 +29,7 @@ import Ride from "./Pages/Driver/Ride";
 import UserRide from "./Pages/user_side/userRide";
 import PaymentModal from "./Components/user_side/PaymentModal";
 import PaymentConfirmModal from "./Components/Driver/PaymentConfirmModal";
+import TripListing from "./Components/Admin/TripListing";
 
 const App = () => {
   
@@ -55,6 +56,7 @@ const App = () => {
               <Route path="/User_list" element={<User_list />} />
               <Route path="/Driver_list" element={<Driver_list />} />
               <Route path="/Documents" element={<Documents />} />
+              <Route path="/triplisting" element={<TripListing />}/>
 
             
               <Route path='/vehicle_doc' element={<Vehicle_doc /> } />

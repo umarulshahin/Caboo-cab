@@ -33,6 +33,7 @@ urlpatterns = [
   path('getDriver/',Get_Drivers,name='getDrivers'),
   path('statusManagement/',Status_management,name='statusManagement'),
   path('Drivermanagement/',Driver_management,name="Drivermanagment"),
+  path('getalltrip/',Get_AllTrips,name='getalltrip'),
   
     #*.....................Driver Api .........................
     

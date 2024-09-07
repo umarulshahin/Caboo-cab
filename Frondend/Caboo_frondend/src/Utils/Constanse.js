@@ -43,3 +43,5 @@ export const PaymentSuccess_url = backendUrl+"/Api/paymentsucces/";
 export const Ride_User_Data_url = backendUrl+"/Api/ridedetails/";
 
 export const Trip_driver_Data_url = backendUrl+"/Api/tripdetails/";
+
+export const Get_all_trips_url = backendUrl+"/Api/getalltrip/";

@@ -9,12 +9,13 @@ const RideHistory = () => {
     const trips = useSelector((state) => state.user_data.userTrips);
 
     useEffect(() => {
+        
         const fetchTrips = async () => {
             if (user.user_id) {
                 try {
                     await UserRides({ id: user.user_id });
                 } finally {
-                    setLoading(false); // Set loading to false after API call
+                    setLoading(false);
                 }
             }
         };

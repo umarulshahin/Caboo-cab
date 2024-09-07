@@ -18,7 +18,7 @@ const Sidebar_admin = () => {
           Dashboard
         </NavLink>
         <NavLink
-          to='/trip'
+          to='/triplisting'
           className="flex items-center font-bold text-lg w-full py-2 px-4 hover:bg-gray-200 rounded transition-colors duration-200"
           activeClassName="bg-gray-300"
         >

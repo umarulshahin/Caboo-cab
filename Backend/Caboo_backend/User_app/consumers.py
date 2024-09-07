@@ -325,7 +325,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         
                         user_id = result['trip_data']['user']
 
-                        await asyncio.sleep(5)  
+                        await asyncio.sleep(3)  
                         
                         await self.channel_layer.group_send(
                             f'driver_{driver_id}',
@@ -442,7 +442,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         
                           print(data,'payment type')
                           amount = data['userRequest']['amount']
-                          result = await self.Trip_update({'payment_type' : data['userRequest']['payment_type'],'status': 'complete'},data['userRequest']['trip_id'])
+                          result = await self.Trip_update({'payment_type' : data['userRequest']['payment_type'],'status': 'completed'},data['userRequest']['trip_id'])
                           if result == 'successfully update' and amount:
                                 data = {
                                 'ride':False,
@@ -461,7 +461,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                         }  
                                     )       
                                     
-                                    await asyncio.sleep(3)  
+                                    await asyncio.sleep(1)  
 
                                     await self.channel_layer.group_send(
                                         f'user_{trip_data['user_id']}', 
@@ -476,7 +476,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     elif data['userRequest']['payment_type'] =='razorpay' and trip_data:
                         print("yes here is working")
                         amount = data['userRequest']['amount']
-                        result = await self.Trip_update({'payment_type' : data['userRequest']['payment_type'],'status': 'complete'},data['userRequest']['trip_id'])
+                        result = await self.Trip_update({'payment_type' : data['userRequest']['payment_type'],'status': 'completed'},data['userRequest']['trip_id'])
                         if result == 'successfully update' and amount:
                                 data = {
                                 'ride':False,
@@ -509,7 +509,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         print('payment reach user side error')
             elif 'payment received' in data:
                 
-                result = await self.Trip_update({'payment_type' : data['payment received'],'status': 'complete'},data['trip_id'])
+                result = await self.Trip_update({'payment_type' : data['payment received'],'status': 'completed'},data['trip_id'])
                 trip_data = await self.get_tripdata(data['trip_id'])
                 if result == 'successfully update' and trip_data:
                     data = {
@@ -531,7 +531,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             elif 'usertripcancel' in data:
                 
                 trip_id=data['usertripcancel']['trip_id']
-                result = await self.Trip_update("canceled",trip_id)
+                result = await self.Trip_update("cancelled",trip_id)
                 print(result,'after updation result')
                 if result == 'successfully update':
                     
@@ -560,7 +560,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                
                 trip_id=data['trip_id']
                 
-                result = await self.Trip_update("canceled",trip_id)
+                result = await self.Trip_update("cancelled",trip_id)
                 
                 if result == 'successfully update':
                     ids= await self.get_tripdata(trip_id)

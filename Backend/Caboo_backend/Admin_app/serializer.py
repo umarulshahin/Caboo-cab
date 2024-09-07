@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone', 'profile', 'id', 'is_active',]
+        fields = ['username', 'email', 'phone', 'profile', 'id', 'is_active', 'wallet','ride']
         read_only_fields = ['id']
 class DriverDataSerializer(serializers.ModelSerializer):
     customuser = UserSerializer(read_only=True)
