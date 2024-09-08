@@ -8,7 +8,6 @@ const UserMain = () => {
     const [status, setStatus] = useState('');
 
     const renderComponent = () => {
-        console.log('uesr working wokring')
         switch (status) {
             case 'profile':
                 return <UserProfile_main />;

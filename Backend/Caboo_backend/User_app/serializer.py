@@ -24,14 +24,13 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
         
 class TripSerializer(serializers.ModelSerializer):
-    dataTime = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = TripDetails
         fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dataTime', 'payment_type']
 
     def get_dataTime(self, obj):
-        # Format the datetime object to 'YYYY-MM-DD'
         return obj.dataTime.strftime('%Y-%m-%d') if obj.dataTime else None
 class OTPValidationSerializer(serializers.Serializer):
     tripOTP = serializers.CharField()
@@ -48,7 +47,11 @@ class OTPValidationSerializer(serializers.Serializer):
     
     
 class WalletSerializer(serializers.ModelSerializer):
-    
+    created_at = serializers.SerializerMethodField()
+
     class Meta:
         model = UserWallet
-        fields = ['customuser', 'amount', 'reason', 'status']
+        fields = ['customuser', 'amount', 'reason', 'status', 'created_at']
+        
+    def get_created_at(self, obj):
+        return obj.created_at.strftime('%Y-%m-%d') if obj.created_at else None

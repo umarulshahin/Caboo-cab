@@ -25,6 +25,7 @@ urlpatterns = [
     path('payment/',Payment,name='payment'),
     path('paymentsucces/',PaymentSuccess,name='paymentsuccess'),
     path('ridedetails/',Ridedetails,name='ridedetails'),
+    path('walletdetails/',Walletdetails,name='walletdetails'),
   
   #*.....................Admin Api .........................
   

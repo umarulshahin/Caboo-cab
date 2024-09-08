@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import useGetUser from '../../Hooks/useGetUser';
 import { useSelector } from 'react-redux';
+import { Ride_User_Data_url } from '../../Utils/Constanse';
 
 const RideHistory = () => {
     const [loading, setLoading] = useState(true);
-    const { UserRides } = useGetUser();
+    const {UserTabls } = useGetUser();
     const user = useSelector((state) => state.user_data.token_data);
     const trips = useSelector((state) => state.user_data.userTrips);
 
@@ -13,7 +14,7 @@ const RideHistory = () => {
         const fetchTrips = async () => {
             if (user.user_id) {
                 try {
-                    await UserRides({ id: user.user_id });
+                    await UserTabls(Ride_User_Data_url,{ id: user.user_id },'trip');
                 } finally {
                     setLoading(false);
                 }
