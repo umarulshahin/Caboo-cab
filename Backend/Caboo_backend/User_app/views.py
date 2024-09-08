@@ -142,11 +142,33 @@ def PaymentSuccess(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def Ridedetails(request):
-    user_id = request.GET.get('id')  
     
-    trips=TripDetails.objects.filter(user=user_id).order_by('-id')
-    if trips:
-        serializer =TripSerializer(trips,many=True)
-        return Response(serializer.data)
+    try:
+        user_id = request.GET.get('id')  
     
-    return Response("error")
+        trips=TripDetails.objects.filter(user=user_id).order_by('-id')
+        if trips:
+            serializer =TripSerializer(trips,many=True)
+            return Response(serializer.data)
+    except Exception as e:
+        return Response(f'error {e}')
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def Walletdetails(request):
+     
+    try:
+        
+        user_id = request.GET.get('id')  
+        data=UserWallet.objects.filter(customuser=user_id)
+        if data:
+            serializer = WalletSerializer(data,many=True)
+            print(serializer.data,'wallet')
+            return Response(serializer.data)
+    
+    except Exception as e:
+        
+        return Response(f'error {e}')
+        
+    
+    

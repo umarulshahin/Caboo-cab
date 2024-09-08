@@ -7,7 +7,8 @@ const userSlice=createSlice({
     initialState:{
         user_data:{},
         token_data:{},
-        userTrips:{}
+        userTrips:{},
+        walletdetails:{}
     },
     reducers:{
         addUser:(state,action)=>{
@@ -20,10 +21,13 @@ const userSlice=createSlice({
         },
         addUserTrips:(state,action)=>{
             state.userTrips=action.payload
+        },
+        addWalletDetails:(state,action)=>{
+            state.walletdetails=action.payload
         }
     }
 
 })
-export const {addUser,addToken_data,addUserTrips}=userSlice.actions
+export const {addUser,addToken_data,addUserTrips,addWalletDetails}=userSlice.actions
 
 export default userSlice.reducer;
