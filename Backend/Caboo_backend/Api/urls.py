@@ -21,7 +21,6 @@ urlpatterns = [
     path('image_uploade/',Image_Upload,name="image_uploade"),
     path('getuser/',GetUser,name='getuser'),
     path('profilupdate/',ProfilUpdate,name='profilupdate'),
-    path('rideManagement/',Ride_management,name='rideManagement'),
     path('payment/',Payment,name='payment'),
     path('paymentsucces/',PaymentSuccess,name='paymentsuccess'),
     path('ridedetails/',Ridedetails,name='ridedetails'),

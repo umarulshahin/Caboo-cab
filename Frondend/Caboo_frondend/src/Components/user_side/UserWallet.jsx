@@ -29,7 +29,7 @@ const {showRazorpay,UserTabls}=useGetUser()
 
     }
     wallet_data()
-  },[])
+  },[userdata])
 
   return (
     <div className="flex items-center justify-center mt-32 overflow-x-hidden">

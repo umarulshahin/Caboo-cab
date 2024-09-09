@@ -1,37 +1,45 @@
 // Signin_form.js
-import React, { useEffect } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import google_icon from '../../assets/Google_icon.png';
-import { email_validate_url } from '../../Utils/Constanse';
-import { useNavigate } from 'react-router-dom';
-import useAuthentication from '../../Hooks/useAuthentication';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { email_validate_url } from "../../Utils/Constanse";
+import { json, useNavigate } from "react-router-dom";
+import useAuthentication from "../../Hooks/useAuthentication";
+import { useSelector } from "react-redux";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 const Signin_form = () => {
-  
-  const {Emailvalidation}=useAuthentication()
-  const role = useSelector((state)=>state.Authentication.role)
-  const Navigate =useNavigate()
+  const { Emailvalidation } = useAuthentication();
+  const role = useSelector((state) => state.Authentication.role);
+  const Navigate = useNavigate();
   const initialValues = {
-    email: '',
+    email: "",
   };
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
-      .email('Invalid email format')
-      .required('Email is required'),
+      .email("Invalid email format")
+      .required("Email is required"),
   });
 
   const onSubmit = (values) => {
-    values['role']=role
-    Emailvalidation(values,email_validate_url)
-    
+    values["role"] = role;
+    Emailvalidation(values, email_validate_url);
   };
+
+  const handleGoogleAuth=(response)=>{
+   
+    const value = jwtDecode(response.credential)
+    const data = {
+      email : value['email'],
+    }
+    onSubmit(data)
+  }
 
   return (
     <div className=" bg-white h-80 text-black flex flex-col justify-center items-center">
-      <div className=''>
+      <div className="">
         <span className=" text-2xl font-bold pr-16">What's your Email?</span>
       </div>
       <div>
@@ -72,13 +80,17 @@ const Signin_form = () => {
         <hr className="flex-grow border-t border-black" />
       </div>
       <div className="mt-5 w-full flex justify-center">
-        <button
-          type="button"
-          className="bg-white w-72 text-black px-4 py-2 border border-black rounded-md font-bold flex items-center justify-center"
-        >
-          <img src={google_icon} alt="Google icon" className="mr-2 h-5 w-5" />
-          Continue with Google
-        </button>
+
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            // console.log(credentialResponse);
+            handleGoogleAuth(credentialResponse)
+          }}
+          onError={() => {
+            console.log("Login Failed");
+          }}
+        />
+
       </div>
     </div>
   );

@@ -10,7 +10,6 @@ import { addCharges, addDistance, addPlaces } from "../../Redux/RideSlice";
 import VehicleCard from "./VehicleCard";
 import { toast } from "sonner";
 import useRide from "../../Hooks/useRide";
-import { Ride_management_url } from "../../Utils/Constanse";
 import RideWaitingmodal from "./RideWaitingmodal";
 import useWebSocket from "../../Socket/Socket";
 

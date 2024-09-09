@@ -220,7 +220,6 @@ const useDriverWebSocket = () => {
                                                 });
                                             };
     
-                                            // Resolve both locations
                                             Promise.all([
                                                 geocodeLocation(driverLatLng),
                                                 geocodeLocation(clientLatLng),
@@ -238,11 +237,11 @@ const useDriverWebSocket = () => {
                                                         address: clientAddress,
                                                     },
                                                     distance: {
-                                                        text: distance.text, // e.g., '3.9 km'
+                                                        text: distance.text, 
                                                         value: distance.value
                                                     },
                                                     duration: {
-                                                        text: duration.text, // e.g., '13 mins'
+                                                        text: duration.text, 
                                                         value: duration.value
                                                     }
                                                 });

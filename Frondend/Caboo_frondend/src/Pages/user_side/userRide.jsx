@@ -60,7 +60,7 @@ const UserRide = () => {
       </div>
     </div>
       
-  <div className="w-screen">
+  <div className="mb-10">
   {selectedTab === 'Current Ride' && (
   ridedriver ? (
     <UserRide_page />
