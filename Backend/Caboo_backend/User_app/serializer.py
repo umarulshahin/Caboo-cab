@@ -24,14 +24,15 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
         
 class TripSerializer(serializers.ModelSerializer):
-    created_at = serializers.SerializerMethodField()
+    dateTime = serializers.SerializerMethodField()
+    driver = UserSerializer()
 
     class Meta:
         model = TripDetails
-        fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dataTime', 'payment_type']
+        fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dateTime', 'payment_type', 'service_type']
 
-    def get_dataTime(self, obj):
-        return obj.dataTime.strftime('%Y-%m-%d') if obj.dataTime else None
+    def get_dateTime(self, obj):
+        return obj.dateTime.strftime('%Y-%m-%d') if obj.dateTime else None
 class OTPValidationSerializer(serializers.Serializer):
     tripOTP = serializers.CharField()
     driver = serializers.IntegerField()

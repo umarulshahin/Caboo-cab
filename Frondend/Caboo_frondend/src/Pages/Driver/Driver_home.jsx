@@ -56,7 +56,7 @@ const Driver_home = () => {
     // current month count
 
     const MonthCount = trips.reduce((count, trip) => {
-      const tripDate = new Date(trip.dataTime);
+      const tripDate = new Date(trip.dateTime);
       
       if (tripDate.getMonth()+1 === currentMonth && tripDate.getFullYear() === currentYear) {
         return count + 1;

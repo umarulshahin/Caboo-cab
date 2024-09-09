@@ -30,6 +30,9 @@ import UserRide from "./Pages/user_side/userRide";
 import PaymentModal from "./Components/user_side/PaymentModal";
 import PaymentConfirmModal from "./Components/Driver/PaymentConfirmModal";
 import TripListing from "./Components/Admin/TripListing";
+import Tripdetails from "./Components/Driver/Tripdetails";
+import RideDetails from "./Components/user_side/RideDetails";
+
 
 const App = () => {
   
@@ -50,6 +53,7 @@ const App = () => {
               <Route path="/otpverification" element={<OtpForm />} />
               <Route path="/userRide" element={<UserRide />}/>
               <Route path="/paymentModal" element={<PaymentModal />}/>
+              <Route path="/ridedetails" element={<RideDetails/>}/>
 
               <Route path="/admin" element={<AdminPrivatRoute><Admin_Signin /></AdminPrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />
@@ -61,11 +65,11 @@ const App = () => {
             
               <Route path='/vehicle_doc' element={<Vehicle_doc /> } />
               <Route path='/waitingModal' element={<WaitingModal /> } />
-
               <Route path="/driver_home" element={<Driver_PrivatRoute> <Driver_home /></ Driver_PrivatRoute>} />
               <Route path="/driver_profile" element={<Driver_profile /> } />
               <Route path="/ride" element={<Ride />} />
               <Route path="/paymentconfirm" element={<PaymentConfirmModal />} />
+              <Route path="/tripdetails" element={<Tripdetails />} />
 
             </Routes>
           </BrowserRouter>

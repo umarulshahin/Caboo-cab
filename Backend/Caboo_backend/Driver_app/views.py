@@ -49,10 +49,11 @@ def Driver_Status(request):
 def Tripdetails(request):
     
     driver_id = request.GET.get('id')
-    print(driver_id,'driver data')
-    trips=TripDetails.objects.filter(driver=driver_id).order_by('-id')
+    trips = TripDetails.objects.filter(driver=driver_id).order_by('-id').select_related('user')
+        
     if trips:
-        serializer =TripSerializer(trips,many=True)
+        serializer =AllTripSerializer(trips,many=True)
+        
         return Response(serializer.data)
     
     return Response("success")

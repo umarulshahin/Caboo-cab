@@ -78,10 +78,6 @@ const Ride = () => {
     )}
     </div>
 
-
-    
-      
-      
       <Footer />
     </div>
   );

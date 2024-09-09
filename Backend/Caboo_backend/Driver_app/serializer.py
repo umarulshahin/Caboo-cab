@@ -28,3 +28,15 @@ class DriverDataSerializer(serializers.ModelSerializer):
                   'comments',
                   'current_Status',
                   'id']
+
+class AllTripSerializer(serializers.ModelSerializer):
+    
+    dateTime = serializers.SerializerMethodField()
+    user =UserSerializer()
+
+    class Meta:
+        model = TripDetails
+        fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dateTime', 'payment_type', 'service_type',]
+
+    def get_dateTime(self, obj):
+        return obj.dateTime.strftime('%Y-%m-%d') if obj.dateTime else None

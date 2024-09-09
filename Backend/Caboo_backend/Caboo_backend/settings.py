@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,22 +30,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-env_path = BASE_DIR / '.env'
-if os.path.exists(env_path):
-    with open(env_path) as f:
-        for line in f:
-            if line.strip() and not line.startswith('#'):
-                key, value = line.strip().split('=', 1)
-                os.environ[key] = value
-
-# Now you can access the environment variables
-RAZORPAY_KEY_ID = os.environ.get('PUBLIC_KEY')
-RAZORPAY_KEY_SECRET = os.environ.get('SECRET_KEY')
+load_dotenv()
+RAZORPAY_SECRET_KEY = os.getenv('RAZORPAY_SECRET_KEY')
+RAZORPAY_PUBLIC_KEY = os.getenv('RAZORPAY_PUBLIC_KEY')
 
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
+    'daphne', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

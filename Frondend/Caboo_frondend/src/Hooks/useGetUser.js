@@ -161,7 +161,7 @@ const useGetUser = () => {
       if (response.status===200){
         console.log(response.data,'success data after payment')
         toast.success("Your wallet successfully recharged")
-        Get_data(user_data_url, null);
+        await Get_data(user_data_url, null);
 
       }
 
@@ -253,9 +253,7 @@ const useGetUser = () => {
   }
 
   const UserTabls = async(url,data,role)=>{
-    console.log(data['id'],'data')
-    console.log(url,'url')
-    console.log(role)
+ 
     try{
        const response = await UserAxios.get(url,{
         params: { id: data['id'] },

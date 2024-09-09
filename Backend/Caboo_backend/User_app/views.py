@@ -6,11 +6,10 @@ from rest_framework import status
 from .models import *
 from rest_framework.permissions import IsAuthenticated
 from  Authentication_app.models import *
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 import razorpay
 from django.conf import settings        
 from django.db.models import *
+from Driver_app.serializer import *
         
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])    
@@ -59,27 +58,6 @@ def ProfilUpdate(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def Ride_management(request):
-    
-    data = request.data
-    print(data, 'ride management')
-    
-    try:
-        # channel_layer = get_channel_layer()
-        # async_to_sync(channel_layer.group_send)(
-        #     'driver_location_room',
-        #     {
-        #         "location":{"latitude": 40.7128, "longitude": -74.0060}
-        #     }
-        # )
-        
-        return Response({'success': "request done"})
-    except Exception as e:
-        print('error',e)
-        return Response({"error":'somthing is wrong'},status=500)
-   
-@api_view(['POST'])
 @permission_classes([IsAuthenticated])   
 def Payment(request):
     
@@ -87,12 +65,13 @@ def Payment(request):
       data=request.data
       amount = data
       print(amount,'amount')
+      
+      secret_key = settings.RAZORPAY_SECRET_KEY  
+      public_key = settings.RAZORPAY_PUBLIC_KEY
+      
       if int(amount) >0:
-            key_id='rzp_test_CBJeWuVVebxglq'
-            secret_key ='NTEfgFjJ4z9dxx4H5fOL1nlm'
-            print(key_id,'key id ')
-            print(secret_key,'secret key ')
-            client = razorpay.Client(auth=(key_id, secret_key))
+          
+            client = razorpay.Client(auth=(public_key, secret_key))
 
             payment = client.order.create({"amount": int(amount) * 100, 
                                         "currency": "INR", 
@@ -109,7 +88,6 @@ def Payment(request):
 def PaymentSuccess(request):
     
     try:
-        print(request.data,'payment success data')
         user_id = request.data['user'][0]['id']
         amount = request.data['amount']
         if user_id:
@@ -142,15 +120,19 @@ def PaymentSuccess(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def Ridedetails(request):
+    print(' yes this is working')
     
     try:
         user_id = request.GET.get('id')  
-    
-        trips=TripDetails.objects.filter(user=user_id).order_by('-id')
+        print(user_id,'user id')
+        trips = TripDetails.objects.filter(driver=user_id).order_by('-id').select_related('driver')
+        print(trips,'trips')
         if trips:
             serializer =TripSerializer(trips,many=True)
+            print(serializer.data,'serializer data')
             return Response(serializer.data)
     except Exception as e:
+        print(e,'error ')
         return Response(f'error {e}')
     
 @api_view(['GET'])
@@ -160,10 +142,9 @@ def Walletdetails(request):
     try:
         
         user_id = request.GET.get('id')  
-        data=UserWallet.objects.filter(customuser=user_id)
+        data=UserWallet.objects.filter(customuser=user_id).order_by('-id')
         if data:
             serializer = WalletSerializer(data,many=True)
-            print(serializer.data,'wallet')
             return Response(serializer.data)
     
     except Exception as e:
