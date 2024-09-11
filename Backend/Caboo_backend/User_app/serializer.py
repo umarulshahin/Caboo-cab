@@ -25,11 +25,25 @@ class UserSerializer(serializers.ModelSerializer):
         
 class TripSerializer(serializers.ModelSerializer):
     dateTime = serializers.SerializerMethodField()
-    driver = UserSerializer()
 
     class Meta:
         model = TripDetails
-        fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dateTime', 'payment_type', 'service_type']
+        fields = ['id', 
+                  'user',
+                  'driver', 
+                  'location',
+                  'destination',
+                  'distance',
+                  'duration',
+                  'amount', 
+                  'orderId',
+                  'tripOTP',
+                  'status', 
+                  'dateTime', 
+                  'payment_type',
+                  'service_type',
+                  'rating',
+                  'message']
 
     def get_dateTime(self, obj):
         return obj.dateTime.strftime('%Y-%m-%d') if obj.dateTime else None
@@ -56,3 +70,16 @@ class WalletSerializer(serializers.ModelSerializer):
         
     def get_created_at(self, obj):
         return obj.created_at.strftime('%Y-%m-%d') if obj.created_at else None
+
+class AllRidesSerializer(serializers.ModelSerializer):
+    
+        dateTime = serializers.SerializerMethodField()
+        driver =UserSerializer()
+        user = UserSerializer()
+
+        class Meta:
+            model = TripDetails
+            fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dateTime', 'payment_type', 'service_type', 'rating' ,'message']
+
+        def get_dateTime(self, obj):
+            return obj.dateTime.strftime('%Y-%m-%d') if obj.dateTime else None

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../assets/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { Link as ScrollLink } from "react-scroll";
 import { useDispatch, useSelector } from "react-redux";
 import avatar from "../../assets/profile_img.png"
 import { backendUrl } from "../../Utils/Constanse";
 import Cookies from "js-cookie"
 import { addadmin_data, addadmin_token, addDriver_list, addUsers_list } from "../../Redux/AdminSlice";
 
-const Admin_header = (props) => {
-    const { ride, drive, user } = props.headprops;
+const Admin_header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
     const dispatch=useDispatch()
@@ -50,28 +48,7 @@ const Admin_header = (props) => {
       <Link to="/Admin_home" >
       <img src={logo} alt="Logo" className="h-12" />
         </Link>
-        <div className="hidden sm:flex sm:space-x-8 pl-6">
-         
-            <ScrollLink
-              to="first_layout"
-              smooth={true}
-              duration={500}
-              className="text-white font-extrabold cursor-pointer hover:text-yellow-500"
-            >
-              Ride
-            </ScrollLink>
-        
-        
-            <ScrollLink
-              to="second_layout"
-              smooth={true}
-              duration={500}
-              className="text-white font-extrabold cursor-pointer hover:text-yellow-500"
-            >
-              Drive
-            </ScrollLink>
-      
-        </div>
+
       </div>
       <div className="flex flex-grow items-center justify-center px-4 space-x-4 sm:space-x-8">
       {/* Search Bar */}
@@ -135,16 +112,8 @@ const Admin_header = (props) => {
       {menuOpen && (
         <div className="w-full block sm:hidden">
           <div className="flex flex-col items-end space-y-2 pt-4">
-            {ride && (
-              <Link className="text-white font-extrabold">
-                Ride
-              </Link>
-            )}
-            {drive && (
-              <Link className="text-white font-extrabold">
-                Drive
-              </Link>
-            )}
+            
+          
             <Link className="text-white font-extrabold">About</Link>
             <Link className="text-white font-extrabold">Help</Link>
           </div>

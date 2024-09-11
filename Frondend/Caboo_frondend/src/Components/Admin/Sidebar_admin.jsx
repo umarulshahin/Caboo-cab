@@ -7,7 +7,7 @@ const Sidebar_admin = () => {
 
 
   return (
-    <div className=' mt-14 w-full max-w-xs mx-auto shadow-md rounded-md '>
+    <div className=' mt-14 w-full max-w-xs mx-auto  rounded-md '>
       <div className="flex flex-col items-start space-y-4 p-4">
         <NavLink
           to='/admin_home'

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import Sidebar_admin from "./Sidebar_admin";
 import { useSelector } from "react-redux";
 import useAdmin from "../../Hooks/useAdmin";
+import Admin_header from "./Admin_header";
+import { useNavigate } from "react-router-dom";
 
 const TripListing = () => {
-  const [User_list, setUserlist] = useState(0);
   const { GetTripdata } = useAdmin();
+  const navigate = useNavigate()
   useEffect(() => {
     const tripdata = async () => {
       console.log("yes working");
@@ -19,6 +21,8 @@ const TripListing = () => {
 
   return (
     <div className="flex min-h-screen mt-16 bg-gray-100">
+      <Admin_header />
+
       <div className="w-1/6 bg-white shadow-lg h-screen">
         <Sidebar_admin />
       </div>
@@ -78,8 +82,8 @@ const TripListing = () => {
                                                data.status === 'cancelled' ? 'text-red-600':
                                                data.status === 'completed'? 'text-green-600':'text-black'
                     } `}>{data.status}</td>
-                    <td className="py-3 px-4 ">
-                        <button
+                    <td className="py-3 ">
+                        <button onClick={()=>navigate('/tripmore',{state:{trips:data}})}
                             className="px-6 py-2 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition"
                         >
                             View

@@ -32,7 +32,7 @@ def Image_Upload(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])    
 def GetUser(request):
-    
+    print('yes here is working ')
     user = request.user
     data=CustomUser.objects.filter(email=user)
     serializer=UserSerializer(data,many=True)
@@ -120,15 +120,14 @@ def PaymentSuccess(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def Ridedetails(request):
-    print(' yes this is working')
     
     try:
         user_id = request.GET.get('id')  
         print(user_id,'user id')
-        trips = TripDetails.objects.filter(driver=user_id).order_by('-id').select_related('driver')
+        trips = TripDetails.objects.filter(user=user_id).order_by('-id')
         print(trips,'trips')
         if trips:
-            serializer =TripSerializer(trips,many=True)
+            serializer =AllRidesSerializer(trips,many=True)
             print(serializer.data,'serializer data')
             return Response(serializer.data)
     except Exception as e:
@@ -152,4 +151,15 @@ def Walletdetails(request):
         return Response(f'error {e}')
         
     
-    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def Review(request):
+    try:
+        data = request.data
+        trip = TripDetails.objects.get(id=data['tripId'])
+        serializer =TripSerializer(trip,data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+    except Exception as e:
+        return Response(f"error review {e}")

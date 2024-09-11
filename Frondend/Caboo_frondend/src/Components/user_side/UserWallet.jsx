@@ -9,9 +9,10 @@ const {showRazorpay,UserTabls}=useGetUser()
   const [alltrip,setalltrip]=useState()
   const userdata = useSelector((state)=>state.user_data.user_data)
   const walletdata = useSelector((state)=>state.user_data.walletdetails)
+  console.log(userdata,'user data')
   const {wallet} = userdata[0]
 
-
+  console.log(wallet,'wallet')
   const handleSubmit = (e) => {
     e.preventDefault();
     const value={

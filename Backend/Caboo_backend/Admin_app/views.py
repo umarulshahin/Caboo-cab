@@ -135,7 +135,7 @@ def Get_AllTrips(request):
         print('all trip working')
         trips = TripDetails.objects.all().order_by('-id')
         if trips:
-            serializer = TripSerializer(trips,many=True)
+            serializer = AllRidesSerializer(trips,many=True)
             return Response(serializer.data)
     except Exception as e:
         return Response(f"error {e}")

@@ -28,6 +28,9 @@ class TripDetails(models.Model):
     payment_type = models.CharField(max_length=50,blank=True)
     dateTime = models.DateTimeField(default=timezone.now)
     service_type = models.CharField(max_length=200,null=False,blank=False)
+    rating = models.IntegerField(null=True,blank=True)
+    message = models.TextField(null=True,blank=True)
+    
      
     def save(self, *args, **kwargs):
         if not self.orderId:
