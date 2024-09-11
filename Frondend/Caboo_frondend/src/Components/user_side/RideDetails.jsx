@@ -1,125 +1,195 @@
 import React from "react";
-
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Clock,
-  MapPin,
-  Star,
-  Tag,
-  Truck,
-  Calendar,
-  Info
-} from "lucide-react";
-import { FaMoneyBillAlt, FaDownload, FaArrowLeft } from "react-icons/fa";
+import { FaDownload, FaArrowLeft } from "react-icons/fa";
 import { backendUrl } from "../../Utils/Constanse";
-import Driver_Header from "../Driver/Driver_Header";
 import Footer from "../Footer";
-
+import User_header from "./User_header";
+import location from "../../assets/pickup.png";
+import time from "../../assets/time.png";
+import pay from "../../assets/pay.png";
+import loading from "../../assets/loading.png";
+import dropoff from "../../assets/dropoff.png";
+import distance from "../../assets/distance.png";
+import calendar from "../../assets/calendar.png";
+import money from "../../assets/money.png";
+import rating from "../../assets/rating.png";
+import feedback from "../../assets/feedback.png";
+import { FaStar } from "react-icons/fa";
 
 const RideDetails = () => {
+  const { state } = useLocation();
+  console.log(state, "state");
+  const { rides } = state || {};
+  const navigate = useNavigate();
+  console.log(rides);
 
-    const { state } = useLocation();
-    console.log(state,'state')
-    const { rides } = state || {};
-    const navigate = useNavigate();
-    console.log(rides)
-  
-    if (!rides) {
-      return <div>No trip data available.</div>;
-    }
+  if (!rides) {
+    return <div>No trip data available.</div>;
+  }
   return (
-<div>
-      <Driver_Header />
-      <div className="flex justify-center  items-center my-28">
-        <div className="w-3/4 border-2 bg-blue-100 p-5 rounded-lg">
-          <div className="bg-gray-100 border-b">
+    <div className="min-h-screen flex flex-col font-inter">
+      <User_header />
+
+      <div className="flex justify-center items-center py-10 mt-20 bg-gray-200">
+        <div className="w-full max-w-4xl mx-4 bg-white rounded-lg shadow-xl p-8">
+          <div className="bg-gray-100 p-1 rounded-t-lg">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-2xl p-6">Trip Details</span>
-              </div>
-              <div>
-                <span className="text-gray-500 font-bold ">
-                  Service Type: {rides.service_type}
+                <span className="font-extrabold text-3xl text-gray-800">
+                  Trip Details
                 </span>
-                <span className="text-gray-500 font-bold px-7">
-                  Trip ID: {rides.orderId}
+              </div>
+              <div className="flex space-x-6">
+                <span className="text-gray-600 font-bold">
+                  Service Type : {rides.service_type}
+                </span>
+                <span className="text-gray-600 font-bold">
+                  Trip ID : {rides.orderId}
                 </span>
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="flex flex-col space-y-4 pt-4">
-              <div className="flex items-center space-x-3 pl-6 rounded-lg bg-white">
-                {/* Profile Image */}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+            {/* Left Column: Driver and Trip Information */}
+            <div className="flex flex-col space-y-6">
+              {/* Profile Image and Username */}
+              <div className="flex items-center space-x-4 p-1 rounded-lg bg-white ">
                 <img
-                  src={`${backendUrl}${rides.driver.profile}`} // Assuming this is the URL to the profile image
+                  src={`${backendUrl}${rides.driver.profile}`}
                   alt={rides.driver.username}
-                  className="w-10 h-10 rounded-full object-cover" // Tailwind classes to make the image round
+                  className="w-12 h-12 rounded-full object-cover"
                 />
-                {/* Username */}
-                <span className="py-4 text-lg font-bold">{rides.driver.username}</span>
-              </div>
-              <div className="flex py-4 space-x-3 pl-8 rounded-lg bg-white">
-                <Star size={24} />
-                <span className="font-bold">
-                 You Rated <br /> <span>⭐⭐⭐⭐⭐</span>
+                <span className="text-xl font-semibold">
+                  {rides.driver.username}
                 </span>
               </div>
-              <div className="flex items-center space-x-3 pl-8 rounded-lg bg-white">
-                <FaMoneyBillAlt size={24} />
-                <span className="font-bold py-5">Fare: ₹{rides.amount}</span>
-              </div>
-              <div className="flex items-center pt-8 space-x-3 pl-8 rounded-lg bg-white">
-                <Tag size={24} />
-                <span className="font-bold">Paid Type: {rides.payment_type}</span>
-              </div>
-              {/* New Data Field with Icon */}
-              <div className="flex items-center py-4 space-x-3 pl-8 rounded-lg bg-white">
-                <Calendar size={24} /> {/* Calendar Icon */}
-                <span className="font-bold">Date: {rides.dateTime}</span>
-              </div>
-              {/* New Status Field with Icon */}
-              
-            </div>
-            <div className="flex flex-col pt-4 space-y-4">
+              {/* Rating */}
+              <div className="flex items-center  p-2 space-x-3  p-1rounded-lg bg-white">
+                <img className="h-7" src={rating} alt="review" />
 
-            <div className="flex items-center py-4 px-4 space-x-3 rounded-lg bg-white">
-                <Info size={24} /> {/* Info Icon for Status */}
-                <span className="font-bold">Status: <span className={`${rides.status === 'completed' ? 'text-green-600' : rides.status === 'pending' ? 'text-orange-600' : 'text-red-600'}`}> {rides.status}</span></span>
+                <div className="text-left">
+                  <h2 className="font-bold mb-2">Review</h2>
+                  <div className="flex justify-start mb-2">
+                    {/* Render stars based on dynamic rating */}
+                    {[...Array(5)].map((_, index) => (
+                      <FaStar
+                        key={index}
+                        className={
+                          index < rides.rating
+                            ? "text-yellow-500"
+                            : "text-gray-300"
+                        }
+                        size={25}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center space-x-3 px-4  rounded-lg bg-white">
-                <Truck size={24} />
-                <span className="font-bold py-3">Distance: {rides.distance}</span>
+              {rides.message && (
+                <div className="flex items-center  space-x-3 p-2 rounded-lg bg-white">
+                  <img className="h-7" src={feedback} alt="amount" />
+                  <span className="font-bold ">
+                    Feedback : {rides.message}
+                  </span>
+                </div>
+              )}
+
+              {/* Fare */}
+              <div className="flex items-center space-x-3 p-2 rounded-lg bg-white ">
+                <img className="h-7" src={money} alt="amount" />
+                <span className="text-lg font-bold">Fare: ₹{rides.amount}</span>
               </div>
-              <div className="flex items-center space-x-3 px-4 rounded-lg bg-white">
-                <Clock size={24} />
-                <span className="font-bold py-3">Duration: {rides.duration}</span>
+              {/* Payment Type */}
+              <div className="flex items-center space-x-3  p-2 rounded-lg bg-white ">
+                <img className="h-7" src={pay} alt="paytype" />
+                <span className="text-lg font-bold">
+                  Paid Type: {rides.payment_type}
+                </span>
               </div>
-              <div className="flex items-center py-3 px-4 space-x-3 rounded-lg bg-white">
-                <MapPin size={24} />
-                <span className="font-bold">Location: <br /> <span>{rides.location}</span></span>
-              </div>
-              <div className="flex items-center py-2 px-4 space-x-3 rounded-lg bg-white">
-                <MapPin size={24} />
-                <span className="font-bold">Destination: <br /><span>{rides.destination}</span></span>
-              </div>
-              <div className="space-x-4 flex justify-end mr-10 py-5">
-                <button onClick={() => navigate(-1)} className="bg-white border text-black font-bold py-2 px-6 my-4 hover:border-black rounded-lg flex items-center">
-                  <FaArrowLeft className="mr-2" />
-                  Back
-                </button>
-                <button className="bg-black font-bold text-white py-2 px-4 my-4 hover:bg-gray-600 rounded-lg flex items-center">
-                  <FaDownload className="mr-2" />
-                  Download
-                </button>
+              {/* Date */}
+              <div className="flex items-center space-x-3  p-2 rounded-lg bg-white ">
+                <img className="h-7" src={calendar} alt="date" />
+                <span className="text-lg font-bold">
+                  Date: {rides.dateTime}
+                </span>
               </div>
             </div>
+
+            {/* Right Column: Trip Details */}
+            <div className="flex flex-col space-y-6">
+              {/* Status */}
+              <div className="flex items-center space-x-4 p-1 rounded-lg bg-white ">
+                <img className="h-7" src={loading} alt="status" />
+                <span className="text-lg font-bold">
+                  Status:{" "}
+                  <span
+                    className={`${
+                      rides.status === "completed"
+                        ? "text-green-600"
+                        : rides.status === "pending"
+                        ? "text-orange-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {" "}
+                    {rides.status}
+                  </span>
+                </span>
+              </div>
+              {/* Distance */}
+              <div className="flex items-center space-x-4 p-1 rounded-lg bg-white ">
+                <img className="h-7" src={distance} alt="distance" />
+                <span className="text-lg font-bold">
+                  Distance: {rides.distance}
+                </span>
+              </div>
+              {/* Duration */}
+              <div className="flex items-center space-x-4 p-1 rounded-lg bg-white ">
+                <img className="h-7" src={time} alt="duration" />
+                <span className="text-lg font-bold">
+                  Duration: {rides.duration}
+                </span>
+              </div>
+              {/* Location */}
+              <div className="flex items-center space-x-4 p-1 rounded-lg bg-white ">
+                <img className="h-7" src={location} alt="pickup" />
+                <span className="text-lg font-bold">
+                  Location: <br />
+                  <span>{rides.location}</span>
+                </span>
+              </div>
+              {/* Destination */}
+              <div className="flex items-center space-x-4 p-1 rounded-lg bg-white ">
+                <img className="h-7" src={dropoff} alt="dropoff" />
+                <span className="text-lg font-bold">
+                  Destination: <br />
+                  <span>{rides.destination}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Buttons */}
+          <div className="flex justify-end mt-8 space-x-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="bg-transparent border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:border-black flex items-center"
+            >
+              <FaArrowLeft className="mr-2" />
+              Back
+            </button>
+            <button className="bg-black text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 flex items-center">
+              <FaDownload className="mr-2" />
+              Download
+            </button>
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
-      )
-}
+  );
+};
 
-export default RideDetails
+export default RideDetails;

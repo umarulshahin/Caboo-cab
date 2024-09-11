@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone', 'profile', 'id', 'is_active',]
+        fields = ['username', 'email', 'phone', 'profile', 'id', 'is_active', 'wallet']
         read_only_fields = ['id']
 class DriverDataSerializer(serializers.ModelSerializer):
     customuser = UserSerializer(read_only=True)
@@ -29,14 +29,3 @@ class DriverDataSerializer(serializers.ModelSerializer):
                   'current_Status',
                   'id']
 
-class AllTripSerializer(serializers.ModelSerializer):
-    
-    dateTime = serializers.SerializerMethodField()
-    user =UserSerializer()
-
-    class Meta:
-        model = TripDetails
-        fields = ['id', 'user', 'driver', 'location', 'destination', 'distance', 'duration', 'amount', 'orderId', 'tripOTP', 'status', 'dateTime', 'payment_type', 'service_type',]
-
-    def get_dateTime(self, obj):
-        return obj.dateTime.strftime('%Y-%m-%d') if obj.dateTime else None

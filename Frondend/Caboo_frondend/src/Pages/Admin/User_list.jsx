@@ -4,16 +4,12 @@ import User_list_page from '../../Components/Admin/User_list_page';
 import Footer from '../../Components/Footer';
 
 const User_list = () => {
-    const headprops = {
-        ride: false,
-        drive: false,
-        user: false,
-      };
+
     
       return (
         <div>
             <div>
-            <Admin_header headprops={headprops} />
+            <Admin_header  />
     
             </div>
             <div className='bg-black'>

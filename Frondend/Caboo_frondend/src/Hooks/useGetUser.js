@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { addToken_data, addUser, addUserTrips, addWalletDetails } from "../Redux/UserSlice";
 import { useNavigate } from "react-router-dom";
-import {Driver_data_urls, img_upload_url,PaymentSuccess_url,Ride_User_Data_url,user_data_url,} from "../Utils/Constanse";
+import {Driver_data_urls, img_upload_url,PaymentSuccess_url,Reviw_add_url,Ride_User_Data_url,user_data_url,} from "../Utils/Constanse";
 import { addadmin_data } from "../Redux/AdminSlice";
 import { addDriver_data, addDriver_token } from "../Redux/DriverSlice";
 import apiClient from "../Axios/GetDataAxios";
@@ -193,7 +193,6 @@ const useGetUser = () => {
       try{
         
         const data=value['amount']
-        console.log(value)
         const response = await UserAxios.post(Razorpay_url,data,{
           headers: {
             "Content-Type": "application/json",
@@ -208,8 +207,8 @@ const useGetUser = () => {
           const image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD7WSqyfPcRDeODaj88BEbubp2HHXSGveBnPf78nBEXsxFjW7t1a7Wn-WVyDtOjO5Ug8I&usqp=CAU"
 
           const options = {
-            key:secretKey, // Replace with your Razorpay Key ID
-            amount:amount, // Amount is in the smallest currency unit
+            key:secretKey, 
+            amount:amount, 
             currency: 'INR',
             name: 'Caboo cab',
             description: 'Test Transaction',
@@ -275,7 +274,34 @@ const useGetUser = () => {
       console.log(error,'user trips')
     }
   }
-  return { img_validate, Get_data, ProfilUpdate,showRazorpay,UserTabls};
+
+  const ReviewManagement= async (url,value)=>{
+         console.log(url,'url')
+         console.log(value,'value')
+         const formdata =new FormData()
+         formdata.append('review',value)
+    try{
+
+      const response = await UserAxios.post(url,value,{
+        headers:{
+          "Content-Type": "application/json"
+        }
+      })
+      if (response.status === 200){
+        console.log(response.data)
+        navigate('/userhome')
+        toast.success("Thank you! Your review has been submitted.")
+
+
+      }
+
+    }catch(error){
+        console.log(error,'review hook error')
+    }
+     
+
+  }
+  return { img_validate, Get_data, ProfilUpdate,showRazorpay,UserTabls,ReviewManagement};
 };
 
 export default useGetUser;

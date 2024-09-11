@@ -206,7 +206,7 @@ const DriverMap = () => {
             otpvalidation !== 'OTP_success' ?
            ( <>
           <div className='flex items-center  mb-4 shadow-xl rounded-md p-4 bg-white'>
-            <img src={key} alt="Key" className='w-6 h-6 mr-2 mt-7' /> 
+            <img src={key} alt="Key" className='w-6 h-6 mr-3' /> 
             <div className="flex space-x-2">
               {otp.map((data, index) => (
                 <input

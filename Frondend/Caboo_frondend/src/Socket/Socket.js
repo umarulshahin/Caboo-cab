@@ -53,12 +53,10 @@ const useUserWebSocket = () => {
                 console.log("yes payment is working ")
                 navigate('/paymentModal')
             }else if (data.type.trim() === "payment completed"){
-               
+                const trip=trip_id
                 dispatch(addClearRide(null))
                 Get_data(user_data_url)
-                navigate('/userhome', { replace: true });
-                toast.success('Trip completed successfully')
-                
+                navigate('/confirmation',{state:{trip_id:trip}});                
                 
             }else if (data.type.trim() === 'Trip cancel'){
                 dispatch(addClearRide(null))

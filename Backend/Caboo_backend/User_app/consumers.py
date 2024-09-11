@@ -6,6 +6,7 @@ import json
 from math import radians, sin, cos, sqrt, atan2
 import random
 import asyncio
+from django.db.models import *
 
 class LocationConsumer(AsyncJsonWebsocketConsumer):
     drivers_location = {}
@@ -15,6 +16,17 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
     drivers_distance = []
     driver_count = set()
     trip_id = None
+    
+    @sync_to_async
+    def driver_rating(self,driver):
+        from User_app.models import TripDetails
+        
+        try: 
+            rating = TripDetails.objects.filter(driver=driver).aggregate(total=Avg('rating'))
+            print(rating['total'],'rating avg')  
+            return rating['total']     
+        except Exception as e:
+            print(f'driver rating error {e}')
     
     @sync_to_async
     def get_tripdata(self,trip_id):
@@ -327,6 +339,19 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         LocationConsumer.driver_count.clear()
                         
                         user_id = result['trip_data']['user']
+                        rating = await self.driver_rating(driver_id)
+                        
+                        await self.channel_layer.group_send(
+                            f'user_{user_id}', 
+                            {
+                                'type': 'notify_user',
+                                'user_data': data,
+                                'tripdata' : result,
+                                'trip_id' : id,
+                                'rating' : rating
+                            }
+                        )
+                        
 
                         await asyncio.sleep(3)  
                         
@@ -338,16 +363,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                             }
                         )
                         
-                        await self.channel_layer.group_send(
-                            f'user_{user_id}', 
-                            {
-                                'type': 'notify_user',
-                                'user_data': data,
-                                'tripdata' : result,
-                                'trip_id' : id
-                            }
-                        )
-                        
+                      
                         
                        
                     else:

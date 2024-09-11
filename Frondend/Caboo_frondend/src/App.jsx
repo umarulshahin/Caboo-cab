@@ -32,6 +32,8 @@ import PaymentConfirmModal from "./Components/Driver/PaymentConfirmModal";
 import TripListing from "./Components/Admin/TripListing";
 import Tripdetails from "./Components/Driver/Tripdetails";
 import RideDetails from "./Components/user_side/RideDetails";
+import TripMore from "./Components/Admin/TripMore";
+import Confirmation from "./Components/user_side/Confirmation";
 
 
 const App = () => {
@@ -54,6 +56,7 @@ const App = () => {
               <Route path="/userRide" element={<UserRide />}/>
               <Route path="/paymentModal" element={<PaymentModal />}/>
               <Route path="/ridedetails" element={<RideDetails/>}/>
+              <Route path="/confirmation" element={<Confirmation />}/>
 
               <Route path="/admin" element={<AdminPrivatRoute><Admin_Signin /></AdminPrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />
@@ -61,7 +64,8 @@ const App = () => {
               <Route path="/Driver_list" element={<Driver_list />} />
               <Route path="/Documents" element={<Documents />} />
               <Route path="/triplisting" element={<TripListing />}/>
-
+              <Route path="/tripmore" element={<TripMore />}/>
+              
             
               <Route path='/vehicle_doc' element={<Vehicle_doc /> } />
               <Route path='/waitingModal' element={<WaitingModal /> } />

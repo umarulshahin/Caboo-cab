@@ -43,7 +43,6 @@ const RideSlice = createSlice({
             state.rideDriverdetails = action.payload;
         },
         addOTPvalidation: (state, action) => {
-            console.log('yes otp slice is working');
             state.otpValidation = action.payload;
         },
         addTripId: (state, action) => {

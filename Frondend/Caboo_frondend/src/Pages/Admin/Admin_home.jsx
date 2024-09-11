@@ -5,16 +5,11 @@ import Admin_home_page from '../../Components/Admin/Admin_home_pag';
 
 const Admin_home = () => {
       
-  const headprops = {
-    ride: false,
-    drive: false,
-    user: false,
-  };
 
   return (
     <div>
         <div>
-        <Admin_header headprops={headprops} />
+        <Admin_header />
 
         </div>
         <div className='bg-black'>

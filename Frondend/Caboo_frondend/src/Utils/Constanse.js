@@ -45,3 +45,5 @@ export const Trip_driver_Data_url = backendUrl+"/Api/tripdetails/";
 export const Get_all_trips_url = backendUrl+"/Api/getalltrip/";
 
 export const Walletdetails_url = backendUrl+"/Api/walletdetails/";
+
+export const Reviw_add_url = backendUrl+"/Api/review/";
