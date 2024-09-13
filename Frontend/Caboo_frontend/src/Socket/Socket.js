@@ -6,6 +6,7 @@ import { replace } from 'formik';
 import { toast } from 'sonner';
 import useGetUser from '../Hooks/useGetUser';
 import { user_data_url } from '../Utils/Constanse';
+import { addClearChat } from '../Redux/Chatslice';
 
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
@@ -45,6 +46,7 @@ const useUserWebSocket = () => {
 
                 console.log('yes otp success working asdfasdfsad')
                 dispatch(addOTPvalidation('OTP_success'))
+                dispatch(addClearChat([]))
 
                 navigate('/userRide')
 

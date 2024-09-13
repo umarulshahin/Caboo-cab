@@ -34,22 +34,29 @@ import Tripdetails from "./Components/Driver/Tripdetails";
 import RideDetails from "./Components/user_side/RideDetails";
 import TripMore from "./Components/Admin/TripMore";
 import Confirmation from "./Components/user_side/Confirmation";
-
+import User_header from "./Components/user_side/User_header";
+import { WebSocketProvider } from "./Socket/UserChatSocker.jsx";
+import { DriverWebSocketProvider } from "./Socket/DriverChatSocket.jsx";
+import Driver_Header from "./Components/Driver/Driver_Header.jsx";
+import Driver_chat from "./Components/Driver/Driver_chat.jsx";
 
 const App = () => {
-  
   return (
     <div>
       <Provider store={appStore}>
         <PersistGate loading={null} persistor={persist}>
           <BrowserRouter>
           <Toaster position="bottom-center" richColors/>
+          <WebSocketProvider>
+            <DriverWebSocketProvider>
+
             <Routes>
 
               <Route path="/" element={<LandingPage />} />
 
               <Route path="/signin_selection" element={<Signin_selection />} />
               <Route path="/signup" element={<PrivatRoute><Signup /></PrivatRoute>} />
+
               <Route path="/userhome" element={ <PrivatRoute_user><UserHome /></PrivatRoute_user> } />
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
               <Route path="/otpverification" element={<OtpForm />} />
@@ -57,6 +64,7 @@ const App = () => {
               <Route path="/paymentModal" element={<PaymentModal />}/>
               <Route path="/ridedetails" element={<RideDetails/>}/>
               <Route path="/confirmation" element={<Confirmation />}/>
+              <Route path="/userheader" element={<User_header />} />
 
               <Route path="/admin" element={<AdminPrivatRoute><Admin_Signin /></AdminPrivatRoute>} />
               <Route path="/admin_home" element={<Admin_home />} />
@@ -74,8 +82,12 @@ const App = () => {
               <Route path="/ride" element={<Ride />} />
               <Route path="/paymentconfirm" element={<PaymentConfirmModal />} />
               <Route path="/tripdetails" element={<Tripdetails />} />
+              <Route path="/driver_header" element={<Driver_Header />} />
 
             </Routes>
+            </DriverWebSocketProvider>
+            </WebSocketProvider>
+
           </BrowserRouter>
         </PersistGate>
       </Provider>

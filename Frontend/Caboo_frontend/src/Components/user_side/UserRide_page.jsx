@@ -10,6 +10,9 @@ import distancee from "../../assets/distance.png";
 import useUserWebSocket from "../../Socket/Socket";
 import RideCancelModal from "./RideCancelModal";
 import { FaStar } from "react-icons/fa";
+import { XCircleIcon } from "@heroicons/react/24/solid"; 
+import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
+import UserChat from "./User_chat";
 
 const UserRide_page = () => {
   const [locationCoords, setLocationCoords] = useState(null);
@@ -17,7 +20,7 @@ const UserRide_page = () => {
   const [driverData, setDriverData] = useState({});
   const [rideData, setRideData] = useState({});
   const [showCancelModal, setShowCancelModal] = useState(false);
-
+  const [showchat , setShowchat]=useState(false)
   const ridedriver = useSelector((state) => state.ride_data.rideDriverdetails);
   const otpvalidation = useSelector((state) => state.ride_data.otpValidation);
   const { Canceltrip } = useUserWebSocket();
@@ -109,11 +112,13 @@ const UserRide_page = () => {
   };
 
   return (
-    <div className="flex flex-row p-10 space-x-4">
-      <div className="py-4 w-1/2 shadow-2xl bg-blue-50 flex flex-col items-center">
+    <div className="flex f p-10 space-x-4">
+      <div className="py-4 w-1/2 shadow-2xl bg-blue-50 flex flex-col ">
+      { showchat ? (<div> <UserChat setShowchat={setShowchat} /></div>
+        ):(<>
         {driverData && rideData && (
           <>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center ">
               <img
                 className="rounded-full h-32 w-32 border-4 border-gray-300"
                 src={`${backendUrl}${driverData.profile}`}
@@ -180,16 +185,23 @@ const UserRide_page = () => {
               </div>
               {otpvalidation !== "OTP_success" ? (
                 <>
-                  <div className='flex items-center justify-center  mb-4 shadow-xl rounded-md p-4 space-x-4  bg-white'>
-                         <p className='font-semibold text-xl '> OTP :</p>
-                        <p className='font-bold text-2xl'>{rideData.tripOtp}</p>
-                    </div>
-                  <div className="flex justify-center py-3">
+                  <div className="flex items-center justify-center  mb-4 shadow-xl rounded-md p-4 space-x-4  bg-white">
+                    <p className="font-semibold text-xl "> OTP :</p>
+                    <p className="font-bold text-2xl">{rideData.tripOtp}</p>
+                  </div>
+                  <div className="flex justify-center py-3 space-x-2">
                     <button
                       onClick={() => setShowCancelModal(true)}
-                      className="bg-red-600 text-white py-2 px-6 font-bold text-xl rounded-md shadow-xl"
+                      className="bg-red-600 text-white py-2 px-4 font-bold rounded-md shadow-xl flex items-center gap-2 hover:scale-105 transition-all duration-300"
                     >
+                      <XCircleIcon className="w-5 h-5" /> {/* Cancel Icon */}
                       Cancel Ride
+                    </button>
+
+                    <button onClick={()=>setShowchat(true)}  className="bg-black text-white py-2 px-4 font-bold shadow-xl rounded-md flex items-center gap-2 hover:scale-105 transition-all duration-300">
+                      <ChatBubbleLeftIcon className="w-5 h-5" />{" "}
+                      {/* Chat Icon */}
+                      Contact
                     </button>
                     {showCancelModal && (
                       <RideCancelModal
@@ -212,6 +224,7 @@ const UserRide_page = () => {
             </div>
           </>
         )}
+        </>)}
       </div>
       <div className="w-1/2 rounded-lg shadow-2xl">
         <MapComponent

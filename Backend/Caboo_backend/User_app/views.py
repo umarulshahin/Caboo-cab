@@ -123,12 +123,9 @@ def Ridedetails(request):
     
     try:
         user_id = request.GET.get('id')  
-        print(user_id,'user id')
         trips = TripDetails.objects.filter(user=user_id).order_by('-id')
-        print(trips,'trips')
         if trips:
             serializer =AllRidesSerializer(trips,many=True)
-            print(serializer.data,'serializer data')
             return Response(serializer.data)
     except Exception as e:
         print(e,'error ')
