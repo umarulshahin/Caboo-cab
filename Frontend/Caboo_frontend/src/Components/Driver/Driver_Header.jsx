@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
@@ -21,6 +21,7 @@ const Driver_Header = () => {
   const data = useSelector((state) => state.driver_data.driver_data);
   const { Driver_status } = useDriver();
   const { showModal, modalUserData, handleAcceptRide, handleDecline } = useDriverWebSocket();
+  
 
   useEffect(() => {
     if (data && data[0]) {

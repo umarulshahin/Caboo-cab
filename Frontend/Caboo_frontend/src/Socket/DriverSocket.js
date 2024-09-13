@@ -5,6 +5,7 @@ import { useLoadScript } from "@react-google-maps/api";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {addDriver_driverRide, addDriverClearRide, addDriverOTPvalidation, addDriverRideDetails, addDriverRideLocations, addDriverTripId,} from '../Redux/DriverRideSlice';
+import { addClearChat } from '../Redux/Chatslice';
 
 const libraries = ["places"];
 const apiKey = import.meta.env.VITE_google_map_api_key;
@@ -338,7 +339,8 @@ const useDriverWebSocket = () => {
                 trip_id:tripId
     
                }))
-           }         
+           }      
+           dispatch(addClearChat())   
     }
 
     const Ride_completion=()=>{

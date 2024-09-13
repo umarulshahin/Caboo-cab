@@ -1,8 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-// import persistReducer from "redux-persist/es/persistReducer";
 import storage from "redux-persist/lib/storage";
-// import persistStore from "redux-persist/es/persistStore";
-// import { persistReducer } from "redux-persist";
+
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
 import userReducer from "./UserSlice"
@@ -11,6 +9,7 @@ import DriverReducer from "./DriverSlice";
 import AuthenticationReducer from "./AuthenticationSlice";
 import RideReducer from "./RideSlice";
 import DriverRideReducer from "./DriverRideSlice";
+import ChatReducer from "./Chatslice";
 
 const persistConfig ={
     key:'root',
@@ -24,7 +23,8 @@ const rootReducer = combineReducers({
     admin_data:AdminReducer,
     driver_data:DriverReducer,
     ride_data:RideReducer,
-    driver_ride_data:DriverRideReducer
+    driver_ride_data:DriverRideReducer,
+    chat_data:ChatReducer,
 })
 
 const PersistedReducer = persistReducer(persistConfig,rootReducer)

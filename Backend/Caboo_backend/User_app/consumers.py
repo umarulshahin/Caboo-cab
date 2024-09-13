@@ -276,7 +276,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             
         else:
             
-            LocationConsumer.user_id = self.user_id
             self.room_group_name = f'user_{self.user_id}'
             await self.channel_layer.group_add('all_users', self.channel_name)
 
@@ -309,7 +308,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 user_id=data['userRequest']['user_id']
                 result = await self.RideStatus(user_id)
                 if result:
-                   LocationConsumer.user_id=user_id
                    await self.handle_user_request(data)
                    
                 else:
@@ -424,7 +422,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     
             elif 'ride_complete' in data:
                 
-                result = await self.Trip_update("complete",data['trip_id'])
+                result = await self.Trip_update("completed",data['trip_id'])
                 trip_data = await self.get_tripdata(data['trip_id'])
                 if result == 'successfully update' and trip_data:
 

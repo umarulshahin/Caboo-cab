@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   
     
-    driverclintDetails:{'clint':'shahin'},
+    driverclintDetails:null,
     driver_driverRideDetails: null,
     driverrideLocations: null,
     driverrideDetails: null,
