@@ -18,6 +18,9 @@ const useGetUser = () => {
 
 
   const Get_data = async (urls, value = null, role = null) => {
+    console.log(value,'value')
+    console.log(role,'role')
+    console.log(urls,'url')
     try {
       const response = await apiClient.get(urls, {
         params: { id: value },

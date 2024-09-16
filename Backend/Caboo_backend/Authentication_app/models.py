@@ -42,7 +42,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
-    phone = models.CharField(max_length=10, blank=False, unique=True)
+    phone = models.CharField(max_length=10, blank=True,null=True, unique=True)
     profile = models.ImageField(upload_to=upload_profile_image, blank=False, max_length=250)
     ride = models.BooleanField(default=False,blank=False)
     wallet = models.IntegerField(default=0,blank=True,null=True)

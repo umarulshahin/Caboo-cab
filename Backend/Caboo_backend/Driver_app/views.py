@@ -48,12 +48,16 @@ def Driver_Status(request):
 @permission_classes([IsAuthenticated])
 def Tripdetails(request):
     
-    driver_id = request.GET.get('id')
-    trips = TripDetails.objects.filter(driver=driver_id).order_by('-id')
-        
-    if trips:
-        serializer =AllRidesSerializer(trips,many=True)
-        
-        return Response(serializer.data)
+    try:
+        driver_id = request.GET.get('id')
+        trips = TripDetails.objects.filter(driver=driver_id).order_by('-id')
+        print(trips,'trips')
+        if trips:
+            serializer =AllRidesSerializer(trips,many=True)
+            
+            return Response(serializer.data)
+        return Response('Trips not availabel')
+    except Exception as e:
+        return Response(f'error trip details {e}')
+   
     
-    return Response("success")

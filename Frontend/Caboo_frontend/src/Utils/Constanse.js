@@ -47,3 +47,5 @@ export const Get_all_trips_url = backendUrl+"/Api/getalltrip/";
 export const Walletdetails_url = backendUrl+"/Api/walletdetails/";
 
 export const Reviw_add_url = backendUrl+"/Api/review/";
+
+export const GoogleAuth_url = backendUrl+"/Api/googleAuth/"

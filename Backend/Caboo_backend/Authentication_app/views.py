@@ -8,6 +8,17 @@ from django.conf import settings
 from celery.result import AsyncResult
 from .serializer import *
 from rest_framework import status
+import logging
+
+
+from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
+from google.oauth2 import id_token
+
+CustomUser = get_user_model()
+logger = logging.getLogger(__name__)
+
+from google.auth.transport import requests
 
 
 
@@ -224,3 +235,75 @@ def Driver_signup(request):
         
         return Response({"success": "Driver successfully created","data":driver_serializer.data}, status=status.HTTP_201_CREATED)
     return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def GoogleAuth(request):
+    
+    id_token_str = request.data.get('token')
+    role = request.data.get('role')
+    
+    if id_token_str is None:
+        return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Verify the ID token
+        idinfo = id_token.verify_oauth2_token(id_token_str, requests.Request(), settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY)
+        
+        google_id = idinfo['sub']
+        email = idinfo['email']
+        first_name = idinfo.get('name', '')
+        profil = idinfo.get('picture','')
+        
+        logger.info(f"Successfully verified credential for email: {email}")
+
+        user, created = CustomUser.objects.get_or_create(
+            email=email,
+            defaults={'username': first_name, 'profile': profil}
+        )
+        
+        if not user.is_active:
+            return Response({'error': 'User account is disabled'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        if created:
+            user.set_unusable_password()
+            user.save() 
+            created=True
+            
+         
+        try:
+            token, _ = Token.objects.get_or_create(user=user)
+        except Exception as e:
+            print(f'IntegrityError: {str(e)}')
+            return Response({'error': 'A database error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        if role =="Drive" :
+                        
+            driver=DriverData.objects.filter(customuser=user.id).first()
+                            
+            if driver and driver.request =='active':
+                
+                                
+                return Response({"success": "alredy email exist",'status':"Driver data success",'email':user.email, "data":CustomUserSerializer(user).data })
+                            
+            elif driver and driver.request =='pending':
+                                    
+                return Response({"success": "alredy email exist",'status':"Driver not approval", "email": user.email})
+
+            else:
+                return Response({"success": "alredy email exist",'status':"Driver data is None","email": user.email, "data":CustomUserSerializer(user).data })
+                
+       
+        response_data = {
+            'token': token.key,
+            'email' : user.email,
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    except ValueError:
+        # Invalid token
+        return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+    except Exception as e:
+        print('Unexpected error during authentication:', str(e))
+        return Response({'error': 'An unexpected error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

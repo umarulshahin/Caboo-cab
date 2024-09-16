@@ -39,8 +39,12 @@ const useDriver = () => {
             },
            })
            if (response.status === 200){
-            console.log(response.data,'usertrips')
-            dispatch(addDriverTrips(response.data))
+
+            if (response.data != 'Trips not availabel'){
+                console.log(response.data,'usertrips')
+                dispatch(addDriverTrips(response.data))
+            }
+            
            }
         }catch(error){
           console.log(error,'user trips')

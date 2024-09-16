@@ -10,7 +10,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 
 const Signin_form = () => {
-  const { Emailvalidation } = useAuthentication();
+  const { Emailvalidation,GoogleAuth } = useAuthentication();
   const role = useSelector((state) => state.Authentication.role);
   const Navigate = useNavigate();
   const initialValues = {
@@ -84,7 +84,7 @@ const Signin_form = () => {
         <GoogleLogin
           onSuccess={(credentialResponse) => {
             // console.log(credentialResponse);
-            handleGoogleAuth(credentialResponse)
+            GoogleAuth(credentialResponse)
           }}
           onError={() => {
             console.log("Login Failed");

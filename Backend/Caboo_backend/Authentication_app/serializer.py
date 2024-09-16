@@ -54,18 +54,21 @@ class CustomTokenSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate(self, data):
+        print(data['email'],'validation data')
         try:
             user = CustomUser.objects.get(email=data['email'], is_active=True)
+            print(user,'user inside validation')
         except CustomUser.DoesNotExist:
             raise serializers.ValidationError("Invalid email or user not active.")
         
         refresh = RefreshToken.for_user(user)
         refresh['username'] = user.username
-
+        print(refresh,'refresh ')
         return {
             'access': str(refresh.access_token),
             'refresh': str(refresh),
             'username': user.username,
+            'email' :user.email
         }
         
 class CustomUserSerializer(serializers.ModelSerializer):

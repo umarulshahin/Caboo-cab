@@ -2,8 +2,8 @@ import { toast } from 'sonner';
 import { addDriver_status, addemail, addrole, addUser_status } from '../Redux/AuthenticationSlice';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { admin_data_url, Driver_data_urls, signin_urls, user_data_url } from '../Utils/Constanse';
+import { json, useNavigate } from 'react-router-dom';
+import { admin_data_url, Driver_data_urls, GoogleAuth_url, signin_urls, user_data_url } from '../Utils/Constanse';
 import { addadmin_token } from '../Redux/AdminSlice';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from "js-cookie";
@@ -233,14 +233,14 @@ const useAuthentication = () => {
               Cookies.set("DriverTokens",JSON.stringify(token), { expires: 7 });
               const value = jwtDecode(token.access);
               dispatch(addDriver_token(value));
+              let email = response.data.token.email
+              console.log(email,'email')
               Get_data(Driver_data_urls,email,"driver");
               const message = 'Login successfully';
               localStorage.setItem('loginMessage', message);
 
-               window.open('/driver_home', '_blank', 'noopener,noreferrer');
-
-              navigate('/')
-
+              window.open('/driver_home', '_blank', 'noopener,noreferrer');
+            //   navigate('/driver_home')
 
             }else{
 
@@ -348,7 +348,66 @@ const useAuthentication = () => {
         }
     };
 
-    return {Emailvalidation,Otp_verification,Signup_validation,Signin,DriverCreation}
+    const GoogleAuth=async(credentials)=>{
+        console.log(credentials,'data coming ')
+        const token = credentials.credential
+         const value ={
+            role:role,
+            token:token
+         }
+        try{
+            const response = await axios.post(GoogleAuth_url,value,{
+                headers:{
+                    "Content-Type": "application/json",
+                }
+            })
+            if (response.status===200){
+                console.log(response.data,'google auth response')
+                console.log(role,'role')
+                dispatch(addemail(response.data.email))
+                if (role === 'Ride'){
+
+                    const data={
+                        email: response.data.email
+                    }
+                    Signin(data,signin_urls)
+
+                }else if(role === "Drive"){
+
+                    const status = response.data.status
+                    if (status  === "Driver data success"){
+                        
+                        console.log(response.data.email,' yes here working')
+
+                        const data={
+                            email:response.data.email
+                        }
+
+                        Signin(data,signin_urls,null,"Driver")
+
+                    }else if(status ==="Driver not approval"){
+                         navigate("/waitingModal")
+
+                    }else if (status ==="Driver data is None"){
+                        dispatch(addDriver_data(response.data.data))
+                        navigate('/vehicle_doc')
+                    }
+                    
+                }
+                   
+                     
+                 
+
+                 
+
+            }
+
+        }catch(error){
+            console.error(error,'google auth error')
+        }
+    }
+
+    return {Emailvalidation,Otp_verification,Signup_validation,Signin,DriverCreation,GoogleAuth}
 
 
 }

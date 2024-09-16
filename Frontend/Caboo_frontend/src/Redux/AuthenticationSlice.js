@@ -12,6 +12,7 @@ const AuthenticationSlice = createSlice({
   reducers: {
   
     addemail:(state,action)=>{
+      console.log(action.payload,'yes email reducer is working')
       state.email=action.payload
     },
     addUser_status:(state,action)=>{
