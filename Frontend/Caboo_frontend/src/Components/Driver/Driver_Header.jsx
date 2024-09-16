@@ -35,12 +35,16 @@ const Driver_Header = () => {
   const handleLogout = async () => {
     console.log('yes working')
     try {
-      const updatedData = {
-        ...data[0],
-        current_Status: !data[0].current_Status
-      };
-      await Driver_status(Driver_status_url, updatedData);
+      if (data && data[0].current_Status===true){
 
+          const updatedData = {
+            ...data[0],
+            current_Status: false
+          };
+          await Driver_status(Driver_status_url, updatedData);
+    
+      }
+      
       dispatch(addClearDriver(null))
 
       dispatch(addDriverOTPvalidation(null))

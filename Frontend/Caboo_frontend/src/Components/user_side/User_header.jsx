@@ -3,7 +3,7 @@ import logo from "../../assets/Logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import avatar from "../../assets/profile_img.png"
-import { addToken_data, addUser } from "../../Redux/UserSlice";
+import { addClearUser, addToken_data, addUser } from "../../Redux/UserSlice";
 import { backendUrl } from "../../Utils/Constanse";
 import Cookies from "js-cookie"
 import useUserWebSocket from "../../Socket/Socket";
@@ -34,8 +34,7 @@ const User_header = ({setStatus}) => {
 
   const handleLogout=()=>{
 
-    dispatch(addUser(null))
-    dispatch(addToken_data(null))
+    dispatch(addClearUser(null))
     Cookies.remove('userTokens')
     localStorage.removeItem('status')
     navigate("/")

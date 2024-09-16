@@ -367,7 +367,7 @@ const useAuthentication = () => {
             if (response.status===200){
                 console.log(response.data,'google auth response')
                 console.log(role,'role')
-                dispatch(addemail(response.data.email))
+                
                 if (role === 'Ride'){
 
                     const data={

@@ -24,10 +24,16 @@ const userSlice=createSlice({
         },
         addWalletDetails:(state,action)=>{
             state.walletdetails=action.payload
+        },
+        addClearUser:(state,action)=>{
+            state.user_data=null
+            state.token_data=null
+            state.userTrips = null
+            state.walletdetails=null
         }
     }
 
 })
-export const {addUser,addToken_data,addUserTrips,addWalletDetails}=userSlice.actions
+export const {addUser,addToken_data,addUserTrips,addWalletDetails,addClearUser}=userSlice.actions
 
 export default userSlice.reducer;
