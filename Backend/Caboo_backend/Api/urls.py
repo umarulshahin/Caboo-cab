@@ -1,4 +1,5 @@
 from django.urls import path,include
+from django.urls import path
 from User_app.views import *
 from Admin_app.views import *
 from Driver_app.views import *
@@ -14,6 +15,7 @@ urlpatterns = [
       path('token_view/',Token_view,name='token_view'),
       path('auth/', include('social_django.urls', namespace='social')),
       path('googleAuth/',GoogleAuth,name='googleAuth'),
+
 
     
     #*.................. User Api .........................

@@ -17,6 +17,7 @@ const DriverSlice=createSlice({
         },
         addDriver_data:(state,action)=>{
          
+
             state.driver_data=action.payload
         },
         addDriverTrips:(state,action)=>{
@@ -26,6 +27,7 @@ const DriverSlice=createSlice({
            state.driver_token=null
            state.driver_data=null
            state.driverTrips=null
+
 
         }
     }

@@ -43,6 +43,7 @@ const Driver_home = () => {
   
     if (trips){
       
+
     const today = new Date();
   
     // Get the current month and year
@@ -113,7 +114,6 @@ const Driver_home = () => {
       }
   
       return acc;
-      
     }, []);
   
     // Sort daily earnings data to keep days in the correct order (Mon-Sun)
@@ -139,6 +139,7 @@ const Driver_home = () => {
       setTripdata(data);
     }
   } 
+
 
   }, [trips]);
   

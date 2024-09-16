@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { json, useNavigate } from 'react-router-dom';
 import { admin_data_url, Driver_data_urls, GoogleAuth_url, signin_urls, user_data_url } from '../Utils/Constanse';
+
 import { addadmin_token } from '../Redux/AdminSlice';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from "js-cookie";
@@ -235,12 +236,14 @@ const useAuthentication = () => {
               dispatch(addDriver_token(value));
               let email = response.data.token.email
               console.log(email,'email')
+
               Get_data(Driver_data_urls,email,"driver");
               const message = 'Login successfully';
               localStorage.setItem('loginMessage', message);
 
               window.open('/driver_home', '_blank', 'noopener,noreferrer');
             //   navigate('/driver_home')
+
 
             }else{
 
@@ -408,7 +411,6 @@ const useAuthentication = () => {
     }
 
     return {Emailvalidation,Otp_verification,Signup_validation,Signin,DriverCreation,GoogleAuth}
-
 
 }
 

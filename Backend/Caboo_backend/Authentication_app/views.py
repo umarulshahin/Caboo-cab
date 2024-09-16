@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 from google.auth.transport import requests
 
 
-
 # Create your views here.
 
 @api_view(['POST'])

@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import logo from "../../assets/Logo.png";
 import avatar from "../../assets/profile_img.png";
 import { addClearDriver, addDriver_data, addDriver_token } from "../../Redux/DriverSlice";
+
 import { backendUrl, Driver_status_url } from "../../Utils/Constanse"; 
 import useDriver from "../../Hooks/useDriver";
 import RideRequestModal from "./RequestModal";
@@ -41,6 +42,7 @@ const Driver_Header = () => {
       await Driver_status(Driver_status_url, updatedData);
 
       dispatch(addClearDriver(null))
+
       dispatch(addDriverOTPvalidation(null))
       Cookies.remove('DriverTokens');
       navigate("/");

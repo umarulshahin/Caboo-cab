@@ -39,6 +39,9 @@ import { WebSocketProvider } from "./Socket/UserChatSocker.jsx";
 import { DriverWebSocketProvider } from "./Socket/DriverChatSocket.jsx";
 import Driver_Header from "./Components/Driver/Driver_Header.jsx";
 
+import Driver_chat from "./Components/Driver/Driver_chat.jsx";
+
+
 const App = () => {
   return (
     <div>
