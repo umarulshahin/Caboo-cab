@@ -219,9 +219,10 @@ def Driver_signup(request):
         'license': files.get('license'),
         'insurance': files.get('insurance'),
         'vehicle_photo': files.get('vehicle_Photo'),
-        'request':'pending'
+        'request':'pending',
+        'Vehicle_type':data.get('Vehicle_type')
     }
-
+    print(driver_data,'driver data')
     try:
         driver_instance = DriverData.objects.get(customuser=custom_user)
         driver_serializer = DriverSerializers(driver_instance, data=driver_data, partial=True)

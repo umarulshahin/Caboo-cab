@@ -60,6 +60,12 @@ class OtpStorage(models.Model):
 
 class DriverData(models.Model):
     
+    TYPE_CHOICE = [
+        ('Bike', 'Bike'),
+        ('Car', 'Car'),
+        ('Auto', 'Auto')
+    ]
+    
     customuser = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     aadhaar = models.CharField(max_length=15, blank=False, unique=True)
     vehicle_name = models.CharField(max_length=100, blank=False)
@@ -72,3 +78,4 @@ class DriverData(models.Model):
     dicline_reason = models.CharField(max_length=150,default="No reason provided")
     comments = models.TextField(default='No comments provided')
     current_Status = models.BooleanField(blank=False,default=False)
+    Vehicle_type = models.CharField(max_length=20,choices=TYPE_CHOICE,blank=False,null=False)

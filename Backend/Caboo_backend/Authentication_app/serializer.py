@@ -89,7 +89,7 @@ class DriverSerializers(serializers.ModelSerializer):
         model = DriverData
         fields = [
             'customuser', 'aadhaar', 'vehicle_name', 'vehicle_no', 
-            'rc_img', 'license', 'insurance', 'vehicle_photo','request'
+            'rc_img', 'license', 'insurance', 'vehicle_photo','request', 'Vehicle_type'
         ]
 
     def validate(self, attrs):
@@ -113,6 +113,7 @@ class DriverSerializers(serializers.ModelSerializer):
             license=validated_data.get('license'),
             insurance=validated_data.get('insurance'),
             vehicle_photo=validated_data.get('vehicle_photo'),
-            request=validated_data.get('request')
+            request=validated_data.get('request'),
+            Vehicle_type=validated_data.get('Vehicle_type')
         )
         return driver_data

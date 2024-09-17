@@ -235,14 +235,12 @@ const useAuthentication = () => {
               const value = jwtDecode(token.access);
               dispatch(addDriver_token(value));
               let email = response.data.token.email
-              console.log(email,'email')
 
               Get_data(Driver_data_urls,email,"driver");
               const message = 'Login successfully';
               localStorage.setItem('loginMessage', message);
 
               window.open('/driver_home', '_blank', 'noopener,noreferrer');
-            //   navigate('/driver_home')
 
 
             }else{
@@ -282,7 +280,7 @@ const useAuthentication = () => {
 
         try {
             const formData = new FormData();
-        
+            console.log(values,'value')
             Object.keys(values).forEach(key => {
                 if (values[key] instanceof File) {
                     formData.append(key, values[key]);
@@ -297,6 +295,7 @@ const useAuthentication = () => {
                 }
             });
         
+            console.log(formData,'fromdata')
             const response = await axios.post(url, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -352,7 +351,7 @@ const useAuthentication = () => {
     };
 
     const GoogleAuth=async(credentials)=>{
-        console.log(credentials,'data coming ')
+
         const token = credentials.credential
          const value ={
             role:role,
@@ -365,9 +364,7 @@ const useAuthentication = () => {
                 }
             })
             if (response.status===200){
-                console.log(response.data,'google auth response')
-                console.log(role,'role')
-                
+                                                            
                 if (role === 'Ride'){
 
                     const data={
@@ -380,8 +377,6 @@ const useAuthentication = () => {
                     const status = response.data.status
                     if (status  === "Driver data success"){
                         
-                        console.log(response.data.email,' yes here working')
-
                         const data={
                             email:response.data.email
                         }
@@ -397,12 +392,7 @@ const useAuthentication = () => {
                     }
                     
                 }
-                   
-                     
-                 
-
-                 
-
+     
             }
 
         }catch(error){

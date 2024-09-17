@@ -80,9 +80,9 @@ const Admin_header = () => {
           
             {/* Dropdown Menu */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-40 w-48 font-bold bg-white text-black rounded-sm shadow-lg">
+              <div className="absolute right-0 mt-40 w-48 font-bold bg-red-600 text-white  rounded-sm shadow-lg">
                
-                <button onClick={handleLogout}  className="block w-full px-4 py-2 text-left hover:bg-gray-200">Logout</button>
+                <button onClick={handleLogout}  className="block w-full px-4 py-2 text-left hover:bg-gray-300 hover:text-black">Logout</button>
               </div>
             )}
           </div>
