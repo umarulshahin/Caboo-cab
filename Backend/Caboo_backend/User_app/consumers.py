@@ -7,15 +7,13 @@ from math import radians, sin, cos, sqrt, atan2
 import random
 import asyncio
 from django.db.models import *
+import traceback
 
 class LocationConsumer(AsyncJsonWebsocketConsumer):
-    drivers_location = {}
-    expected_drivers = set()
     user_data = {}
-    drivers = set()
     drivers_distance = []
-    driver_count = set()
     trip_id = None
+    active_drivers = set()
     
     @sync_to_async
     def driver_rating(self,driver):
@@ -58,10 +56,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         from User_app.serializer import UserSerializer,WalletSerializer
         from Authentication_app.models import CustomUser
         from User_app.models import UserWallet
-        print('yes it is working ')
-        print(user_id,'user_id')
-        print(driver_id,'driver_id')
-        print(data,'data')
+     
         try:
            if user_id and driver_id:
                 user = CustomUser.objects.get(id=user_id)
@@ -70,20 +65,16 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 if user and driver:
                     if 'wallet' in data:
                         pay_amount = int(data['wallet'])
-                        print(pay_amount,'pay amount')
                         data['wallet']=int(user.wallet) - int(data['wallet'])
-                        print(data,'data after updation')
                         
                     userserializer = UserSerializer(user, data, partial=True)
-                if userserializer.is_valid():
-                    userserializer.save()
-                else:
-                    print('User serializer error:', userserializer.errors)
-                    return False
+                    if userserializer.is_valid():
+                        userserializer.save()
+                    else:
+                        print('User serializer error:', userserializer.errors)
+                        return False
                 
-                # Update driver data
                 ride = data.get('ride', {})
-                print(ride,'user ride status')
                 driverserializer = UserSerializer(driver,{'ride': ride}, partial=True)
                 if driverserializer.is_valid():
                     driverserializer.save()
@@ -93,7 +84,6 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 
                 # Handle wallet transaction if 'wallet' is in data
                 if 'wallet' in data:
-                    print(pay_amount,'pay amount')
 
                     wallet_data = {
                         "customuser": user.id,
@@ -255,90 +245,135 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             return None
         
     @database_sync_to_async
-    def save_driver_location(self, Driver_id, Location):
-        from User_app.models import DriverLocation
+    def save_driver_location(self, driver_id, location, user_id):
+        DriverLocation = apps.get_model('User_app', 'DriverLocation')
+        
         try:
             DriverLocation.objects.create(
-                driver_id=Driver_id,
-                location=Location
+                user_id=user_id,
+                driver_id=driver_id,
+                location=dict(location)
+                
             )
         except Exception as e:
             print(f'Driver location saving error: {e}')
-    
+
+    @sync_to_async
+    def get_active_drivers(self, vehicle_type):
+        CustomUser = apps.get_model('Authentication_app', 'CustomUser')
+        DriverData = apps.get_model('Authentication_app', 'DriverData')
+        try:
+            return list(DriverData.objects.filter(
+                Vehicle_type=vehicle_type,
+                current_Status=True,
+                customuser__ride=False
+            ).values_list('customuser_id', flat=True))
+            
+        except Exception as e:
+            print(f"Error in get_active_drivers: {e}")
+            return []
+
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
-        self.user_type = await self.get_user_type(self.user_id)
-        
-        if self.user_type == 'driver':
-            LocationConsumer.driver_count.add(int(self.user_id))
-            self.room_group_name = f'driver_{self.user_id}'
-            await self.channel_layer.group_add('all_drivers', self.channel_name)
-            
-        else:
-            
-            self.room_group_name = f'user_{self.user_id}'
-            await self.channel_layer.group_add('all_users', self.channel_name)
-
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
-    
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        if self.user_type == 'driver':
-            await self.channel_layer.group_discard('all_drivers', self.channel_name)
+        
+        user_type = await self.get_user_type(self.user_id)
+        print(f'Connection established for {user_type} with ID {self.user_id}')
+        
+        if user_type == 'driver':
+            await self.channel_layer.group_add('all_drivers', self.channel_name)
         else:
-            await self.channel_layer.group_discard('all_users', self.channel_name)
-    
+            await self.channel_layer.group_add('all_users', self.channel_name)
+        
+        if user_type and self.user_id:
+           await self.channel_layer.group_add(f'{user_type}_{self.user_id}', self.channel_name)
+           print(f'Added to group: {user_type}_{self.user_id}')
+           
+           
+    async def disconnect(self, close_code):
+        # Remove from all groups
+        await self.channel_layer.group_discard(f'user_{self.user_id}', self.channel_name)
+        await self.channel_layer.group_discard(f'driver_{self.user_id}', self.channel_name)
+        await self.channel_layer.group_discard('all_drivers', self.channel_name)
+        await self.channel_layer.group_discard('all_users', self.channel_name)
+
+
+            
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            print(data, 'received data')
+            print(data,'receved data')
             
-            if 'Driverlocation' in data:
-                await self.handle_driver_location(data)
+            
+            if 'userRequest' in data and 'type' in data['userRequest']:
                 
-            elif 'userRequest' in data and 'type' in data['userRequest']:
                 LocationConsumer.drivers_distance.clear()
-                LocationConsumer.drivers_location.clear()
                 LocationConsumer.user_data.clear()
-                LocationConsumer.drivers.clear()
-                LocationConsumer.driver_count.clear()
-
+                LocationConsumer.active_drivers.clear()
                 
-                user_id=data['userRequest']['user_id']
-                result = await self.RideStatus(user_id)
-                if result:
-                   await self.handle_user_request(data)
-                   
-                else:
-                    
-                    await self.channel_layer.group_send(
+                user_id = data['userRequest']['user_id']
+                user_type = await self.get_user_type(user_id)
+                if user_type == 'user':
+                    result = await self.RideStatus(user_id)
+                    if result:
+                        await self.handle_user_request(data)
+                    else:
+                        await self.channel_layer.group_send(
                             f'user_{user_id}', 
                             {
                                 'type': 'SuccessNotification',
-                                'status': 'User already in a ride ',
-                                'message': 'User already in a ride. first finish current ride then try again .',
+                                'status': 'User already in a ride',
+                                'message': 'User already in a ride. First finish current ride then try again.',
                             }
                         )
+                else:
+                    print(f"Ride request received from a driver (ID: {user_id}). Ignoring.")
+                    
+            elif 'Driverlocation' in data:
+                try:
+                    driver_id = data.get('id')
+                    location = data.get('Driverlocation')
+                    user_id = data.get('user_id')
+                    print(user_id,'user id in driver location')
+                    if driver_id and location:
+                        await self.save_driver_location(driver_id, location,user_id)
+                except Exception as e:
+                    print(f"driver location {e}")
+                
             elif 'rideRequestResponse' in data:
                 
                 if data['rideRequestResponse'] == 'accepted':
-                    print(data,'accepted data')
+                    
+                    print('accept working')
                     result = await self.Ride_Acceptance(data)
-                    print(result,'result')
+                    print(result,'accept result')
 
                     if result:
                         id = result['trip_data']['id']
-                        print(id,'trip id ')
 
                         driver_id = result['trip_data']['driver']
                         print(driver_id,'request notification for driver')
+                        
                         LocationConsumer.drivers_distance.clear()
-                        LocationConsumer.driver_count.clear()
                         
                         user_id = result['trip_data']['user']
                         rating = await self.driver_rating(driver_id)
                         
+                        print(id,'trip id ')
+
+                        print(driver_id,'driver id ')
+                        print(user_id,'user id ')
+                        await self.channel_layer.group_send(
+                            f'driver_{driver_id}',
+                            {
+                                'type': 'notify_driver',
+                                'trip_id' : id
+                            }
+                        )
+                        
+                        await asyncio.sleep(3)  
+                        
+                        print(id,'trip id ')
                         await self.channel_layer.group_send(
                             f'user_{user_id}', 
                             {
@@ -350,25 +385,13 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                             }
                         )
                         
-
-                        await asyncio.sleep(3)  
-                        
-                        await self.channel_layer.group_send(
-                            f'driver_{driver_id}',
-                            {
-                                'type': 'notify_user',
-                                'trip_id' : id
-                            }
-                        )
-                        
-                      
-                        
                        
                     else:
                         print("error result is empty")
                   
                 elif data['rideRequestResponse'] == 'declined':
                     if LocationConsumer.drivers_distance:
+                        print(data,'decline request')
                         value = list(LocationConsumer.drivers_distance.pop(0))
                         await self.channel_layer.group_send(
                             f'driver_{value[0]}',
@@ -379,7 +402,12 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                             }
                         )
                     else:
-                        print(LocationConsumer.user_id, 'user id')
+                        print('Driver not available')
+                        user_id=data['user_data']['userRequest']['user_id']
+                        if user_id:
+                           await self.notify_user_no_drivers(user_id)
+                        else:
+                            print('user id not available')
                         
             elif 'Otp_data' in data:
                 
@@ -545,14 +573,14 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 trip_id=data['usertripcancel']['trip_id']
                 result = await self.Trip_update("cancelled",trip_id)
                 if result == 'successfully update':
-                    
+                    print('yes its working inside ')
                     ids= await self.get_tripdata(trip_id)
                     if ids:
                         data = {
                             'ride':False
                         }
                         update = await self.updateRide(ids['user_id'],ids['driver_id'],data)
-                        
+                        print(update,'updated data')
                         if update:
                             await self.channel_layer.group_send(
                             f'driver_{ids['driver_id']}',
@@ -600,114 +628,115 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         except json.JSONDecodeError:
             print(f"Failed to decode JSON: {text_data}")
         except Exception as e:
+            print('yes error is woring')
             print(f"Error in receive: {e}")
+            traceback.print_exc()
 
-    async def handle_driver_location(self, data):
-        driver_id = data.get('id')
-        location = data.get('Driverlocation')
+
         
-        if driver_id and location:
-            await self.save_driver_location(driver_id, location)
-            LocationConsumer.drivers_location[driver_id] = location
-            print(LocationConsumer.driver_count,'driver count')
-            print(LocationConsumer.drivers_location,'driver location')
-            if LocationConsumer.driver_count.issubset(LocationConsumer.drivers_location.keys()):
-                await self.all_drivers_location()
-
     async def handle_user_request(self, data):
         
+        user_id = data['userRequest']['user_id']
+        vehicle_type = data['userRequest'].get('type')
         LocationConsumer.user_data = data
-        await self.channel_layer.group_send(
-            'all_drivers',
-            {
-                'type': 'request_location',
-                'user_id': self.user_id
-            }
-        )
 
-    async def send_driver_location(self, event):
-        await self.send(text_data=json.dumps({
-            'type': 'driver_location',
-            'driver_id': event['driver_id'],
-            'location': event['location']
-        }))
+        LocationConsumer.active_drivers = await self.get_active_drivers(vehicle_type)
+        print(LocationConsumer.active_drivers,'active drivers')
+        # Request locations from all active drivers 
+        await self.request_driver_locations(user_id)
 
-    async def request_location(self, event):
+        # Wait for a short time to allow drivers to respond
+        await asyncio.sleep(5)
+
+        # Process received locations and find the nearest driver
+        await self.process_driver_locations(user_id)
         
-        await self.send(text_data=json.dumps({
-            'type': 'location_request',
-            'user_id': event['user_id']
-        }))
-
-    @sync_to_async
-    def get_user_type(self, user_id):
-        userdata = apps.get_model('Authentication_app','CustomUser')
-        DriverData = apps.get_model('Authentication_app', 'DriverData')
-        print(user_id,'user id in get user')
-        try:
-            tripstatus=None
-            
-            driver = DriverData.objects.filter(customuser=user_id, current_Status=True).first()
-            print(driver,'driver id get type')
-            if driver:
-                
-               tripstatus = userdata.objects.filter(email=driver.customuser,ride=False)
-               
-            if tripstatus:
-                    return 'driver'
-            elif not driver and not tripstatus :
-            
-                return 'user'
-            
-            return 'driver' if driver else 'user'
-        
-        except Exception as e:
-            print(f"Error in get_user_type: {e}")
-            return 'user'
-    
-    async def all_drivers_location(self):
-        
-        LocationConsumer.drivers_distance.clear()
-        LocationConsumer.drivers.clear()
-        DriverLocation = apps.get_model('User_app', 'DriverLocation')
-
-        userLocation = LocationConsumer.user_data.get('userRequest', {}).get('place_code', {}).get('location')
-        if not userLocation:
-            print("User location not available")
-            return
-
-        user_lat = userLocation.get('lat')
-        user_lng = userLocation.get('lng')
-        if not user_lat or not user_lng:
-            print("User latitude and longitude missing")
-            return
-
-        for driver_id, location in LocationConsumer.drivers_location.items():
-            driver_lat = location.get('latitude')
-            driver_lng = location.get('longitude')
-            if driver_lat and driver_lng:
-                distance = await self.distance_calculation(user_lat, user_lng, driver_lat, driver_lng)
-                LocationConsumer.drivers.add((driver_id, distance))
-                
-        if LocationConsumer.drivers:
-            
-            LocationConsumer.drivers_distance = list(LocationConsumer.drivers)
-            LocationConsumer.drivers_distance.sort(key=lambda x: x[1])
-            value = list(LocationConsumer.drivers_distance.pop(0))
-            await sync_to_async(lambda: DriverLocation.objects.all().delete())()
-              
+    async def request_driver_locations(self,user_id):
+        print('reques driver is working ')
+        for driver_id in LocationConsumer.active_drivers:
             await self.channel_layer.group_send(
-                f'driver_{value[0]}',
+                f'driver_{driver_id}',
                 {
-                    'type': 'Ride_request',
-                    'driver_id': value[0],
-                    'user_data': LocationConsumer.user_data
+                    'type': 'request_location',
+                    'user_id': user_id
                 }
             )
+            
+            
+    async def process_driver_locations(self, user_id):
+        
+        DriverLocation = apps.get_model('User_app', 'DriverLocation')
+        user_location = LocationConsumer.user_data['userRequest']['place_code']['location']
+        user_lat = user_location['lat']
+        user_lng = user_location['lng']
+
+        print(type(user_id),'type user id ')
+        for driver_id in self.active_drivers:
+            print(type(driver_id),'driver id ')
+            try:
+                location = await database_sync_to_async(DriverLocation.objects.filter(driver_id=int(driver_id),user_id=int(user_id)).latest)('timestamp')
+                
+                if location:
+                    latitude = location.location.get('latitude')
+                    longitude = location.location.get('longitude'
+                                                  )
+                    distance = await self.distance_calculation(
+                        user_lat, user_lng, 
+                       latitude, longitude
+                    )
+                    print('yes append is working')
+                    LocationConsumer.drivers_distance.append((driver_id, distance))
+                else:
+                    print('error location data is empty ')
+                
+            except DriverLocation.DoesNotExist:
+                print(f"No location found for driver {driver_id}")
+            except Exception as e:
+                print(f'error in process driver location {e}')
+                traceback.print_exc()
+
+        print(LocationConsumer.drivers_distance,'drivers distance')
+        if LocationConsumer.drivers_distance:
+            LocationConsumer.drivers_distance.sort(key=lambda x: x[1])
+            nearest_driver = LocationConsumer.drivers_distance.pop(0)
+           
+            
+            await self.channel_layer.group_send(
+            f'driver_{nearest_driver[0]}',
+            {
+                'type': 'Ride_request',
+                'driver_id': driver_id,
+                'user_data': LocationConsumer.user_data
+            }
+        )
+            
         else:
-            print("No drivers found")
+            await self.notify_user_no_drivers(user_id)
+
+
+    async def request_location(self, event):
+        print(event,'request location is working')
+        await self.send(text_data=json.dumps({
+                'type': 'location_request',
+                'user_id': event['user_id']
+            }))
+            
+    @sync_to_async
+    def get_user_type(self, user_id):
+        userdata = apps.get_model('Authentication_app', 'CustomUser')
+        DriverData = apps.get_model('Authentication_app', 'DriverData')
+        try:
+            print(f'Determining user type for user ID: {user_id}')
+            driver = DriverData.objects.filter(customuser=user_id, current_Status=True).first()
+            if driver:
+                return 'driver'
+            return 'user'
+        except Exception as e:
+            print(f"Error in get_user_type: {e}")
+
 
     async def distance_calculation(self, user_lat, user_lng, driver_lat, driver_lng):
+        print('yes distance caluclation is working ')
         R = 6371
         dlat = radians(driver_lat - user_lat)
         dlon = radians(driver_lng - user_lng)
@@ -715,17 +744,20 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         c = 2 * atan2(sqrt(a), sqrt(1 - a))
         distance = R * c
         return distance
+    
 
     async def Ride_request(self, event):
-        
+        print('yes ride reques is working ')
         await self.send(text_data=json.dumps({
             'type': 'Riding_request',
             'driver_id': event['driver_id'],
             'user_data': LocationConsumer.user_data
         }))
+        
     
     async def notify_user(self, event):
         
+        print(' yes notify is working')
         await self.send(text_data=json.dumps({
             'type': 'ride_accepted',
             'data': event
@@ -739,10 +771,26 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             'type' : 'otp validation faild '
             
         }))
-    
-    async def SuccessNotification(self, event):
         
+    async def notify_user_no_drivers(self, user_id):
+        await self.channel_layer.group_send(
+            f'user_{user_id}',
+            {
+                'type': 'SuccessNotification',
+                'status': 'No_drivers_available',
+                'message': 'No drivers are currently available. Please try again later.',
+            }
+        )
+    async def SuccessNotification(self, event):
+        print('yes success notification is working')
         await self.send(text_data=json.dumps({
             'type': event['status'],
             'message': event['message'],
+        }))
+    
+    async def notify_driver(self,event):
+        print(event,'driver notify is working')
+        await self.send(text_data=json.dumps({
+            'type': 'ride_accepted',
+            'data': event
         }))

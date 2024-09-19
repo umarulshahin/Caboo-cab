@@ -51,7 +51,6 @@ def Tripdetails(request):
     try:
         driver_id = request.GET.get('id')
         trips = TripDetails.objects.filter(driver=driver_id).order_by('-id')
-        print(trips,'trips')
         if trips:
             serializer =AllRidesSerializer(trips,many=True)
             

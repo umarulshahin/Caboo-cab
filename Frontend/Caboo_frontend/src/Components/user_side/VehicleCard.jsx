@@ -9,9 +9,9 @@ const VehicleCard = ({ handleRide }) => {
   const charges = useSelector((state) => state.ride_data.charges);
 
   const cards = [
-    { id: 1, type: "auto", imgSrc: auto, price: charges.auto },
-    { id: 2, type: "car", imgSrc: car, price: charges.car },
-    { id: 3, type: "bike", imgSrc: bike, price: charges.bike },
+    { id: 1, type: "Auto", imgSrc: auto, price: charges.auto },
+    { id: 2, type: "Car", imgSrc: car, price: charges.car },
+    { id: 3, type: "Bike", imgSrc: bike, price: charges.bike },
   ];
   
   const handleCardClick = (card) => {

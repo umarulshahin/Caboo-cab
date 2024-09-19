@@ -6,8 +6,9 @@ from django.utils import timezone
 
 
 class DriverLocation(models.Model):
+    user_id = models.IntegerField()
     driver_id = models.IntegerField()
-    location = models.CharField(max_length=250)
+    location = models.JSONField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -42,8 +42,8 @@ const useDriverWebSocket = () => {
             console.log('WebSocket connection established');
         };
 
-        const handleDecline = () => {
-            console.log('No, ride declined');
+        const handleDecline = (user_data) => {
+            console.log('No, ride declined 1');
             clearTimeout(declineTimeout);
             setResponded(true);
             respondedRef.current = true;
@@ -52,6 +52,7 @@ const useDriverWebSocket = () => {
                 socketRef.current.send(JSON.stringify({
                     requestType: 'rideRequestResponse',
                     driver_id: driver.user_id,
+                    user_data:user_data,
                     rideRequestResponse: 'declined',
                 }));
             } else {
@@ -66,9 +67,10 @@ const useDriverWebSocket = () => {
             console.log(data.type,'data type ')
 
             if (data.type === 'location_request') {
+
                 if (!isRequestInProgress) {
                     setIsRequestInProgress(true);
-                    handleLocationRequest(ws);
+                    handleLocationRequest(ws,data.user_id);
                 }
             } else if (data.type === 'Riding_request') {
                 console.log("Ride request received");
@@ -87,7 +89,7 @@ const useDriverWebSocket = () => {
                 const timeout = setTimeout(() => {
                     if (!respondedRef.current) {
                         console.warn("No action taken, automatically declining the request.");
-                        handleDecline();
+                        handleDecline(data.user_data);
                     }
                 }, 10000);
 
@@ -111,8 +113,9 @@ const useDriverWebSocket = () => {
                 dispatch(addDriverClearRide(null))
                 navigate('/driver_home')
                 toast.warning("User canceled the trip. We apologize for the inconvenience.")
+
             }else if (data.type.trim() === "ride_accepted"){
-               
+                console.log('ride acceptence')
                 dispatch(addDriverTripId(data.data['trip_id']))
             }else if (data.type.trim() === 'payment completed'){
                 dispatch(addDriverClearRide(null))
@@ -135,7 +138,7 @@ const useDriverWebSocket = () => {
  
   
         
-    const handleLocationRequest = (ws) => {
+    const handleLocationRequest = (ws,user_id) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -145,7 +148,8 @@ const useDriverWebSocket = () => {
                     ws.send(JSON.stringify({
                         requestType: 'sendLocation',
                         Driverlocation: { latitude, longitude },
-                        id: driver.user_id
+                        id: driver.user_id,
+                        user_id : user_id
                     }));
                     setIsRequestInProgress(false);
                 },
@@ -328,6 +332,7 @@ const useDriverWebSocket = () => {
     
 
     const OTP_confirm= async(value)=>{
+           console.log("yes otp fucntion working")
            if(value){
             const data={
                 'otp' : value,
@@ -388,13 +393,14 @@ const useDriverWebSocket = () => {
 
         handleDecline: () => {
             if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-                console.log('No, ride declined');
+                console.log('No, ride declined 2');
                 setResponded(true);
                 respondedRef.current = true;
                 setShowModal(false);
                 socketRef.current.send(JSON.stringify({
                     requestType: 'rideRequestResponse',
                     driver_id: driver.user_id,
+                    user_data: modalUserData,
                     rideRequestResponse: 'declined',
                 }));
 
