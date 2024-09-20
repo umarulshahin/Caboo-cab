@@ -171,9 +171,11 @@ const DriverMap = () => {
     RideCancel();
   };
   return (
-    <div className="flex flex-col md:flex-row  p-6 md:p-10 space-y-4 md:space-y-0 md:space-x-4">
-      {showChat ? (<div className="w-1/2">    <Driver_chat setShowchat={setShowChat} /></div>
-    
+    <div className="flex flex-col md:flex-row   p-6 md:p-10 space-y-4 md:space-y-0 md:space-x-4">
+      {showChat ? (
+        <div className="w-full md:w-1/2">
+          <Driver_chat setShowchat={setShowChat} />
+        </div>
       ) : (
         <div className="w-full md:w-1/2  bg-blue-50 rounded-md p-4 font-bold flex flex-col justify-between">
           <div>
@@ -259,7 +261,7 @@ const DriverMap = () => {
                     Confirm Ride
                   </button>
                   <button
-                    onClick={()=>setShowChat(true)}
+                    onClick={() => setShowChat(true)}
                     className="bg-black text-white py-2 px-4 font-bold shadow-xl rounded-md flex items-center gap-2 hover:scale-105 transition-all duration-300"
                   >
                     <ChatBubbleLeftIcon className="w-5 h-5" /> {/* Chat Icon */}

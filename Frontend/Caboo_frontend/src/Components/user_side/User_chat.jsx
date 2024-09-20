@@ -1,29 +1,47 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useDispatch, useSelector } from 'react-redux';
-import { adduserMessage } from '../../Redux/Chatslice';
+import { useSelector } from 'react-redux';
 import { useWebSocket } from '../../Socket/UserChatSocker';
 
 const UserChat = ({ setShowchat }) => {
-  const [newMessage, setNewMessage] = useState('');
   const userMessage = useSelector((state) => state.chat_data.userMessage);
-  
-  const messagesEndRef = useRef(null);
-  const { handleSendMessage}=useWebSocket()
+  const [newMessage, setNewMessage] = useState('');
+  const messagesContainerRef = useRef(null);
+  const [isNearBottom, setIsNearBottom] = useState(true);
+
+  const { handleSendMessage } = useWebSocket();
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
-    scrollToBottom(); // Scroll to the bottom whenever messages are updated
-  }, [userMessage]);
+    if (isNearBottom) {
+      scrollToBottom();
+    }
+  }, [userMessage, isNearBottom]);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = container;
+        setIsNearBottom(scrollHeight - scrollTop <= clientHeight + 100);
+      };
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   const handleMessage = (e) => {
     e.preventDefault();
     if (newMessage.trim()) {
       handleSendMessage(newMessage);
       setNewMessage('');
+      // Force scroll to bottom when sending a new message
+      setTimeout(scrollToBottom, 0);
     }
   };
 
@@ -32,21 +50,20 @@ const UserChat = ({ setShowchat }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen mx-auto bg-gray-100 p-4">
-      <div className="flex-1 overflow-y-auto mb-4">
+    <div className="flex flex-col h-screen mx-auto bg-[url('https://w0.peakpx.com/wallpaper/580/650/HD-wallpaper-whatsapp-bg-dark-background-thumbnail.jpg')] p-4 rounded-md">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto mb-4 max-h-[calc(100vh-100px)] "
+      >
         {Array.isArray(userMessage) && userMessage.length > 0 ? (
           userMessage.map((msg, index) => (
             <div
               key={index}
-              className={`flex ${
-                msg.type === "sent" ? "justify-end" : "justify-start"
-              } mb-2`}
+              className={`flex ${msg.type === 'sent' ? 'justify-end' : 'justify-start'} mb-2`}
             >
               <div
                 className={`p-2 rounded-lg max-w-xs ${
-                  msg.type === "sent"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-700"
+                  msg.type === 'sent' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
                 }`}
               >
                 {typeof msg.text === 'string' ? msg.text : JSON.stringify(msg.text)}
@@ -56,14 +73,12 @@ const UserChat = ({ setShowchat }) => {
         ) : (
           <p>No messages</p>
         )}
-        {/* Invisible div to ensure scrolling to bottom */}
-        <div ref={messagesEndRef} />
       </div>
 
       <div className="flex items-center space-x-4 p-4">
         <button
           onClick={handleBack}
-          className="bg-transparent border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:border-black flex items-center"
+          className="bg-transparent border text-white font-semibold py-2 px-4 rounded-lg hover:border-white flex items-center"
         >
           <FaArrowLeft className="mr-2" />
           Back

@@ -7,38 +7,53 @@ const Driver_chat = ({ setShowchat }) => {
   const driverMessage = useSelector((state) => state.chat_data.driverMessage);
   const dispatch = useDispatch();
   const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
-  // Use the custom hook to access WebSocket functionality
   const { handleSendDriverMessage } = useDriverWebSocket();
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (shouldAutoScroll && messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
-  // Scroll to the bottom whenever messages are updated
   useEffect(() => {
     scrollToBottom();
-  }, [driverMessage]);
+  }, [driverMessage, shouldAutoScroll]);
 
-  // Handle sending a new message
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = container;
+        setShouldAutoScroll(scrollHeight - scrollTop === clientHeight);
+      };
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
   const handleMessage = (e) => {
     e.preventDefault();
     if (newMessage.trim()) {
       handleSendDriverMessage(newMessage);
       setNewMessage('');
+      setShouldAutoScroll(true);
     }
   };
 
-  // Go back to previous screen
   const handleBack = () => {
     setShowchat(false);
   };
 
   return (
-    <div className="flex flex-col h-screen mx-auto bg-gray-100 p-4">
+    <div className="flex flex-col h-screen  mx-auto bg-[url('https://w0.peakpx.com/wallpaper/580/650/HD-wallpaper-whatsapp-bg-dark-background-thumbnail.jpg')] p-4 rounded-md">
       {/* Chat Container */}
-      <div className="flex-1 overflow-y-auto mb-4">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto mb-4 max-h-[calc(100vh-100px)]"
+      >
         {Array.isArray(driverMessage) && driverMessage.length > 0 ? (
           driverMessage.map((msg, index) => (
             <div
@@ -57,23 +72,18 @@ const Driver_chat = ({ setShowchat }) => {
         ) : (
           <p>No messages</p>
         )}
-
-        {/* Reference for scrolling */}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
       <div className="flex items-center space-x-4 p-4">
-        {/* Back button */}
         <button
           onClick={handleBack}
-          className="bg-transparent border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:border-black flex items-center"
+          className="bg-transparent border text-white font-semibold py-2 px-4 rounded-lg hover:border-white flex items-center"
         >
           <FaArrowLeft className="mr-2" />
           Back
         </button>
 
-        {/* Form */}
         <form onSubmit={handleMessage} className="flex flex-1">
           <input
             type="text"
