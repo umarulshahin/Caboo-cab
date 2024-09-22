@@ -1,16 +1,20 @@
-# chat/consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Extract user_id and driver_id from the URL or request
-        self.roomId = self.scope['url_route']['kwargs']['roomId']
-        # self.driver_id = self.scope['url_route']['kwargs']['driver_id']
+        from django.contrib.auth.models import AnonymousUser
 
-        # Generate a unique room name for the chat between the user and driver
+        self.user = self.scope['user']
+        print(self.user,'user in chat')
+        if isinstance(self.user, AnonymousUser):
+            await self.close()
+            return 
+
+        self.roomId = self.scope['url_route']['kwargs']['roomId']
         self.room_name = f'chat_{self.roomId}'
-        self.room_group_name = self.room_name  # Unique room for each conversation
+        self.room_group_name = self.room_name 
 
         # Join the room group
         await self.channel_layer.group_add(
@@ -21,18 +25,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave the room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        # Check if room_group_name is set before using it
+        if hasattr(self, 'room_group_name'):
+            # Leave the room group
+            await self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
 
-    # Receive message from WebSocket
     async def receive(self, text_data):
         data = json.loads(text_data)
-      
-        print(data,'message')
-        connect_id=data['connectId']
+        print(data, 'chat data received ')
+        connect_id = data['connectId']
         await self.channel_layer.group_send(
             f'chat_{connect_id}',
             {
@@ -42,7 +46,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-    # Handle receiving a message from the room group
     async def chat_message(self, event):
         message = event['message']
         user_id = event['user_id']

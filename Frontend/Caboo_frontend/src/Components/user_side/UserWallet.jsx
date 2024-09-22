@@ -79,7 +79,7 @@ const {showRazorpay,UserTabls}=useGetUser()
           <tbody>
             {walletdata ? (
               walletdata.map((data, index) => (
-                <tr key={data.id} className="hover:bg-gray-200 font-bold transition-colors">
+                <tr key={index} className="hover:bg-gray-200 font-bold transition-colors">
                   <td className="py-3 px-4 text-gray-500">{index + 1}</td>
                   <td className="py-3 px-4">{data.created_at}</td>
                   <td className="py-3 px-4">{data.reason}</td>

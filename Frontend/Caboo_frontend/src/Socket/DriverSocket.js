@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {addDriver_driverRide, addDriverClearRide, addDriverOTPvalidation, addDriverRideDetails, addDriverRideLocations, addDriverTripId,} from '../Redux/DriverRideSlice';
 import { addClearChat } from '../Redux/Chatslice';
+import Cookies from "js-cookie"
 
 const libraries = ["places"];
 const apiKey = import.meta.env.VITE_google_map_api_key;
@@ -24,6 +25,9 @@ const useDriverWebSocket = () => {
     const [Driverlocation,setDriverlocation] = useState(null)
     const dispatch=useDispatch()
     const navigate = useNavigate()
+    const rawtoken = Cookies.get("DriverTokens")
+    const token= JSON.parse(rawtoken)
+    console.log(token["access"],'driver token')
     
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: apiKey,
@@ -35,7 +39,8 @@ const useDriverWebSocket = () => {
     }, [responded]);
 
     useEffect(() => {
-        const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${driver.user_id}/`);
+        if (!driver.user_id || !token) return;
+        const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
         socketRef.current = ws;
 
         ws.onopen = () => {
@@ -134,7 +139,7 @@ const useDriverWebSocket = () => {
             }
             clearTimeout(declineTimeout);
         };
-    }, [driver.user_id]);
+    }, [driver.user_id,token]);
  
   
         

@@ -48,11 +48,10 @@ const Driver_chat = ({ setShowchat }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen  mx-auto bg-[url('https://w0.peakpx.com/wallpaper/580/650/HD-wallpaper-whatsapp-bg-dark-background-thumbnail.jpg')] p-4 rounded-md">
-      {/* Chat Container */}
+    <div className=" flex flex-col h-screen  mx-auto bg-[url('https://w0.peakpx.com/wallpaper/580/650/HD-wallpaper-whatsapp-bg-dark-background-thumbnail.jpg')] p-4 rounded-md">
       <div 
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto mb-4 max-h-[calc(100vh-100px)]"
+        className="chat_ui flex-1 overflow-y-auto mb-4 max-h-[calc(100vh-100px)]"
       >
         {Array.isArray(driverMessage) && driverMessage.length > 0 ? (
           driverMessage.map((msg, index) => (

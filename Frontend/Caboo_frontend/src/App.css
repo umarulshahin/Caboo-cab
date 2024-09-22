@@ -6,3 +6,6 @@
     text-align: center;
     
 }
+.chat_ui::-webkit-scrollbar {
+    display: none;
+}

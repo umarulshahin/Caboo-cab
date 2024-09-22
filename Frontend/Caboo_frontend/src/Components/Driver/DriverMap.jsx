@@ -295,8 +295,8 @@ const DriverMap = () => {
       )}
 
       {/* Right side with the map */}
-      <div className="w-1/2 rounded-md shadow-2xl bg-blue-100">
-        <div className="" style={mapContainerStyle}>
+      <div className="w-1/2 rounded-lg shadow-2xl bg-blue-100">
+        <div  style={mapContainerStyle}>
           {isLoaded && (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}

@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import useGetUser from '../Hooks/useGetUser';
 import { user_data_url } from '../Utils/Constanse';
 import { addClearChat } from '../Redux/Chatslice';
+import Cookies from "js-cookie"
 
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
@@ -15,6 +16,9 @@ const useUserWebSocket = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const {Get_data}=useGetUser()
+    const rawtoken = Cookies.get("userTokens")
+    const token = JSON.parse(rawtoken)
+    console.log(token.access,'user token')
 
     useEffect(() => {
         if (!user.user_id) {
@@ -22,7 +26,10 @@ const useUserWebSocket = () => {
             return;
         }
 
-        const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${user.user_id}/`);
+        if (!user.user_id || !token )return ;
+
+        const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
+
         console.log(ws);
         
         ws.onopen = () => {
@@ -77,8 +84,8 @@ const useUserWebSocket = () => {
             console.error('WebSocket error:', error);
         };
 
-        ws.onclose = () => {
-            console.log('WebSocket connection closed');
+        ws.onclose = (event) => {
+            console.log(event.code,'WebSocket connection closed');
         };
 
         return () => {
