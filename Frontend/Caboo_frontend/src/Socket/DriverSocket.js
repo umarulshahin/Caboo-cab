@@ -26,9 +26,13 @@ const useDriverWebSocket = () => {
     const dispatch=useDispatch()
     const navigate = useNavigate()
     const rawtoken = Cookies.get("DriverTokens")
-    const token= JSON.parse(rawtoken)
-    console.log(token["access"],'driver token')
-    
+    let token = null 
+    if (rawtoken){
+        token= JSON.parse(rawtoken)
+        console.log(token["access"],'driver token')
+        
+    }
+
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: apiKey,
         libraries,
@@ -116,6 +120,8 @@ const useDriverWebSocket = () => {
             }else if (data.type.trim() === "Trip cancel"){
 
                 dispatch(addDriverClearRide(null))
+                dispatch(addClearChat(null))
+
                 navigate('/driver_home')
                 toast.warning("User canceled the trip. We apologize for the inconvenience.")
 
@@ -378,6 +384,8 @@ const useDriverWebSocket = () => {
     const RideCancel=()=>{
        
         dispatch(addDriverClearRide(null))
+        dispatch(addClearChat(null))
+        
         console.log(tripId,'trip id ')
        console.log(typeof(tripId),'tripid type')
         socketRef.current.send(JSON.stringify({

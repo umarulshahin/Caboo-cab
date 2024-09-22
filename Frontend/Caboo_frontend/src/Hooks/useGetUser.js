@@ -83,16 +83,21 @@ const useGetUser = () => {
             dispatch(addDriver_data(null))
             dispatch(addDriver_token(null))
             Cookies.remove('DriverTokens')
-            
+            toast.warning("Your session has expired. Please log in again to continue.")
+            navigate("/")
+
 
           }else{
   
           dispatch(addUser(null))
           dispatch(addToken_data(null))
           Cookies.remove('userTokens')
-          }
           toast.warning("Your session has expired. Please log in again to continue.")
           navigate("/")
+
+          
+          }
+        
         }
 
         toast.warning(error);

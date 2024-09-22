@@ -57,20 +57,62 @@ const Driver_chat = ({ setShowchat }) => {
           driverMessage.map((msg, index) => (
             <div
               key={index}
-              className={`flex ${msg.type === 'sent' ? 'justify-end' : 'justify-start'} mb-2`}
+              className={`flex ${
+                msg.type === "sent" ? "justify-end" : "justify-start"
+              } mb-2`}
             >
-              <div
-                className={`p-2 rounded-lg max-w-xs ${
-                  msg.type === 'sent' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                {typeof msg.text === 'string' ? msg.text : JSON.stringify(msg.text)}
-              </div>
+              {msg.status ? (
+                msg.status === "pending" ? (
+                  <div className="flex flex-col">
+                    <div
+                      className={`py-2 rounded-lg max-w-xs flex items-center  ${
+                        msg.type === "sent"
+                          ? "bg-red-600 text-white"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                    >
+                      {" "}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mx-2 text-start text-red-300 ml-2"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.993.883L9 8v4a1 1 0 001.993.117L11 12V8a1 1 0 00-1-1zm0 8a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {typeof msg.text === "string"
+                        ? msg.text
+                        : JSON.stringify(msg.text)}
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-gray-500">
+                        Message not send
+                      </p>
+                    </div>
+                  </div>
+                ) : msg.status === "delivered" ? (
+                  <div
+                    className={`p-2 rounded-lg max-w-xs ${
+                      msg.type === "sent"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {typeof msg.text === "string"
+                      ? msg.text
+                      : JSON.stringify(msg.text)}
+                  </div>
+                ) : null
+              ) : (
+                <p>No messages</p>
+              )}
             </div>
           ))
-        ) : (
-          <p>No messages</p>
-        )}
+        ) : null }
       </div>
 
       {/* Message Input */}

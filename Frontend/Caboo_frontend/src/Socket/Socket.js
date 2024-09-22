@@ -17,8 +17,12 @@ const useUserWebSocket = () => {
     const navigate = useNavigate()
     const {Get_data}=useGetUser()
     const rawtoken = Cookies.get("userTokens")
-    const token = JSON.parse(rawtoken)
-    console.log(token.access,'user token')
+    let token = null
+    if(rawtoken){
+        token = JSON.parse(rawtoken)
+        console.log(token.access,'user token')
+    }
+   
 
     useEffect(() => {
         if (!user.user_id) {
@@ -69,6 +73,7 @@ const useUserWebSocket = () => {
                 
             }else if (data.type.trim() === 'Trip cancel'){
                 dispatch(addClearRide(null))
+                dispatch(addClearChat(null))
                 navigate('/userhome', { replace: true });
 
                 toast.warning("Driver canceled the trip. We apologize for the inconvenience.")
@@ -111,6 +116,7 @@ const useUserWebSocket = () => {
          if (socket && socket.readyState === WebSocket.OPEN) {
 
             dispatch(addClearRide(null))
+            dispatch(addClearChat(null))
 
             console.log(trip_id,'Sending message:');
             const data={

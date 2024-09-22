@@ -19,11 +19,29 @@ const Chatslice=createSlice({
         addClearChat:(state,action)=>{
             state.userMessage=[]
             state.driverMessage=[]
+        },
+        addUpdateUserChat:(state,action)=>{
+            const {id,status}= action.payload
+
+            const message = state.userMessage.find((message)=>message.id === id)
+            console.log(message, 'update message user')
+            if(message){
+                message.status = status
+            }
+        },
+        addUpdateDriverChat:(state,action)=>{
+            const {id,status}= action.payload
+
+            const message = state.driverMessage.find((message)=>message.id === id)
+            console.log(message, 'update message driver')
+            if(message){
+                message.status = status
+            }
         }
     
     }
 })
 
-export const {adddriverMessage,adduserMessage,addClearChat}=Chatslice.actions
+export const {adddriverMessage,adduserMessage,addClearChat,addUpdateUserChat,addUpdateDriverChat}=Chatslice.actions
 
 export default Chatslice.reducer
