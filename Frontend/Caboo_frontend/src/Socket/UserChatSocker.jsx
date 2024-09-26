@@ -58,6 +58,14 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
+  useEffect(()=>{
+    const rawtoken = Cookies.get("userTokens")
+    let token = null
+    if(rawtoken){
+        token = JSON.parse(rawtoken)
+        setAccessToken(token)
+    }  },[])
+
   const connectWebSocket = useCallback(() => {
     if (!user_id || !driver_id || !accessToken) {
       console.log("Missing required data for WebSocket connection");

@@ -1,0 +1,75 @@
+name: Deploy React app to s3
+
+# Run the workflow whenever code is pushed to the main branch
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Frontend/**' # Only trigger when frontend files are changed
+
+# Define the jobs to run
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Updated to Node.js version 18
+
+      # Create .env file with secrets
+      - name: Create .env file
+        run: |
+          echo "VITE_GOOGLE_OAUTH=${{ secrets.VITE_GOOGLE_OAUTH }}" >> .env
+          echo "VITE_google_map_api_key=${{ secrets.VITE_GOOGLE_MAP_API_KEY }}" >> .env
+          echo "VITE_PUBLIC_KEY=${{ secrets.VITE_PUBLIC_KEY }}" >> .env
+          echo "VITE_SECRET_KEY=${{ secrets.VITE_SECRET_KEY }}" >> .env
+
+
+      # Display .env file contents (for debugging)
+      - name: Display .env file contents
+        run: |
+          echo "Contents of .env file:"
+          cat .env
+
+      # Install dependencies and build the frontend
+      - name: Install dependencies and build
+        working-directory: ./Frontend  # Adjust path if necessary
+        run: |
+          npm ci  # Using npm ci for clean, faster install
+          npm run build
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2  # Updated to version 2
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # Verify AWS credentials (optional, for debugging)
+      - name: Verify AWS credentials
+        run: |
+          echo "AWS Access Key ID: ${{ secrets.ACCESS_KEY_ID }}"
+          aws sts get-caller-identity --region ${{ secrets.AWS_REGION }}
+
+      # Deploy the frontend build to S3
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./frontend/build s3://${{ secrets.AWS_S3_BUCKET }} --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+
+      # Invalidate CloudFront cache (optional, if using CloudFront)
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
