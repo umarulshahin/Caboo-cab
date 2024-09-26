@@ -36,7 +36,7 @@ const Header = (props) => {
             duration={500}
             className="text-white font-extrabold cursor-pointer hover:text-yellow-500"
           >
-            Ride request
+            Ride
           </ScrollLink>
         )}
         {drive && (

@@ -63,7 +63,7 @@ jobs:
       # Deploy the frontend build to S3
       - name: Deploy to S3
         run: |
-          aws s3 sync ./Frontend/Caboo_frontend/build s3://${{ secrets.AWS_S3_BUCKET }} --delete
+          aws s3 sync ./Frontend/build s3://${{ secrets.AWS_S3_BUCKET }} --delete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
