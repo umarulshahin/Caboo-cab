@@ -36,7 +36,7 @@ const Header = (props) => {
             duration={500}
             className="text-white font-extrabold cursor-pointer hover:text-yellow-500"
           >
-            Ride
+            Ride user
           </ScrollLink>
         )}
         {drive && (
@@ -54,7 +54,7 @@ const Header = (props) => {
 
     <div className="flex items-center px-8 space-x-4">
     <Link className="text-white font-extrabold hidden sm:block pr-6">
-        Help Me
+        Help Me hello
       </Link>
      
       
