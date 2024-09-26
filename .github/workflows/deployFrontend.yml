@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'Frontend/**' # Only trigger when frontend files are changed
+      - 'Frontend/Caboo_frontend/**' # Only trigger when frontend files are changed
 
 # Define the jobs to run
 jobs:
