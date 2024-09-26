@@ -41,7 +41,7 @@ jobs:
 
       # Install dependencies and build the frontend
       - name: Install dependencies and build
-        working-directory: ./Frontend  # Adjust path if necessary
+        working-directory: ./Frontend/Caboo_frontend  # Adjust path if necessary
         run: |
           npm ci
           npm run build
