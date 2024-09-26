@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies and build
         working-directory: ./Frontend  # Adjust path if necessary
         run: |
-          npm ci  # Using npm ci for clean, faster install
+          npm ci
           npm run build
 
       # Configure AWS credentials
