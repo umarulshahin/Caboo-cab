@@ -25,9 +25,9 @@ const Header = (props) => {
     <div className="fixed top-0 left-0 w-full z-50 bg-black">
   <div className="flex flex-wrap items-center justify-between p-4">
     <div className="flex items-center">
-    <Link to="/">
+    {/* <Link to="/">
     <img src={logo} alt="Logo" className="h-12" />
-      </Link>
+      </Link> */}
       <div className="hidden sm:flex sm:space-x-8 pl-6">
         {ride && (
           <ScrollLink
@@ -36,7 +36,7 @@ const Header = (props) => {
             duration={500}
             className="text-white font-extrabold cursor-pointer hover:text-yellow-500"
           >
-            Ride 
+            Ride request
           </ScrollLink>
         )}
         {drive && (
