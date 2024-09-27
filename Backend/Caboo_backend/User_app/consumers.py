@@ -417,28 +417,31 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                 
                 if 'tripOTP' in result and 'driver' in result and trip_data:
                     
+                    if 'user_id' in trip_data and 'driver_id' in trip_data:
                     
-                    
-                    await self.channel_layer.group_send(
-                            f'user_{trip_data['user_id']}', 
+                            await self.channel_layer.group_send(
+                                    f"user_{trip_data['user_id']}", 
+                                    {
+                                        'type': 'SuccessNotification',
+                                        'status': 'OTP_success',
+                                        'message': 'OTP validation succeeded. Trip is confirmed.',
+                                    }
+                                )
+                            
+                            
+                            await self.channel_layer.group_send(
+                            f"driver_{trip_data['driver_id']}",
                             {
-                                'type': 'SuccessNotification',
+                                
+                                'type' : 'SuccessNotification',
                                 'status': 'OTP_success',
-                                'message': 'OTP validation succeeded. Trip is confirmed.',
-                            }
-                        )
-                    
-                    
-                    await self.channel_layer.group_send(
-                       f'driver_{trip_data['driver_id']}',
-                       {
-                        
-                        'type' : 'SuccessNotification',
-                        'status': 'OTP_success',
-                        'message': 'OTP validation succeeded. You can start the trip.',
+                                'message': 'OTP validation succeeded. You can start the trip.',
 
-                       }  
-                    )
+                            }  
+                            )
+                    else:
+                        
+                        print('error otp data user id or driver id is missing ')
                     
                 elif 'error' in result:
                     id=data['Otp_data']['driver_id']
@@ -456,7 +459,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                 if result == 'successfully update' and trip_data:
 
                     await self.channel_layer.group_send(
-                            f'user_{trip_data['user_id']}', 
+                            f"user_{trip_data['user_id']}", 
                             {
                                 'type': 'SuccessNotification',
                                 'status': 'Trip complete',
@@ -470,7 +473,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
 
                     if data['userRequest']['payment_type']=='cashinhand' and trip_data:
                         await self.channel_layer.group_send(
-                        f'driver_{trip_data['driver_id']}',
+                        f"driver_{trip_data['driver_id']}",
                         {
                             
                             'type' : 'SuccessNotification',
@@ -491,7 +494,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                 update = await self.updateRide(trip_data['user_id'],trip_data['driver_id'],data) 
                                 if update:
                                     await self.channel_layer.group_send(
-                                        f'driver_{trip_data['driver_id']}',
+                                        f"driver_{trip_data['driver_id']}",
                                         {
                                             
                                             'type' : 'SuccessNotification',
@@ -504,7 +507,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                     await asyncio.sleep(1)  
 
                                     await self.channel_layer.group_send(
-                                        f'user_{trip_data['user_id']}', 
+                                        f"user_{trip_data['user_id']}", 
                                         {
                                             'type': 'SuccessNotification',
                                             'status': 'payment completed',
@@ -524,7 +527,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                 update = await self.updateRide(trip_data['user_id'],trip_data['driver_id'],data) 
                                 if update:
                                     await self.channel_layer.group_send(
-                                        f'driver_{trip_data['driver_id']}',
+                                        f"driver_{trip_data['driver_id']}",
                                         {
                                             
                                             'type' : 'SuccessNotification',
@@ -537,7 +540,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                     await asyncio.sleep(3)  
 
                                     await self.channel_layer.group_send(
-                                        f'user_{trip_data['user_id']}', 
+                                        f"user_{trip_data['user_id']}", 
                                         {
                                             'type': 'SuccessNotification',
                                             'status': 'payment completed',
@@ -559,7 +562,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     update = await self.updateRide(trip_data['user_id'],trip_data['driver_id'],data)
                     if update:
                         await self.channel_layer.group_send(
-                                f'user_{trip_data['user_id']}', 
+                                f"user_{trip_data['user_id']}", 
                                 {
                                     'type': 'SuccessNotification',
                                     'status': 'payment completed',
@@ -584,7 +587,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                         print(update,'updated data')
                         if update:
                             await self.channel_layer.group_send(
-                            f'driver_{ids['driver_id']}',
+                            f"driver_{ids['driver_id']}",
                             {
                                 
                                 'type' : 'SuccessNotification',
@@ -609,7 +612,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                     update = await self.updateRide(ids['user_id'],ids['driver_id'],data)
                     if update:
                         await self.channel_layer.group_send(
-                                f'user_{ids['user_id']}', 
+                                f"user_{ids['user_id']}", 
                                 {
                                     'type': 'SuccessNotification',
                                     'status': 'Trip cancel',
