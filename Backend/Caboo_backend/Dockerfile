@@ -27,7 +27,7 @@ COPY . .
 RUN chmod +x start.sh
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8001
 
 # Entry point
 ENTRYPOINT ["/bin/bash", "start.sh"]

@@ -71,6 +71,10 @@ const UserProfile_main = () => {
           <img
             src={profile_img ? `${backendUrl}${profile_img}` : profile_img_placeholder}
             alt="User Profile"
+            onError={(e) => {
+              console.error("Error loading image:", e);
+              e.target.src =profile_img_placeholder; // Fallback to avatar if image fails to load
+            }}
             className="h-48 w-48 rounded-full object-cover border-4 border-gray-300"
           />
           <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-xl rounded-full opacity-0 hover:opacity-100 cursor-pointer">

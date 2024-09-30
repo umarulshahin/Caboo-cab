@@ -66,12 +66,16 @@ const User_header = ({setStatus}) => {
       </Link>
       {/* Profile Section */}
           <div className="relative flex items-center space-x-2">
-          <img
-          src={profile ? `${backendUrl}${profile}` : avatar}
-          alt="Profile"
-            className="h-8 w-8 rounded-full object-cover cursor-pointer"
-            onClick={toggleDropdown}
-          />
+                <img
+        src={profile ? `${backendUrl}${profile}` : avatar}
+        alt="Profile"
+        className="h-8 w-8 rounded-full object-cover cursor-pointer"
+        onClick={toggleDropdown}
+        onError={(e) => {
+          console.error("Error loading image:", e);
+          e.target.src = avatar; // Fallback to avatar if image fails to load
+        }}
+      />
           <span className="text-white font-bold cursor-pointer" onClick={toggleDropdown}>
             {username}
           </span>
