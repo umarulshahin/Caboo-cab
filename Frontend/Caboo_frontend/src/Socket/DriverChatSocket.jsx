@@ -70,6 +70,7 @@ export const DriverWebSocketProvider = ({ children }) => {
   const driver_id = driver ? driver[0]?.customuser?.id : null;
 
   const connectDriverWebSocket = useCallback(() =>{
+    
     if (!user_id || !driver_id || !accessToken){
       console.log("Missing required data for WebSocket connection");
       setConnectionStatus("disconnected");

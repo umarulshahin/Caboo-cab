@@ -8,9 +8,7 @@ import DriverHomePage from "../../Components/Driver/DriverHomePage";
 import useDriver from "../../Hooks/useDriver";
 
 const Driver_home = () => {
-  const currentMonth = new Date().getMonth()+1;
-  const currentYear = new Date().getFullYear();
-  const { Get_data } = useGetUser();
+
   const { DriverTrips } = useDriver();
   const driver_token = useSelector((state) => state.driver_data.driver_token);
   const trips = useSelector((state) => state.driver_data.driverTrips);
@@ -83,7 +81,7 @@ const Driver_home = () => {
       const tripYear = tripDate.getFullYear();
   
       // Group by month
-      if (tripYear === currentYear) {  // Only count current year data (optional)
+      if (tripYear === currentYear) {  
         const monthName = tripDate.toLocaleString('default', { month: 'short' }); // e.g., 'Jan'
   
         const existingMonth = acc.find(item => item.month === monthName);
@@ -116,7 +114,6 @@ const Driver_home = () => {
       return acc;
     }, []);
   
-    // Sort daily earnings data to keep days in the correct order (Mon-Sun)
     const orderedDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     dailyEarningsData.sort((a, b) => orderedDays.indexOf(a.day) - orderedDays.indexOf(b.day));
   
@@ -134,17 +131,12 @@ const Driver_home = () => {
       monthlydata: monthlyRidesData,
     };
   
-    // Set the state
     if (data) {
       setTripdata(data);
     }
   } 
 
-
   }, [trips]);
-  
-
-
   
 
   return (

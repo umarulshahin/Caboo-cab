@@ -68,13 +68,13 @@ const App = () => {
               <Route path="/confirmation" element={<Confirmation />}/>
               <Route path="/userheader" element={<User_header />} />
 
-              <Route path="/admin" element={<AdminPrivatRoute><Admin_Signin /></AdminPrivatRoute>} />
-              <Route path="/admin_home" element={<Admin_home />} />
-              <Route path="/User_list" element={<User_list />} />
-              <Route path="/Driver_list" element={<Driver_list />} />
-              <Route path="/Documents" element={<Documents />} />
-              <Route path="/triplisting" element={<TripListing />}/>
-              <Route path="/tripmore" element={<TripMore />}/>
+              <Route path="/admin" element={<Admin_Signin />} />
+              <Route path="/admin_home" element={<AdminPrivatRoute><Admin_home /></AdminPrivatRoute>} />
+              <Route path="/User_list" element={<AdminPrivatRoute><User_list /></AdminPrivatRoute>} />
+              <Route path="/Driver_list" element={<AdminPrivatRoute><Driver_list /></AdminPrivatRoute>} />
+              <Route path="/Documents" element={<AdminPrivatRoute><Documents /></AdminPrivatRoute>} />
+              <Route path="/triplisting" element={<AdminPrivatRoute><TripListing /></AdminPrivatRoute>}/>
+              <Route path="/tripmore" element={<AdminPrivatRoute><TripMore /></AdminPrivatRoute>}/>
               
             
               <Route path='/vehicle_doc' element={<Vehicle_doc /> } />

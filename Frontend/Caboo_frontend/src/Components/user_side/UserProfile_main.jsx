@@ -63,6 +63,8 @@ const UserProfile_main = () => {
     ProfilUpdate(updatedData, profileUpdate_url);
   };
 
+  console.log(profile_img,'profile image ');
+  
   return (
     <div className="flex w-screen min-h-screen mt-20 bg-gray-100 justify-center items-center">
       <div className="p-12 flex flex-col items-center bg-white shadow-lg rounded-lg w-full max-w-2xl">

@@ -36,15 +36,21 @@ const Vehicle_documents = () => {
                 </div>
               </div>
               <div className="flex flex-col">
-                <label className="text-gray-600 font-semibold mb-1">Vehicle</label>
+                <label className="text-gray-600 font-semibold mb-1">Vehicle Name</label>
                 <div className="bg-white p-3 rounded-lg border border-gray-300">
-                  {document[0].vehicle_no}
+                  {document[0].vehicle_name}
                 </div>
               </div>
               <div className="flex flex-col">
                 <label className="text-gray-600 font-semibold mb-1">Vehicle Number</label>
                 <div className="bg-white p-3 rounded-lg border border-gray-300">
-                  {document[0].vehicle_name}
+                  {document[0].vehicle_no }
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-600 font-semibold mb-1">Vehicle</label>
+                <div className="bg-white p-3 rounded-lg border border-gray-300">
+                  {document[0].Vehicle_type }
                 </div>
               </div>
             </div>

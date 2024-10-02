@@ -27,8 +27,14 @@ const Admin_home_page = () => {
     const fetchData = async () => {
       const userResponse = await GetUsers(get_Users_url, "user");
       const driverResponse = await GetUsers(get_Driver_url, "driver");
-      setUserData(userResponse.data);
-      setDriverData(driverResponse.data);
+ 
+      if(userResponse){
+        setUserData(userResponse.data);
+
+      }else if (driverResponse){
+        setDriverData(driverResponse.data);
+
+      }
     };
 
     fetchData();

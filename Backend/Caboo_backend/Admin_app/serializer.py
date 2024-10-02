@@ -5,14 +5,14 @@ from Authentication_app.models import *
 
 
 
-class UserSerializer(serializers.ModelSerializer):
-
+class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomUser
-        fields = ['username', 'email', 'phone', 'profile', 'id', 'is_active', 'wallet','ride']
+        model=CustomUser
+        fields=['username', 'email', 'phone', 'is_active', 'profile','id','ride','wallet']
         read_only_fields = ['id']
+        
 class DriverDataSerializer(serializers.ModelSerializer):
-    customuser = UserSerializer(read_only=True)
+    customuser = UserDataSerializer(read_only=True)
 
     class Meta:
         model = DriverData
@@ -27,4 +27,5 @@ class DriverDataSerializer(serializers.ModelSerializer):
                   'request',
                   'dicline_reason',
                   'comments',
-                  'id']
+                  'id',
+                  'Vehicle_type']

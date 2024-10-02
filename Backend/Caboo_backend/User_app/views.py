@@ -18,7 +18,7 @@ def Image_Upload(request):
     if request.method == "PATCH":
         image = request.FILES.get('image')
         id = request.data.get('id')
-        
+        print(image,'image name ')
         if not image:
             return Response({"error": "Image file is required"}, status=400)
         data = {"image": image, "id": id}
@@ -26,6 +26,7 @@ def Image_Upload(request):
         serializer = ImageUploadSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+        
             return Response({"Success": "Image uploaded successfully"}, status=200)
         return Response({"error": serializer.errors}, status=400)
     
@@ -34,9 +35,9 @@ def Image_Upload(request):
 def GetUser(request):
     print('yes here is working ')
     user = request.user
-    data=CustomUser.objects.filter(email=user)
+    data=CustomUser.objects.filter(email=user,is_active=True)
     serializer=UserSerializer(data,many=True)
-           
+    print(serializer.data,'user side')
     return Response(serializer.data)
 
     

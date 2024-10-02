@@ -13,10 +13,10 @@ load_dotenv()
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = True
 
 # ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost 127.0.0.1 0.0.0.0 [::1]').split(' ')
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1','localhost']
 # Razorpay configuration
 RAZORPAY_SECRET_KEY = os.environ.get('RAZORPAY_SECRET_KEY')
 RAZORPAY_PUBLIC_KEY = os.environ.get('RAZORPAY_PUBLIC_KEY')
@@ -125,24 +125,31 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
+
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
+STATICFILES_DIRS=[
+    os.path.join(BASE_DIR,'static')
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = BASE_DIR / "media" 
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'Authentication_app.CustomUser'
+CORS_ALLOW_ALL_ORIGINS = True 
 
 # CORS configuration
-CORS_ALLOWED_ORIGINS =['http://localhost:5174' , 'http://localhost:5173']
+CORS_ORIGIN_WHITELIST =['http://localhost:5174' , 'http://localhost:5173']
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PATCH', 'DELETE']
 CORS_ALLOW_HEADERS = ['Authorization', 'Content-Type']
 
@@ -157,13 +164,12 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Channels configuration
 ASGI_APPLICATION = "Caboo_backend.asgi.application"
-CORS_ALLOW_ALL_ORIGINS = True  # For development only
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-        "hosts": [("redis", 6379)]
+        "hosts": [("127.0.0.1", 6379)]
         },
     }
 }
@@ -181,8 +187,8 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # JWT configuration
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),  # Increased for better user experience
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),  # Increased for better user experience
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -209,6 +215,6 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=60),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=10),
 }

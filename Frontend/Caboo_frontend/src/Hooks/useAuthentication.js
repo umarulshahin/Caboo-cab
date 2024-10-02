@@ -220,12 +220,19 @@ const useAuthentication = () => {
             if (role === "admin") {
               console.log(response.data.token)
               const token = response.data.token
-              Cookies.set("adminTokens", JSON.stringify(token), { expires: 7 });
               const value = jwtDecode(token.access);
-              dispatch(addadmin_token(value));
-              Get_data(admin_data_url,value.user_id,role);
-              toast.success("Login successfully");
-              navigate("/admin_home",{replace:true});
+              console.log(value)
+              if(value.role){
+                Cookies.set("adminTokens", JSON.stringify(token), { expires: 7 });
+                const value = jwtDecode(token.access);
+                dispatch(addadmin_token(value));
+                Get_data(admin_data_url,value.user_id,role);
+                toast.success("Login successfully");
+                navigate("/admin_home",{replace:true});
+              }else{
+                toast.warning("Your email and password do not match. Please try again");
+            }
+
     
             } else if( role === "Driver") {
 
@@ -262,11 +269,7 @@ const useAuthentication = () => {
             dispatch(addDriver_status(null))
           }
         } catch (error) {
-          console.log(error, "Signin");
-          if (
-            error.response.data.detail ===
-            "No active account found with the given credentials"
-          ) {
+          if (error.response.data.detail === "No active account found with the given credentials" || error.response.data.non_field_errors[0] === "Invalid email or user not active.") {
             toast.warning("Your email and password do not match. Please try again");
           }
           console.log(error, "Signin");

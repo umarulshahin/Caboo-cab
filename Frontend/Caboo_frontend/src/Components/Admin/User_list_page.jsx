@@ -75,8 +75,8 @@ const User_list_page = () => {
         <span className="text-4xl text-gray-800 mx-8 font-bold mb-6">
           User Management
         </span>
-        <div className="m-8 bg-white p-6 rounded-lg shadow-lg">
-          <table className="min-w-full bg-white rounded-lg overflow-hidden">
+        <div className="m-8 bg-white p-6 rounded-lg  shadow-lg">
+          <table className="min-w-full bg-white  rounded-lg overflow-auto">
             <thead>
               <tr className="bg-gray-200">
                 <th className="py-3 px-4 text-left text-gray-600 font-semibold">
@@ -102,7 +102,7 @@ const User_list_page = () => {
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody >
               {User_list.map((data) => (
                 <tr
                   key={data.id}
@@ -131,63 +131,62 @@ const User_list_page = () => {
                     </span>
                   </td>
                   <td className="py-3 px-4">
-                    <div className="relative inline-block text-left">
-                      <button
-                        type="button"
-                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                        onClick={() => handleDropdownToggle(data.id)}
-                      >
-                        {data.is_active ? "Active" : "Blocked"}
-                        <svg
-                          className="-mr-1 ml-2 h-5 w-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M6 8a1 1 0 01.993-.883L7 7a1 1 0 011.414.293L10 9.586l1.293-1.293a1 1 0 011.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 01-.293-.707z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
+  <div className="relative inline-block text-left">
+    <button
+      type="button"
+      className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      onClick={() => handleDropdownToggle(data.id)}
+    >
+      {data.is_active ? "Active" : "Blocked"}
+      <svg
+        className="-mr-1 ml-2 h-5 w-5"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fillRule="evenodd"
+          d="M6 8a1 1 0 01.993-.883L7 7a1 1 0 011.414.293L10 9.586l1.293-1.293a1 1 0 011.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 01-.293-.707z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </button>
 
-                      {dropdownOpen === data.id && (
-                        <div
-                          className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
-                          role="menu"
-                          aria-orientation="vertical"
-                          aria-labelledby={`menu-button-${data.id}`}
-                          style={{
-                            maxHeight: '200px',
-                            overflowY: 'auto',
-                            bottom: `-${document.querySelector('tr').offsetHeight}px`,
-                          }}
-                        >
-                          <div className="p-1" role="none">
-                            {data.is_active ? (
-                              <button
-                                onClick={() => handleBlockUnblock(data)}
-                                className="block w-full  px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-                                role="menuitem"
-                              >
-                                Block
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => handleBlockUnblock(data)}
-                                className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100"
-                                role="menuitem"
-                              >
-                                Unblock
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </td>
+    {dropdownOpen === data.id && (
+      <div
+        className="absolute z-50 mb-2 w-40 origin-bottom-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        role="menu"
+        aria-orientation="vertical"
+        aria-labelledby={`menu-button-${data.id}`}
+        style={{
+          bottom: `-150%`, // Places dropdown above the button
+        }}
+      >
+        <div className="p-1" role="none">
+          {data.is_active ? (
+            <button
+              onClick={() => handleBlockUnblock(data)}
+              className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+              role="menuitem"
+            >
+              Block
+            </button>
+          ) : (
+            <button
+              onClick={() => handleBlockUnblock(data)}
+              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100"
+              role="menuitem"
+            >
+              Unblock
+            </button>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</td>
+
                 </tr>
               ))}
             </tbody>

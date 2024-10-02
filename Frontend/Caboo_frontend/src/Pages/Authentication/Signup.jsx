@@ -13,12 +13,6 @@ const Signup = () => {
   };
 
 
-  // useEffect(()=>{
-  //   const cookie=Cookies.get('userTokens')
-  //   if(cookie){
-
-  //   }
-  // },[])
   return (
     <div>
       <div>

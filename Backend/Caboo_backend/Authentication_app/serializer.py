@@ -54,17 +54,15 @@ class CustomTokenSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate(self, data):
-        print(data['email'],'validation data')
         try:
             user = CustomUser.objects.get(email=data['email'], is_active=True)
-            print(user,'user inside validation')
        
         except CustomUser.DoesNotExist:
             raise serializers.ValidationError("Invalid email or user not active.")
         
         refresh = RefreshToken.for_user(user)
         refresh['username'] = user.username
-        print(refresh,'refresh ')
+        refresh['role'] = user.is_staff
 
         return {
             'access': str(refresh.access_token),
@@ -75,7 +73,7 @@ class CustomTokenSerializer(serializers.Serializer):
         }
         
 class CustomUserSerializer(serializers.ModelSerializer):
-    profile = serializers.ImageField(required=False)  # Handle profile photo
+    profile = serializers.ImageField(required=False)  
 
     class Meta:
         model = CustomUser
@@ -93,7 +91,7 @@ class DriverSerializers(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        # Validation logic
+        
         if DriverData.objects.filter(customuser=attrs.get('customuser')).exclude():
             return attrs
         

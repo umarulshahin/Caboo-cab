@@ -14,41 +14,65 @@ from Authentication_app.views import *
 from User_app.serializer import *
 
 
+from rest_framework.permissions import BasePermission
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
+
+class RoleBasedPermission(BasePermission):
+
+
+    def has_permission(self, request, view):
+        
+        try:
+            auth = JWTAuthentication()
+            user, token = auth.authenticate(request)
+
+            role = token.payload.get('role')
+         
+            if role :
+                return True
+            else:
+                raise PermissionDenied("You do not have permission to access this resource.")
+
+        except AuthenticationFailed:
+            raise PermissionDenied("Invalid token or token missing.")
+        except Exception as e:
+            raise PermissionDenied(f"Error occurred: {str(e)}")
+        
+
+
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated,RoleBasedPermission])
 def Get_admin(request):
     
     admin_id = request.GET.get('id', None)
-    print(admin_id)
     user=CustomUser.objects.get(id=admin_id)
     if user:
-        serializer=UserSerializer(user)
+        serializer=UserDataSerializer(user)
         return Response(serializer.data)
 
     return Response({"error":"somting wrong"},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated,RoleBasedPermission])
 def Get_users(request):
 
     users=CustomUser.objects.filter(is_staff=False)
     
     if users:
-        
-        serializer=UserSerializer(users,many=True)
-        print(serializer.data)
+            
+        serializer=UserDataSerializer(users,many=True)
         return Response(serializer.data)
 
     return Response({"error":"somting wrong"},status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated,RoleBasedPermission])
 def Get_Drivers(request):
     
     try:
         users = DriverData.objects.all().prefetch_related("customuser")
-        print(users)
         if users:
             
             serializer=DriverDataSerializer(users,many=True)
@@ -62,7 +86,7 @@ def Get_Drivers(request):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated,RoleBasedPermission])
 def Status_management(request):
     
         data = request.data
@@ -78,12 +102,12 @@ def Status_management(request):
 
         user.save()  
 
-        serializer = UserSerializer(user)
+        serializer = UserDataSerializer(user)
         return Response({"success": f"User {'blocked' if data['action'] == 'block' else 'unblocked'} successfully", "user": serializer.data}, status=status.HTTP_200_OK)
     
     
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated,RoleBasedPermission])
 def Driver_management(request):
     
         data = request.data
@@ -104,7 +128,6 @@ def Driver_management(request):
             )
             
         elif data['status'] == 'decline':
-            print(data['status'])
             driver.request = data['status']
             driver.dicline_reason = data ['reason']
             driver.comments = data['comments']
@@ -128,7 +151,7 @@ def Driver_management(request):
         return Response({'error':serializer.errors})
     
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated,RoleBasedPermission])
 def Get_AllTrips(request):
     
     try:

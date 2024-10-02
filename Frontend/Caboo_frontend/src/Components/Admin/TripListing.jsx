@@ -4,14 +4,15 @@ import { useSelector } from "react-redux";
 import useAdmin from "../../Hooks/useAdmin";
 import Admin_header from "./Admin_header";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const TripListing = () => {
   const { GetTripdata } = useAdmin();
   const navigate = useNavigate();
 
   // State for pagination
-  const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentTrips, setcurrentTrips] = useState({});
   const tripsPerPage = 5; // Number of trips per page
 
   useEffect(() => {
@@ -22,11 +23,17 @@ const TripListing = () => {
   }, []);
 
   const alltrip = useSelector((state) => state.admin_data.allTrips);
-
+  console.log(alltrip, "alltrip");
   // Pagination Logic
   const indexOfLastTrip = currentPage * tripsPerPage;
+  console.log(indexOfLastTrip, "last trip");
+
   const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
-  const currentTrips = alltrip.slice(indexOfFirstTrip, indexOfLastTrip);
+  console.log(indexOfFirstTrip, "first trip");
+
+  if (indexOfFirstTrip && indexOfLastTrip) {
+    setcurrentTrips(alltrip.slice(indexOfFirstTrip, indexOfLastTrip));
+  }
 
   const totalPages = Math.ceil(alltrip.length / tripsPerPage); // Total number of pages
 
@@ -136,13 +143,12 @@ const TripListing = () => {
                   <td colSpan="7" className="py-2 px-4 text-center">
                     <div>
                       <div className="animate-pulse flex flex-col items-center mt-10  gap-4 w-full">
-                        <div>
-                          <div className="w-48 h-6 bg-slate-400 rounded-md"></div>
-                          <div className="w-28 h-4 bg-slate-400 mx-auto mt-3 rounded-md"></div>
-                        </div>
+                        {" "}
                         <div className="h-7 bg-slate-400 w-full rounded-md"></div>
                         <div className="h-7 bg-slate-400 w-full rounded-md"></div>
                         <div className="h-7 bg-slate-400 w-full rounded-md"></div>
+                        <div className="h-7 bg-slate-400 w-full rounded-md"></div>
+                        <div className="h-7 bg-slate-400 w-1/2 rounded-md"></div>
                         <div className="h-7 bg-slate-400 w-1/2 rounded-md"></div>
                       </div>
                     </div>
@@ -167,20 +173,41 @@ const TripListing = () => {
               {currentPage > 2 && (
                 <>
                   <PageButton page={1} onClick={() => handlePageClick(1)} />
-                  {currentPage > 3 && <span className="text-gray-400">...</span>}
+                  {currentPage > 3 && (
+                    <span className="text-gray-400">...</span>
+                  )}
                 </>
               )}
 
-              {currentPage > 1 && <PageButton page={currentPage - 1} onClick={() => handlePageClick(currentPage - 1)} />}
+              {currentPage > 1 && (
+                <PageButton
+                  page={currentPage - 1}
+                  onClick={() => handlePageClick(currentPage - 1)}
+                />
+              )}
 
-              <PageButton page={currentPage} isActive onClick={() => handlePageClick(currentPage)} />
+              <PageButton
+                page={currentPage}
+                isActive
+                onClick={() => handlePageClick(currentPage)}
+              />
 
-              {currentPage < totalPages && <PageButton page={currentPage + 1} onClick={() => handlePageClick(currentPage + 1)} />}
+              {currentPage < totalPages && (
+                <PageButton
+                  page={currentPage + 1}
+                  onClick={() => handlePageClick(currentPage + 1)}
+                />
+              )}
 
               {currentPage < totalPages - 1 && (
                 <>
-                  {currentPage < totalPages - 2 && <span className="text-gray-400">...</span>}
-                  <PageButton page={totalPages} onClick={() => handlePageClick(totalPages)} />
+                  {currentPage < totalPages - 2 && (
+                    <span className="text-gray-400">...</span>
+                  )}
+                  <PageButton
+                    page={totalPages}
+                    onClick={() => handlePageClick(totalPages)}
+                  />
                 </>
               )}
             </div>
@@ -205,8 +232,8 @@ const PageButton = ({ page, isActive = false, onClick }) => (
     onClick={onClick}
     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200 ${
       isActive
-        ? 'bg-blue-400 text-white'
-        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+        ? "bg-blue-400 text-white"
+        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
     }`}
   >
     {page}

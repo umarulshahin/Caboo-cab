@@ -27,5 +27,6 @@ class DriverDataSerializer(serializers.ModelSerializer):
                   'dicline_reason',
                   'comments',
                   'current_Status',
-                  'id']
+                  'id',
+                  'Vehicle_type']
 
