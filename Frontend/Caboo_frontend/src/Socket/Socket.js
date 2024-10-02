@@ -8,6 +8,7 @@ import useGetUser from '../Hooks/useGetUser';
 import { user_data_url } from '../Utils/Constanse';
 import { addClearChat } from '../Redux/Chatslice';
 import Cookies from "js-cookie"
+import { addClearUser } from '../Redux/UserSlice';
 
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
@@ -25,7 +26,7 @@ const useUserWebSocket = () => {
    
 
     useEffect(() => {
-        if (!user.user_id) {
+        if ( !user || !user.user_id ) {
             console.error("User ID is not available");
             return;
         }
@@ -45,7 +46,14 @@ const useUserWebSocket = () => {
             const data = JSON.parse(event.data);
             console.log('Message received:', data);
             
-            if (data.type==='ride_accepted'){
+            if (data.type === "block notification" ){
+                dispatch(addClearUser(null))
+                Cookies.remove('userTokens')
+                localStorage.removeItem('status')
+                toast.warning("Your account has been blocked. Please contact our customer service.")
+                navigate("/")
+            }
+            else if (data.type==='ride_accepted'){
                
                 dispatch(addRideDriverdetails(data))
                 console.log(data.data.trip_id,"accept data")
@@ -98,7 +106,7 @@ const useUserWebSocket = () => {
                 ws.close();
             }
         };
-    }, [user.user_id]);
+    }, [user]);
 
     const sendMessage = (data) => {
         if (socket && socket.readyState === WebSocket.OPEN) {

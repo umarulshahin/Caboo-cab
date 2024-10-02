@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import {addDriver_driverRide, addDriverClearRide, addDriverOTPvalidation, addDriverRideDetails, addDriverRideLocations, addDriverTripId,} from '../Redux/DriverRideSlice';
 import { addClearChat } from '../Redux/Chatslice';
 import Cookies from "js-cookie"
+import { addClearDriver } from '../Redux/DriverSlice';
 
 const libraries = ["places"];
 const apiKey = import.meta.env.VITE_google_map_api_key;
@@ -73,9 +74,13 @@ const useDriverWebSocket = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log(data,'yes driver side request reached ')
-            console.log(data.type,'data type ')
 
-            if (data.type === 'location_request') {
+            if (data.type === "block notification" ){
+                dispatch(addClearDriver(null))
+                Cookies.remove("DriverTokens")
+                toast.warning("Your account has been blocked. Please contact our customer service.")
+                navigate("/")
+            }else if (data.type === 'location_request') {
 
                 if (!isRequestInProgress) {
                     setIsRequestInProgress(true);

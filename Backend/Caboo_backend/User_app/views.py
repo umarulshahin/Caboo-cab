@@ -10,6 +10,8 @@ import razorpay
 from django.conf import settings        
 from django.db.models import *
 from Driver_app.serializer import *
+from rest_framework.pagination import PageNumberPagination
+from django.core.paginator import Paginator
         
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])    
@@ -36,25 +38,31 @@ def GetUser(request):
     print('yes here is working ')
     user = request.user
     data=CustomUser.objects.filter(email=user,is_active=True)
-    serializer=UserSerializer(data,many=True)
-    print(serializer.data,'user side')
-    return Response(serializer.data)
+    if data:
+        serializer=UserSerializer(data,many=True)
+        print(serializer.data,'user side')
+        return Response(serializer.data)
 
     
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
 def ProfilUpdate(request):
     
-    user_id=request.data.get('id')
-    user=CustomUser.objects.get(id=user_id)
-    if user :
-        serializer =UserSerializer(user,request.data,partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response({"error":serializer.errors})
+    try:
         
-    return Response({"error":"User data not get"})
+        user_id=request.data.get('id')
+        user=CustomUser.objects.get(id=user_id,is_active=True)
+        if user :
+            serializer =UserSerializer(user,request.data,partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response({"error":serializer.errors})
+        
+            
+        return Response({"error":"User data not get"})
+    except Exception as e:
+        return Response({'error':e},status=status.HTTP_401_UNAUTHORIZED)
 
 
 
@@ -139,11 +147,24 @@ def Walletdetails(request):
     try:
         
         user_id = request.GET.get('id')  
+        page_number = request.GET.get('page',1)
+        print(page_number,'page number')
+        page_size = 5
         data=UserWallet.objects.filter(customuser=user_id).order_by('-id')
         if data:
-            serializer = WalletSerializer(data,many=True)
-            return Response(serializer.data)
-    
+            paginator = Paginator(data,page_size)
+            try:
+                page = paginator.page(page_number)
+            except Exception as e:
+                return Response({"detail": "Page not found."}, status=404)
+            
+            serializer = WalletSerializer(page,many=True)
+            return Response({
+                'wallet_details': serializer.data,
+                'total_pages': paginator.num_pages,
+                'current_page': page_number,
+                'total_items': paginator.count,
+            })    
     except Exception as e:
         
         return Response(f'error {e}')

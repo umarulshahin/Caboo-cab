@@ -272,7 +272,17 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         except Exception as e:
             print(f"Error in get_active_drivers: {e}")
             return []
-
+        
+        
+    @sync_to_async
+    def uservalidate(self,user_id):
+        CustomUser = apps.get_model('Authentication_app', 'CustomUser')
+        try:
+            return CustomUser.objects.filter(id=user_id,is_active=True).exists()
+        
+        except Exception as e:
+            print(f'uservalidation error  {e}') 
+    
     async def connect(self):
         
         self.user_id = self.scope['url_route']['kwargs']['user_id']
@@ -280,17 +290,29 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         
         user_type = await self.get_user_type(self.user_id)
         print(f'Connection established for {user_type} with ID {self.user_id}')
+            
         
         if user_type == 'driver':
             await self.channel_layer.group_add('all_drivers', self.channel_name)
         else:
             await self.channel_layer.group_add('all_users', self.channel_name)
-        
+            
         if user_type and self.user_id:
-           await self.channel_layer.group_add(f'{user_type}_{self.user_id}', self.channel_name)
-           print(f'Added to group: {user_type}_{self.user_id}')
-           
-           
+            await self.channel_layer.group_add(f'{user_type}_{self.user_id}', self.channel_name)
+            print(f'Added to group: {user_type}_{self.user_id}')
+            result = await self.uservalidate(self.user_id)
+            print(result,'result ')
+            if not result:
+                
+                 await self.channel_layer.group_send(
+                            f'{user_type}_{self.user_id}', 
+                            {
+                                'type': 'BlockNotification',
+                                'status': 'Your account has been blocked',
+                                'message': 'Your account has been blocked. Please contact our customer service.',
+                            }
+                        )
+                
     async def disconnect(self, close_code):
         # Remove from all groups
         await self.channel_layer.group_discard(f'user_{self.user_id}', self.channel_name)
@@ -796,5 +818,12 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         print(event,'driver notify is working')
         await self.send(text_data=json.dumps({
             'type': 'ride_accepted',
+            'data': event
+        }))
+    
+    async def BlockNotification(self,event):
+        print("block notification is working")
+        await self.send(text_data=json.dumps({
+            'type': 'block notification',
             'data': event
         }))

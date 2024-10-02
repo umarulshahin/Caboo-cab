@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import { addToken_data, addUser, addUserTrips, addWalletDetails } from "../Redux/UserSlice";
+import { addClearUser, addToken_data, addUser, addUserTrips, addWalletDetails } from "../Redux/UserSlice";
 import { useNavigate } from "react-router-dom";
 import {Driver_data_urls, img_upload_url,PaymentSuccess_url,Reviw_add_url,Ride_User_Data_url,user_data_url,} from "../Utils/Constanse";
 import { addadmin_data } from "../Redux/AdminSlice";
@@ -87,8 +87,8 @@ const useGetUser = () => {
             navigate("/")
 
 
-          }else{
-  
+        }else{
+          console.log('yes working logout')
           dispatch(addUser(null))
           dispatch(addToken_data(null))
           Cookies.remove('userTokens')
@@ -98,9 +98,17 @@ const useGetUser = () => {
           
           }
         
+        }else if (error.response.data.detail ==="User is inactive"){
+          dispatch(addClearUser(null))
+          Cookies.remove('userTokens')
+          localStorage.removeItem('status')
+          toast.warning("Your account has been blocked. Please contact our customer service.")
+          navigate("/")
+        }else{
+          toast.warning(error);
+
         }
 
-        toast.warning(error);
       }
     }
   };
@@ -146,7 +154,15 @@ const useGetUser = () => {
         navigate("/")
 
 
-              }
+      }
+      else if (error.response.data.details === "User is inactive"){
+
+        dispatch(addClearUser(null))
+        Cookies.remove('userTokens')
+        localStorage.removeItem('status')
+        toast.warning("Your account has been blocked. Please contact our customer service.")
+        navigate("/")
+      }
         toast.warning(error);
 
     }
@@ -261,7 +277,7 @@ const useGetUser = () => {
  
     try{
        const response = await UserAxios.get(url,{
-        params: { id: data['id'] },
+        params: { id: data['id'],page:data['page'] },
         headers:{
           'Content-Type' : "application/json"
         },

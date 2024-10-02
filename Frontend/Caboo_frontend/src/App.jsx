@@ -39,8 +39,6 @@ import { WebSocketProvider } from "./Socket/UserChatSocker.jsx";
 import { DriverWebSocketProvider } from "./Socket/DriverChatSocket.jsx";
 import Driver_Header from "./Components/Driver/Driver_Header.jsx";
 
-import Driver_chat from "./Components/Driver/Driver_chat.jsx";
-
 
 const App = () => {
   return (
@@ -55,18 +53,20 @@ const App = () => {
             <Routes>
 
               <Route path="/" element={<LandingPage />} />
-
               <Route path="/signin_selection" element={<Signin_selection />} />
               <Route path="/signup" element={<PrivatRoute><Signup /></PrivatRoute>} />
+              <Route path="/otpverification" element={<OtpForm />} />
+              <Route path='/waitingModal' element={<WaitingModal /> } />
+              <Route path='/vehicle_doc' element={<Vehicle_doc /> } />
+
 
               <Route path="/userhome" element={ <PrivatRoute_user><UserHome /></PrivatRoute_user> } />
               <Route path="/userprofile" element={ <PrivatRoute_user><UserProfile/></PrivatRoute_user>}/>
-              <Route path="/otpverification" element={<OtpForm />} />
-              <Route path="/userRide" element={<UserRide />}/>
-              <Route path="/paymentModal" element={<PaymentModal />}/>
-              <Route path="/ridedetails" element={<RideDetails/>}/>
-              <Route path="/confirmation" element={<Confirmation />}/>
-              <Route path="/userheader" element={<User_header />} />
+              <Route path="/userRide" element={<PrivatRoute_user><UserRide /></PrivatRoute_user>}/>
+              <Route path="/paymentModal" element={<PrivatRoute_user><PaymentModal /></PrivatRoute_user>}/>
+              <Route path="/ridedetails" element={<PrivatRoute_user><RideDetails/></PrivatRoute_user>}/>
+              <Route path="/confirmation" element={<PrivatRoute_user><Confirmation /></PrivatRoute_user>}/>
+              <Route path="/userheader" element={<PrivatRoute_user><User_header /></PrivatRoute_user>} />
 
               <Route path="/admin" element={<Admin_Signin />} />
               <Route path="/admin_home" element={<AdminPrivatRoute><Admin_home /></AdminPrivatRoute>} />
@@ -77,14 +77,12 @@ const App = () => {
               <Route path="/tripmore" element={<AdminPrivatRoute><TripMore /></AdminPrivatRoute>}/>
               
             
-              <Route path='/vehicle_doc' element={<Vehicle_doc /> } />
-              <Route path='/waitingModal' element={<WaitingModal /> } />
-              <Route path="/driver_home" element={<Driver_PrivatRoute> <Driver_home /></ Driver_PrivatRoute>} />
-              <Route path="/driver_profile" element={<Driver_profile /> } />
-              <Route path="/ride" element={<Ride />} />
-              <Route path="/paymentconfirm" element={<PaymentConfirmModal />} />
-              <Route path="/tripdetails" element={<Tripdetails />} />
-              <Route path="/driver_header" element={<Driver_Header />} />
+              <Route path="/driver_home" element={<Driver_PrivatRoute><Driver_home /></ Driver_PrivatRoute>} />
+              <Route path="/driver_profile" element={<Driver_PrivatRoute><Driver_profile /></Driver_PrivatRoute> } />
+              <Route path="/ride" element={<Driver_PrivatRoute><Ride /></Driver_PrivatRoute>} />
+              <Route path="/paymentconfirm" element={<Driver_PrivatRoute><PaymentConfirmModal /></Driver_PrivatRoute>} />
+              <Route path="/tripdetails" element={<Driver_PrivatRoute><Tripdetails /></Driver_PrivatRoute>} />
+              <Route path="/driver_header" element={<Driver_PrivatRoute><Driver_Header /></Driver_PrivatRoute>} />
 
             </Routes>
             </DriverWebSocketProvider>

@@ -400,6 +400,10 @@ const useAuthentication = () => {
 
         }catch(error){
             console.error(error,'google auth error')
+            if(error.response.data.error==="User account is disabled"){
+                toast.warning("Your account has been blocked. Please contact our customer service.")
+
+            }
         }
     }
 

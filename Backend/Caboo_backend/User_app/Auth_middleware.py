@@ -13,9 +13,7 @@ CustomUser = get_user_model()
 def get_user(token_key):
     try:
         access_token = AccessToken(token_key)
-        print(access_token,'access token')
         user = CustomUser.objects.get(id=access_token['user_id'])
-        print(user,'user')
         return user
     
     except (CustomUser.DoesNotExist, KeyError):
@@ -42,7 +40,6 @@ class JwtAuthMiddleware(BaseMiddleware):
         token_key = None
         if 'token=' in query_string:
             token_key = query_string.split('token=')[1]
-            print(token_key,'token key ')
 
         # If a token is found, get the user
         if token_key:

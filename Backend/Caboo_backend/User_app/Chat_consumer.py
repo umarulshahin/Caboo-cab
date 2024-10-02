@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    
     async def connect(self):
         from django.contrib.auth.models import AnonymousUser
 
@@ -15,6 +16,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.roomId = self.scope['url_route']['kwargs']['roomId']
         self.room_name = f'chat_{self.roomId}'
         self.room_group_name = self.room_name 
+        
 
         # Join the room group
         await self.channel_layer.group_add(

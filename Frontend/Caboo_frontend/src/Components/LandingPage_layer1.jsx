@@ -5,21 +5,6 @@ import { FiFlag, FiMapPin } from "react-icons/fi";
 import mainImage from "../assets/mainimage.webp";
 
 const Landing_Form = () => {
-  const initialValues = {
-    location: "",
-    destination: "",
-  };
-
-  const validationSchema = Yup.object({
-    location: Yup.string().required("Location is required"),
-    destination: Yup.string().required("Destination is required"),
-  });
-
-  const onSubmit = (values, { setSubmitting, resetForm }) => {
-    console.log("Form data:", values);
-    setSubmitting(false);
-    resetForm();
-  };
 
   return (
     <div className="container mx-auto " id="first_layout">
@@ -32,12 +17,7 @@ const Landing_Form = () => {
 
             <div className="mt-10 w-full max-w-md" id="first_layout">
               <span className="font-bold text-center block md:text-left">Request a ride, hop in, and enjoy the journey.</span>
-              <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={onSubmit}
-              >
-                {({ isSubmitting }) => (
+              <Formik>
                   <Form>
                     <div className="mb-4 relative w-full text-lg font-bold">
                       <Field
@@ -50,11 +30,7 @@ const Landing_Form = () => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <FiMapPin className="text-gray-400" />
                       </div>
-                      <ErrorMessage
-                        name="location"
-                        component="div"
-                        className="text-red-500 text-sm mt-1"
-                      />
+                    
                     </div>
 
                     <div className="mb-4 relative text-lg font-bold">
@@ -68,22 +44,16 @@ const Landing_Form = () => {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <FiFlag className="text-gray-400" />
                       </div>
-                      <ErrorMessage
-                        name="destination"
-                        component="div"
-                        className="text-red-500 text-sm mt-1"
-                      />
+                     
                     </div>
 
                     <button
                       type="submit"
-                      disabled={isSubmitting}
                       className="px-4 py-2 bg-white text-black font-bold rounded-md"
                     >
-                      {isSubmitting ? "Submitting..." : "See price"}
+                      See price
                     </button>
                   </Form>
-                )}
               </Formik>
             </div>
           </div>
