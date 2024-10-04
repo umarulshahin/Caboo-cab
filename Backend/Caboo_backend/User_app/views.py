@@ -188,4 +188,4 @@ def Review(request):
    
 @api_view(['GET']) 
 def health_check(request):
-    return JsonResponse({"status": "ok"})
+    return Response({"status": "ok"}, status=200)
