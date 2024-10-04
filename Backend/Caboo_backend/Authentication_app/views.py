@@ -78,7 +78,7 @@ def OTP_sender(email):
     subject = "Caboo OTP verification"
     message = f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
     from_email = 'akkushahin666@gmail.com'
-    recipient_list = ["akkushahin666@gmail.com"]
+    recipient_list = [email]
 
         # Send email task (Make sure send_email_task is defined and works properly)
     result = send_email_task.delay(subject, message, from_email, recipient_list)
