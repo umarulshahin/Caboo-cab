@@ -1,9 +1,11 @@
-name: Deploy on AWS
+name: Deploy Django Application
 
 on:
   push:
     branches:
-      - master
+      - main
+    paths:
+      - 'Backend/Caboo_backend/**'
 
 jobs:
   build-and-deploy:
