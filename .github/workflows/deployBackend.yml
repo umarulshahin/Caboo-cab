@@ -30,8 +30,9 @@ jobs:
     # Step 4: Build the Docker image and push it to Docker Hub
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest .
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest.
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
+
 
     # Step 5: Setup SSH to access AWS EC2
     - name: Setup SSH
@@ -49,7 +50,7 @@ jobs:
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
           # Pull the latest Docker image from Docker Hub
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
 
           # Stop the running container if it exists
           docker stop caboo_backend || true
