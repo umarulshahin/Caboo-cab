@@ -64,11 +64,15 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-          # Change to the correct directory on the server
-          cd "Caboo CAB"          
-          # Pull the latest code from the main branch
+          # Navigate to the main project directory if necessary
+          cd "Caboo CAB" || exit 1
+
+          # Pull the latest code from the main branch for the entire repository
           git pull origin main
-          cd Backend/Caboo_backend
+
+          # Navigate to the backend directory
+          cd Backend/Caboo_backend || exit 1
+
           # Stop the current containers if running
           docker-compose down
 
