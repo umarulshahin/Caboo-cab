@@ -68,7 +68,7 @@ jobs:
           cd "Caboo CAB"          
           # Pull the latest code from the main branch
           git pull origin main
-
+          cd Backend/Caboo_backend
           # Stop the current containers if running
           docker-compose down
 
