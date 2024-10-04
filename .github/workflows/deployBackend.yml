@@ -64,16 +64,16 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-  
+   
 
           # Debugging: Print the current working directory
+          echo "Current working directory: $(pwd)"
 
           # Pull the latest code from the main branch for the entire repository
           git pull origin main
-          echo "Current working directory: $(pwd)"
 
           # Navigate to the backend directory
-          cd ./Backend/Caboo_backend
+          cd ./Backend/Caboo_backend || exit 1
 
           # Stop the current containers if running
           docker-compose down
