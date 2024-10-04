@@ -174,6 +174,7 @@ def Walletdetails(request):
 @permission_classes([IsAuthenticated])
 def Review(request):
     try:
+        print('yes yes ci/cd')
         data = request.data
         trip = TripDetails.objects.get(id=data['tripId'])
         serializer =TripSerializer(trip,data,partial=True)
