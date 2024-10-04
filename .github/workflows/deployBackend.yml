@@ -64,33 +64,28 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-        # Navigate to the main project directory if necessary
-        cd "Caboo CAB" || exit 1
+          # Change to the correct directory on the server
+          cd "Caboo CAB"          
+          # Pull the latest code from the main branch
+          git pull origin main
+          cd Backend/Caboo_backend
+          # Stop the current containers if running
+          docker-compose down
 
-        # Pull the latest code from the main branch for the entire repository
-        git pull origin main
+          # Pull the latest Docker images
+          docker-compose pull
 
-        # Navigate to the backend directory
-        cd Backend/Caboo_backend || exit 1
+          # Rebuild the containers (if needed)
+          docker-compose build
 
-        # Stop the current containers if running
-        docker-compose down
+          # Migrate the database
+          docker-compose run web python manage.py migrate
 
-        # Pull the latest Docker images
-        docker-compose pull
+          # Collect static files (for Django)
+          docker-compose run web python manage.py collectstatic --noinput
 
-        # Rebuild the containers (if needed)
-        docker-compose build
+          # Start the containers
+          docker-compose up -d
 
-        # Migrate the database
-        docker-compose run web python manage.py migrate
-
-        # Collect static files (for Django)
-        docker-compose run web python manage.py collectstatic --noinput
-
-        # Start the containers
-        docker-compose up -d
-
-        # Optional: Show logs for debugging
-        docker-compose logs -f web
-
+          # Optional: Show logs for debugging
+          docker-compose logs -f web
