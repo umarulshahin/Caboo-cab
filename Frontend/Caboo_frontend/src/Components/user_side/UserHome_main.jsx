@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCharges, addDistance, addPlaces } from "../../Redux/RideSlice";
 import VehicleCard from "./VehicleCard";
 import { toast } from "sonner";
-import useRide from "../../Hooks/useRide";
 import RideWaitingmodal from "./RideWaitingmodal";
 import useWebSocket from "../../Socket/Socket";
 
@@ -38,7 +37,7 @@ const UserHome_main = () => {
   const options = {
     componentRestrictions: { country: "in" },
     fields: ["address_components", "geometry", "icon", "name", "formatted_address", "place_id", "types"],
-    types: ["geocode"],
+    types: [],
   };
 
   const [locationCoords, setLocationCoords] = useState({ lat: null, lng: null });
@@ -142,9 +141,9 @@ const UserHome_main = () => {
   const handleCloseModal = () => setModalOpen(false);
 
   return (
-    <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center m-10">
+    <div className="h-screen w-screen flex flex-col lg:flex-row justify-center items-center mx-10">
       <div className="flex flex-col bg-white shadow-lg rounded-md w-full lg:w-1/3 p-6 mb-4 lg:mb-0 lg:mr-4">
-        <span className="font-bold text-3xl text-blue-500 text-center mb-10 p-10 mt-6">
+        <span className="font-bold text-3xl text-blue-500 text-center mb-10 p-10 ">
           Request a ride, hop in, and <br />enjoy the journey.
         </span>
         <Formik

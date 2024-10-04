@@ -12,11 +12,13 @@ const UserWallet = () => {
   console.log(userdata, "user data");
 
   const { wallet } = userdata[0];
-  const {wallet_details,
-    current_page
-    ,total_pages
-  } = walletdata
-  const [page ,setpage] = useState(parseInt(current_page))
+  const wallet_details = walletdata ? walletdata.wallet_details : null
+  const current_page = walletdata ? walletdata.current_page : 1
+  const total_pages= walletdata ? walletdata.total_pages: 1
+  // const {wallet_details, current_page, total_pages} = walletdata ? walletdata : null
+  console.log(total_pages,'total page')
+  const [page ,setpage] = useState(parseInt(current_page ))
+
 
   const handleSubmit = (e) => {
     e.preventDefault();

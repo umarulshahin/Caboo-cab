@@ -17,6 +17,7 @@ export const DriverWebSocketProvider = ({ children }) => {
   const dispatch = useDispatch();
   const driver = useSelector((state) => state.driver_data.driver_data);
   const user = useSelector((state) => state.driver_ride_data.driverrideDetails);
+  const messages = useSelector((state) => state.chat_data.driverMessage)
   const [accessToken , setAccessToken] = useState(null)
   const [connectionStatus, setConnectionStatus] = useState("disconnected");
   const reconnectTimeoutRef = useRef(null);
@@ -78,8 +79,6 @@ export const DriverWebSocketProvider = ({ children }) => {
 
     const roomId = driver_id;
     const ws = new WebSocket(`ws://127.0.0.1:8001/ws/chat/${roomId}/?token=${accessToken}`);
-    
-
 
     ws.onopen = () => {
       console.log('Driver WebSocket connection established');
@@ -92,6 +91,8 @@ export const DriverWebSocketProvider = ({ children }) => {
       const data = JSON.parse(event.data);
       console.log('Received message:', data);
       if (data.type.trim() === "chat_message") {
+
+        // if(data.message_id  messages)
         dispatch(
           adddriverMessage([
             {

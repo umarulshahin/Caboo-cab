@@ -283,6 +283,21 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         except Exception as e:
             print(f'uservalidation error  {e}') 
     
+    # @sync_to_async
+    # def Current_ride_check(self,user_id):
+    #     Trips = apps.get_model('User_app', 'TripDetails')
+    #     from django.db.models import Q
+    #     from .serializer import AllRidesSerializer
+
+    #     try:
+            
+    #         result= Trips.objects.filter((Q(driver_id=user_id) | Q(user_id=user_id)) & Q(status="pending")).order_by('-id').first() 
+    #         if result:       
+    #             return AllRidesSerializer(result).data
+    #     except Exception as e :
+         
+    #      print(f"current ride check error {e}")
+    
     async def connect(self):
         
         self.user_id = self.scope['url_route']['kwargs']['user_id']
@@ -312,6 +327,18 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
                                 'message': 'Your account has been blocked. Please contact our customer service.',
                             }
                         )
+            # current_ride = await self.Current_ride_check(self.user_id)
+            # print(current_ride,'current ride')
+            # if current_ride:
+                
+            #      await self.channel_layer.group_send(
+            #                 f'{user_type}_{self.user_id}', 
+            #                 {
+            #                     'type': 'SuccessNotification',
+            #                     'status': 'pending ride',
+            #                     'message': current_ride,
+            #                 }
+            #             )
                 
     async def disconnect(self, close_code):
         # Remove from all groups

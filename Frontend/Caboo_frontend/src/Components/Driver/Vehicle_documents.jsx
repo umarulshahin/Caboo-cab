@@ -22,7 +22,7 @@ const Vehicle_documents = () => {
     return (
       <div className="flex min-h-screen mt-16 bg-gray-100 justify-center">
         <div className="w-full max-w-4xl p-10 flex flex-col items-center bg-white shadow-lg rounded-lg">
-          <h1 className="text-3xl text-gray-800 font-bold mb-6">Account Info</h1>
+          <h1 className="text-3xl text-gray-800 font-bold mb-6">Vehicle Documents</h1>
           {/* Profile Image and other info */}
           
           {/* Document Information */}

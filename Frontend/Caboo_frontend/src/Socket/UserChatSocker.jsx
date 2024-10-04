@@ -67,10 +67,25 @@ export const WebSocketProvider = ({ children }) => {
     }  },[])
 
   const connectWebSocket = useCallback(() => {
-    if (!user_id || !driver_id || !accessToken) {
+    if (!user_id || !driver_id) {
+      console.log(user_id)
+      console.log(driver_id)
+    
       console.log("Missing required data for WebSocket connection");
       setConnectionStatus("disconnected");
       return;
+    }else if(!accessToken){
+      const rawtoken = Cookies.get("userTokens")
+      console.log(rawtoken,'rawtoken')
+      let token = null
+      if(rawtoken){
+          token = JSON.parse(rawtoken)
+          setAccessToken(token)
+      }else{
+        console.log("Token is missing ");
+        setConnectionStatus("disconnected");
+  
+      }
     }
 
     if (socket) {

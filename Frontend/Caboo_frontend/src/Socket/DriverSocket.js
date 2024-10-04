@@ -44,7 +44,13 @@ const useDriverWebSocket = () => {
     }, [responded]);
 
     useEffect(() => {
-        if (!driver.user_id || !token) return;
+        if (!driver || !driver.user_id || !token) {
+            dispatch(addClearDriver(null))
+            Cookies.remove("DriverTokens")
+            toast.warning("Something went wrong. Please log in again.")
+            navigate("/")
+            return
+        }
         const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
         socketRef.current = ws;
 
@@ -74,8 +80,10 @@ const useDriverWebSocket = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log(data,'yes driver side request reached ')
-
-            if (data.type === "block notification" ){
+            
+            if (data.type === "'pending ride'"){
+               console.log('yes pending ride is working ',data)
+            }else if (data.type === "block notification" ){
                 dispatch(addClearDriver(null))
                 Cookies.remove("DriverTokens")
                 toast.warning("Your account has been blocked. Please contact our customer service.")
@@ -150,7 +158,7 @@ const useDriverWebSocket = () => {
             }
             clearTimeout(declineTimeout);
         };
-    }, [driver.user_id,token]);
+    }, [driver,token]);
  
   
         
