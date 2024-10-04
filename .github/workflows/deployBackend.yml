@@ -76,13 +76,13 @@ jobs:
           cd Caboo-cab/Backend/Caboo_backend || exit 1
 
           # Stop the current containers if running
-          docker-compose down
+          docker-compose down -v
 
           # Pull the latest Docker images
           docker-compose pull
 
           # Rebuild the containers (if needed)
-          docker-compose build
+          docker-compose build 
 
           # Migrate the database
           docker-compose run web python manage.py migrate
