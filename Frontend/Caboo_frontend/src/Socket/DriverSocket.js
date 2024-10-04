@@ -51,7 +51,7 @@ const useDriverWebSocket = () => {
             navigate("/")
             return
         }
-        const ws = new WebSocket(`ws://cabooserver.online/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
+        const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
         socketRef.current = ws;
 
         ws.onopen = () => {

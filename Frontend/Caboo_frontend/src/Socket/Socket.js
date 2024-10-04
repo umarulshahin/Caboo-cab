@@ -33,7 +33,7 @@ const useUserWebSocket = () => {
 
         if (!user.user_id || !token )return ;
 
-        const ws = new WebSocket(`ws://cabooserver.online/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
+        const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
 
         console.log(ws);
         

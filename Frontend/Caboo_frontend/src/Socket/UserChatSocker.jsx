@@ -97,7 +97,7 @@ export const WebSocketProvider = ({ children }) => {
     console.log(`Attempting to connect WebSocket for room ${roomId}`);
 
     const ws = new WebSocket(
-      `ws://cabooserver.online/ws/chat/${roomId}/?token=${accessToken}`
+      `wss://cabooserver.online/ws/chat/${roomId}/?token=${accessToken}`
     );
 
     ws.onopen = () => {
