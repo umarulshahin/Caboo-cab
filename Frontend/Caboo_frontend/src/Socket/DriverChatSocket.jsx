@@ -78,7 +78,7 @@ export const DriverWebSocketProvider = ({ children }) => {
     } 
 
     const roomId = driver_id;
-    const ws = new WebSocket(`ws://127.0.0.1:8001/ws/chat/${roomId}/?token=${accessToken}`);
+    const ws = new WebSocket(`ws://cabooserver.online/ws/chat/${roomId}/?token=${accessToken}`);
 
     ws.onopen = () => {
       console.log('Driver WebSocket connection established');
