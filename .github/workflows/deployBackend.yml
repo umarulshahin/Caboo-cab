@@ -30,8 +30,8 @@ jobs:
         context: ./Backend/Caboo_backend
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/caboo_backend:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/caboo_backend:${{ github.sha }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/Caboo_backend:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/Caboo_backend:${{ github.sha }}
 
     - name: Run tests
       run: |
