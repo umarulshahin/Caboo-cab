@@ -50,6 +50,6 @@ urlpatterns = [
   path('tripdetails/',Tripdetails,name='tripdetails'),
   
 
-  path('health/', health_check, name='health_check'),
+  # path('health/', health_check, name='health_check'),
  
 ]

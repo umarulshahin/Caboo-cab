@@ -12,7 +12,7 @@ from django.db.models import *
 from Driver_app.serializer import *
 from rest_framework.pagination import PageNumberPagination
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+# from django.http import JsonResponse
 
         
 @api_view(["PATCH"])
@@ -186,6 +186,6 @@ def Review(request):
     except Exception as e:
         return Response(f"error review {e}")
    
-@api_view(['GET']) 
-def health_check(request):
-    return Response({"status": "ok"}, status=200)
+# @api_view(['GET']) 
+# def health_check(request):
+#     return Response({"status": "ok"}, status=200)
