@@ -10,57 +10,83 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-    # Step 1: Checkout the code
-    - name: Checkout Code
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    # Step 2: Setup Docker Buildx for multi-platform builds (if needed)
-    - name: Setup Docker Buildx
+    - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
-    # Step 3: Log in to Docker Hub
-    - name: Log in to Docker Hub
+    - name: Install Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version
+
+    - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    # Step 4: Build the Docker image and push it to Docker Hub
-    - name: Build and Push Docker Image
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Backend/Caboo_backend
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
+
+    - name: Set up environment for tests
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest.
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
+        cd Backend/Caboo_backend
+        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" > .env
+        echo "POSTGRES_DB=caboo_cab" >> .env
+        echo "POSTGRES_USER=POSTGRES_USER" >> .env
+        echo "POSTGRES_PASSWORD=POSTGRES_PASSWORD" >> .env
+        echo "DB_HOST=db" >> .env
+        echo "DB_PORT=5432" >> .env
+        echo "EMAIL_HOST=EMAIL_HOST" >> .env
+        echo "EMAIL_PORT=EMAIL_PORT" >> .env
+        echo "EMAIL_HOST_USER=EMAIL_HOST_USER" >> .env
+        echo "EMAIL_HOST_PASSWORD=EMAIL_HOST_PASSWORD" >> .env
+        echo "RAZORPAY_SECRET_KEY=RAZORPAY_SECRET_KEY" >> .env
+        echo "RAZORPAY_PUBLIC_KEY=RAZORPAY_PUBLIC_KEY" >> .env
+        echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
+        echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET" >> .env
 
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_PEM_KEY }}
+        script: |
+          # Change to the correct directory on the server
+          # cd Caboo CAB/Backend/Caboo_backend
+          
+          # Pull the latest code from the main branch
+          git pull origin main
 
-    # Step 5: Setup SSH to access AWS EC2
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh/
-        echo "${{ secrets.SERVER_PEM_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          # Stop the current containers if running
+          docker-compose down
 
-    # Step 6: Deploy to AWS EC2
-    - name: Deploy on AWS EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.SERVER_IP }} << 'EOF'
-          # Log in to Docker Hub on the EC2 instance
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+          # Pull the latest Docker images
+          docker-compose pull
 
-          # Pull the latest Docker image from Docker Hub
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
+          # Rebuild the containers (if needed)
+          docker-compose build
 
-          # Stop the running container if it exists
-          docker stop caboo_backend || true
+          # Migrate the database
+          docker-compose run web python manage.py migrate
 
-          # Remove the container if it exists
-          docker rm caboo_backend || true
+          # Collect static files (for Django)
+          docker-compose run web python manage.py collectstatic --noinput
 
-          # Run the container with the latest image
-          docker run -d --name caboo_backend -p 8001:8001 ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
+          # Start the containers
+          docker-compose up -d
 
-          # Optional: Tail logs for debugging (you can remove this if not needed)
-          docker logs -f caboo_backend
-        EOF
+          # Optional: Show logs for debugging
+          docker-compose logs -f web
