@@ -12,6 +12,8 @@ from django.db.models import *
 from Driver_app.serializer import *
 from rest_framework.pagination import PageNumberPagination
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+
         
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])    
@@ -183,3 +185,6 @@ def Review(request):
         return Response(serializer.data)
     except Exception as e:
         return Response(f"error review {e}")
+    
+def health_check(request):
+    return JsonResponse({"status": "ok"})
