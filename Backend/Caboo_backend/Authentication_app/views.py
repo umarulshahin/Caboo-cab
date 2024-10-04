@@ -73,7 +73,7 @@ def Email_validate(request):
                         
 def OTP_sender(email):
     
-    print('yes otp send is working')
+    print(email,'yes otp send is working')
     otp_code = str(random.randint(100000, 999999))
     subject = "Caboo OTP verification"
     message = f'Your OTP code is {otp_code}. It is valid for 3 minutes.'
