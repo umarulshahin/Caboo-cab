@@ -185,6 +185,7 @@ def Review(request):
         return Response(serializer.data)
     except Exception as e:
         return Response(f"error review {e}")
-    
+   
+@api_view(['GET']) 
 def health_check(request):
     return JsonResponse({"status": "ok"})
