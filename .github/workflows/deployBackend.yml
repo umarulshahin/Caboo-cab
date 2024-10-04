@@ -64,8 +64,7 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-          # Navigate to the main project directory
-          cd "$(dirname "$0")/Caboo CAB" || exit 1
+  
 
           # Debugging: Print the current working directory
           echo "Current working directory: $(pwd)"
