@@ -17,7 +17,7 @@ const UserWallet = () => {
   const total_pages= walletdata ? walletdata.total_pages: 1
   // const {wallet_details, current_page, total_pages} = walletdata ? walletdata : null
   console.log(total_pages,'total page')
-  const [page ,setpage] = useState(parseInt(current_page ))
+  const [page ,setpage] = useState(parseInt(current_page ),1)
 
 
   const handleSubmit = (e) => {
