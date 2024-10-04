@@ -65,7 +65,7 @@ jobs:
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
           # Change to the correct directory on the server
-          Backend\Caboo_backend>
+          cd Backend/Caboo_backend
           
           # Pull the latest code from the main branch
           git pull origin main
