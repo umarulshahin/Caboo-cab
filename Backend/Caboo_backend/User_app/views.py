@@ -176,7 +176,7 @@ def Walletdetails(request):
 @permission_classes([IsAuthenticated])
 def Review(request):
     try:
-        print('yes yes ci/cd 7')
+        print('yes yes ci/cd 12')
         data = request.data
         trip = TripDetails.objects.get(id=data['tripId'])
         serializer =TripSerializer(trip,data,partial=True)
@@ -186,6 +186,3 @@ def Review(request):
     except Exception as e:
         return Response(f"error review {e}")
    
-# @api_view(['GET']) 
-# def health_check(request):
-#     return Response({"status": "ok"}, status=200)
