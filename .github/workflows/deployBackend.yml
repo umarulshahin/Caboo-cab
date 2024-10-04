@@ -18,12 +18,6 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: Install Docker Compose
-      run: |
-        sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-        sudo chmod +x /usr/local/bin/docker-compose
-        docker-compose --version
-
     - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
@@ -39,24 +33,6 @@ jobs:
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
 
-    - name: Set up environment for tests
-      run: |
-        cd Backend/Caboo_backend
-        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" > .env
-        echo "POSTGRES_DB=caboo_cab" >> .env
-        echo "POSTGRES_USER=POSTGRES_USER" >> .env
-        echo "POSTGRES_PASSWORD=POSTGRES_PASSWORD" >> .env
-        echo "DB_HOST=db" >> .env
-        echo "DB_PORT=5432" >> .env
-        echo "EMAIL_HOST=EMAIL_HOST" >> .env
-        echo "EMAIL_PORT=EMAIL_PORT" >> .env
-        echo "EMAIL_HOST_USER=EMAIL_HOST_USER" >> .env
-        echo "EMAIL_HOST_PASSWORD=EMAIL_HOST_PASSWORD" >> .env
-        echo "RAZORPAY_SECRET_KEY=RAZORPAY_SECRET_KEY" >> .env
-        echo "RAZORPAY_PUBLIC_KEY=RAZORPAY_PUBLIC_KEY" >> .env
-        echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
-        echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET" >> .env
-
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
@@ -64,34 +40,86 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-   
-
-          # Debugging: Print the current working directory
-          echo "Current working directory: $(pwd)"
-
-          # Pull the latest code from the main branch for the entire repository
-          git pull origin main
-
-          # Navigate to the backend directory
-          cd Caboo-cab/Backend/Caboo_backend || exit 1
-
-          # Stop the current containers if running
-          docker-compose down -v
-
-          # Pull the latest Docker images
+          # Enable error handling
+          set -e
+          
+          echo "Starting deployment process..."
+          
+          # Create deployment directory if it doesn't exist
+          DEPLOY_DIR="/home/${{ secrets.SERVER_USERNAME }}/Caboo-cab/Backend/Caboo_backend"
+          mkdir -p $DEPLOY_DIR
+          cd $DEPLOY_DIR || exit 1
+          
+          echo "Current directory: $(pwd)"
+          
+          # Ensure we have the latest code
+          if [ -d ".git" ]; then
+            git fetch origin main
+            git reset --hard origin/main
+          else
+            git clone https://github.com/yourusername/Caboo-cab.git .
+          fi
+          
+          echo "Creating/updating environment file..."
+          # Create/update environment file
+          cat > .env << EOF
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          DB_HOST=db
+          DB_PORT=5432
+          EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+          EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+          EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
+          EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
+          RAZORPAY_SECRET_KEY=${{ secrets.RAZORPAY_SECRET_KEY }}
+          RAZORPAY_PUBLIC_KEY=${{ secrets.RAZORPAY_PUBLIC_KEY }}
+          SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+          SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
+          EOF
+          
+          echo "Stopping existing containers..."
+          # Stop existing containers
+          docker-compose down || true
+          
+          echo "Pulling latest images..."
+          # Pull latest images
           docker-compose pull
-
-          # Rebuild the containers (if needed)
-          docker-compose build 
-
-          # Migrate the database
-          docker-compose run web python manage.py migrate
-
-          # Collect static files (for Django)
-          docker-compose run web python manage.py collectstatic --noinput
-
-          # Start the containers
-          docker-compose up -d
-
-          # Optional: Show logs for debugging
-          docker-compose logs -f web
+          
+          echo "Starting core services..."
+          # Start core services first
+          docker-compose up -d db redis
+          
+          # Wait for database to be ready
+          echo "Waiting for database to be ready..."
+          sleep 15
+          
+          echo "Running database migrations..."
+          # Run migrations
+          docker-compose run --rm web python manage.py migrate
+          
+          echo "Collecting static files..."
+          # Collect static files
+          docker-compose run --rm web python manage.py collectstatic --noinput
+          
+          echo "Starting remaining services..."
+          # Start the rest of the services
+          docker-compose up -d web celery celery-beat
+          
+          # Wait for services to start
+          sleep 10
+          
+          echo "Verifying service status..."
+          # Check if services are running
+          docker-compose ps
+          
+          echo "Checking logs for errors..."
+          # Check logs for any immediate errors
+          docker-compose logs --tail=50
+          
+          echo "Cleaning up old images..."
+          # Cleanup old images
+          docker image prune -f
+          
+          echo "Deployment completed successfully!"
