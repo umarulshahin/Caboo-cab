@@ -30,13 +30,13 @@ jobs:
         context: ./Backend/Caboo_backend
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/Caboo_backend:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/Caboo_backend:${{ github.sha }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
 
     - name: Run tests
       run: |
         cd Backend/Caboo_backend
-        docker-compose run web python manage.py test
+        docker-compose -f docker-compose.yml run web python manage.py test
 
     - name: Deploy to server
       uses: appleboy/ssh-action@master
@@ -49,4 +49,3 @@ jobs:
           git pull origin main
           docker-compose pull
           docker-compose up -d
-          docker system prune -af
