@@ -73,7 +73,7 @@ jobs:
           echo "Current working directory: $(pwd)"
 
           # Navigate to the backend directory
-          cd Backend/Caboo_backend || exit 1
+          cd ./Backend/Caboo_backend
 
           # Stop the current containers if running
           docker-compose down
