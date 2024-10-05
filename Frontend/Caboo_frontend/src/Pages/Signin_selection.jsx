@@ -8,13 +8,14 @@ import Signin_form from '../Components/Authentication/Signin_form';
 import OtpForm from '../Components/Authentication/OtpFrom';
 import { addrole } from '../Redux/AuthenticationSlice';
 import Driver_Otp from '../Components/Authentication/Driver_Otp';
+const apiKey = import.meta.env.VITE_google_map_api_key;
 
 const Signin_selection = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const { state } = useLocation();
   const dispatch = useDispatch();
-  
+  console.log(apiKey,'api key google map ')
   useEffect(() => {
     if (state?.modal) {
       openModal(state.modal);
