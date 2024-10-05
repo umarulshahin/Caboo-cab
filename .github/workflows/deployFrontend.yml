@@ -24,13 +24,13 @@ jobs:
         with:
           node-version: '18'  # Updated to Node.js version 18
 
-      # Create .env file with secrets
-      - name: Create .env file
+      # Create .env file inside 'Frontend/Caboo_frontend'
+      - name: Create .env file in frontend directory
         run: |
-          echo "VITE_GOOGLE_OAUTH=${{ secrets.VITE_GOOGLE_OAUTH }}" >> .env
-          echo "VITE_google_map_api_key=${{ secrets.VITE_GOOGLE_MAP_API_KEY }}" >> .env
-          echo "VITE_PUBLIC_KEY=${{ secrets.VITE_PUBLIC_KEY }}" >> .env
-          echo "VITE_SECRET_KEY=${{ secrets.VITE_SECRET_KEY }}" >> .env
+          echo "VITE_GOOGLE_OAUTH=${{ secrets.VITE_GOOGLE_OAUTH }}" >> Frontend/Caboo_frontend/.env
+          echo "VITE_google_map_api_key=${{ secrets.VITE_GOOGLE_MAP_API_KEY }}" >> Frontend/Caboo_frontend/.env
+          echo "VITE_PUBLIC_KEY=${{ secrets.VITE_PUBLIC_KEY }}" >> Frontend/Caboo_frontend/.env
+          echo "VITE_SECRET_KEY=${{ secrets.VITE_SECRET_KEY }}" >> Frontend/Caboo_frontend/.env
 
 
       # Display .env file contents (for debugging)
