@@ -9,6 +9,7 @@ import { user_data_url } from '../Utils/Constanse';
 import { addClearChat } from '../Redux/Chatslice';
 import Cookies from "js-cookie"
 import { addClearUser } from '../Redux/UserSlice';
+import { backendUrl } from '../Utils/Constanse';
 
 const useUserWebSocket = () => {
     const [socket, setSocket] = useState(null);
@@ -34,6 +35,10 @@ const useUserWebSocket = () => {
         if (!user.user_id || !token )return ;
 
         const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
+        // const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
+
+
+
 
         console.log(ws);
         
@@ -46,14 +51,14 @@ const useUserWebSocket = () => {
             const data = JSON.parse(event.data);
             console.log('Message received:', data);
             
-            if (data.type === "block notification" ){
-                // dispatch(addClearUser(null))
-                // Cookies.remove('userTokens')
-                // localStorage.removeItem('status')
-                toast.warning("Your account has been blocked. Please contact our customer service.")
-                // navigate("/")
-            }
-            else if (data.type==='ride_accepted'){
+            // if (data.type === "block notification" ){
+            //     // dispatch(addClearUser(null))
+            //     // Cookies.remove('userTokens')
+            //     // localStorage.removeItem('status')
+            //     toast.warning("Your account has been blocked. Please contact our customer service.")
+            //     // navigate("/")
+            // }
+            if (data.type==='ride_accepted'){
                
                 dispatch(addRideDriverdetails(data))
                 console.log(data.data.trip_id,"accept data")
