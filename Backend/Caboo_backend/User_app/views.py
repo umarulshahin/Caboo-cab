@@ -176,7 +176,7 @@ def Walletdetails(request):
 @permission_classes([IsAuthenticated])
 def Review(request):
     try:
-        print('pani yaan idh 2')
+        print('pani yaan idh 3')
         data = request.data
         trip = TripDetails.objects.get(id=data['tripId'])
         serializer =TripSerializer(trip,data,partial=True)
