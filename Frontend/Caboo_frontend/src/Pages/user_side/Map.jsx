@@ -26,6 +26,8 @@ const currentLocationIcon = {
 };
 
 const MapComponent = ({ locationCoords, destinationCoords }) => {
+
+  console.log(apiKey,'google map api key ')
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,
     libraries,
