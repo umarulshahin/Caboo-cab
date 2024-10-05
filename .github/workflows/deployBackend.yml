@@ -23,6 +23,7 @@ jobs:
         sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
         docker-compose --version
+
     - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
@@ -37,6 +38,7 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
+
     - name: Set up environment for tests
       run: |
         cd Backend/Caboo_backend
@@ -54,6 +56,7 @@ jobs:
         echo "RAZORPAY_PUBLIC_KEY=RAZORPAY_PUBLIC_KEY" >> .env
         echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
         echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET" >> .env
+
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
@@ -61,7 +64,6 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-   
 
           # Debugging: Print the current working directory
           echo "Current working directory: $(pwd)"
@@ -90,5 +92,19 @@ jobs:
           # Start the containers
           docker-compose up -d
 
+          # Check if containers are running successfully
+          if [ $(docker-compose ps | grep "Up" | wc -l) -eq 0 ]; then
+              echo "Error: Containers failed to start"
+              exit 1
+          else
+              echo "Containers are running successfully"
+          fi
+
           # Optional: Show logs for debugging
           docker-compose logs -f web
+
+          # After ensuring everything is up, you can proceed with your next process
+          # For example, you can start your worker, or whatever is required next
+          echo "Starting the next process..."
+          # Add next steps here
+
