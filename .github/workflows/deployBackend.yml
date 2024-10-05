@@ -8,7 +8,7 @@ on:
       - 'Backend/Caboo_backend/**'
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -38,19 +38,23 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
-          
-    - name: Deploy to server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SERVER_PEM_KEY }}
-        script: |
-          # Navigate to the backend directory
-          cd Caboo-cab/Backend/Caboo_backend || exit 1
 
-          # Start the containers (run the app)
-          docker-compose up -d
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    
+    steps:
+    - name: Pull Docker image from Docker Hub
+      run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
 
-          # Optional: Show logs for debugging
-          docker-compose logs -f web
+    - name: Delete old container
+      run: sudo docker rm -f caboo-backend-container || true  # Avoid error if container doesn't exist
+
+    - name: Run new Docker container
+      run: |
+        sudo docker run -d -p 8000:8000 --name caboo-backend-container \
+        --env-file ./Backend/Caboo_backend/.env \
+        ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
+
+    - name: Verify container is running
+      run: sudo docker ps -a
