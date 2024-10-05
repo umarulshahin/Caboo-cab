@@ -15,7 +15,7 @@ const Signin_selection = () => {
   const [modalContent, setModalContent] = useState(null);
   const { state } = useLocation();
   const dispatch = useDispatch();
-  console.log(apiKey,'api key google map vannoo')
+  console.log(apiKey,'api key google map ')
   useEffect(() => {
     if (state?.modal) {
       openModal(state.modal);

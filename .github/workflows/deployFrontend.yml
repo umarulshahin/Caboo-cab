@@ -27,7 +27,7 @@ jobs:
       # Create .env file inside 'Frontend/Caboo_frontend'
       - name: Create .env file in frontend directory
         run: |
-          echo "VITE_GOOGLE_OAUTH=${{ secrets.VITE_GOOGLE_OAUTH }}" >> Frontend/Caboo_frontend/.env
+          echo "VITE_GOOGLE_OAUTH=${{ secrets.VITE_GOOGLE_OAUTH }}" >> aboo-cabFrontend/Caboo_frontend/.env
           echo "VITE_google_map_api_key=${{ secrets.VITE_GOOGLE_MAP_API_KEY }}" >> Frontend/Caboo_frontend/.env
           echo "VITE_PUBLIC_KEY=${{ secrets.VITE_PUBLIC_KEY }}" >> Frontend/Caboo_frontend/.env
           echo "VITE_SECRET_KEY=${{ secrets.VITE_SECRET_KEY }}" >> Frontend/Caboo_frontend/.env
@@ -37,7 +37,7 @@ jobs:
       - name: Display .env file contents
         run: |
           echo "Contents of .env file:"
-          cat .env
+          cat Frontend/Caboo_frontend/.env
 
       # Install dependencies and build the frontend
       - name: Install dependencies and build
