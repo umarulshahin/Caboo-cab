@@ -9,6 +9,8 @@ import avatar from "../../assets/profile_img.png";
 const Drivers_list_page = () => {
   const { GetUsers } = useAdmin();
   const navigate = useNavigate();
+  const [activeTab , setActiveTab] = useState('all')
+  const [User_list,setUserlist] = useState()
 
   useEffect(() => {
 
@@ -16,16 +18,36 @@ const Drivers_list_page = () => {
     
   }, []);
 
-  const User_list = useSelector((state) => state.admin_data.Driver_list || []);
-  console.log(User_list,'driver')
+  const driver_list = useSelector((state) => state.admin_data.Driver_list || []);
+  console.log(driver_list,'driver')
 
   const handleView = (data) => {
     navigate('/Documents', { state: { driver: data } });
   };
+ 
+
+  useEffect(() => {
+    // Filter driver_list based on the activeTab value
+    const filteredDrivers = driver_list.filter((data) => {
+      if (activeTab === 'all') {
+        return true; 
+      } else if (activeTab === 'Active') {
+        return data.request === 'active'; 
+      } else if (activeTab === 'Pending') {
+        return data.request === 'pending'; 
+      } else if (activeTab === 'Decline') {
+        return data.request === 'decline'; 
+      }
+      return false;
+    });
+  
+    setUserlist(filteredDrivers);
+  }, [activeTab, driver_list]);
+  
 
   return (
-    <div className="flex min-h-screen mt-16 bg-gray-100">
-      <div className="w-1/6 bg-white shadow-lg h-screen">
+    <div className="flex min-h-screen mt-16 bg-gray-200">
+      <div className="w-1/6 bg-white shadow-xl h-screen">
         <Sidebar_admin />
       </div>
       <div className="w-5/6 mt-10 pl-10 flex flex-col">
@@ -33,7 +55,48 @@ const Drivers_list_page = () => {
 
         {/* Table Container */}
         <div className="m-8 bg-white p-6 rounded-lg shadow-lg">
+          <div  >
+
+        <div className='text-black  w-2/4 flex justify-evenly rounded-md my-4 overflow-hidden border-2 shadow-2xl'>
+          <button 
+            className={`flex-grow py-2 ${ activeTab != 'all' && "hover:bg-gray-300 hover:text-black"} font-semibold transition-colors duration-700 pr-2 ${
+              activeTab === 'all' ? 'bg-black text-white' : 'bg-transparent'
+            }`} 
+            onClick={() => setActiveTab('all')}
+          >
+           All
+          </button>
+          <button 
+            className={`flex-grow py-2 font-semibold ${ activeTab != 'Active' && "hover:bg-gray-300 hover:text-black"}  transition-colors duration-700 pr-2 ${
+              activeTab === 'Active' ? 'bg-black text-white' : 'bg-transparent'
+            }`} 
+            onClick={() => setActiveTab('Active')}
+          >
+            Active
+          </button>
+          <button 
+            className={`flex-grow py-2 font-semibold ${ activeTab != 'Pending' && "hover:bg-gray-300 hover:text-black"} transition-colors duration-700 pr-2 ${
+              activeTab === 'Pending' ? 'bg-black text-white' : 'bg-transparent'
+            }`} 
+            onClick={() => setActiveTab('Pending')}
+          >
+            Pending
+          </button>
+
+
+          <button 
+            className={`flex-grow py-2 font-semibold ${ activeTab != 'Decline' && "hover:bg-gray-300 hover:text-black"}  transition-colors duration-700 pr-2 ${
+              activeTab === 'Decline' ? 'bg-black text-white' : 'bg-transparent'
+            }`} 
+            onClick={() => setActiveTab('Decline')}
+          >
+            Decline
+          </button>
+        </div>
+        </div>
+
           <table className="min-w-full bg-white rounded-lg overflow-hidden">
+          
             <thead>
               <tr className="bg-gray-200">
                 <th className="py-3 px-4 text-left text-gray-600 font-semibold">ID</th>
@@ -46,7 +109,7 @@ const Drivers_list_page = () => {
               </tr>
             </thead>
             <tbody>
-              {User_list.length > 0 ? (
+              {User_list ? (
                 User_list.map((data) => (
                   <tr key={data.id} className="relative hover:bg-gray-200 font-bold transition-colors">
                     <td className="py-3 px-4 text-gray-500">{data.customuser.id}</td>

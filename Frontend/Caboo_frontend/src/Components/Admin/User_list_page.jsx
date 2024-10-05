@@ -20,6 +20,7 @@ const User_list_page = () => {
   const User = useSelector((state) => state.admin_data.users_list);
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
   useEffect(() => {
     console.log("Fetching users...");
     GetUsers(get_Users_url, "user");
@@ -32,6 +33,7 @@ const User_list_page = () => {
   const handleBlockUnblock = (user) => {
     setSelectedUser(user);
     setModalUsername(user.username);
+    setDropdownOpen(null)
     const action = user.is_active ? "block" : "unblock";
     setModalMessage(`Are you sure you want to ${action} this user?`);
     setModalOpen(true);
@@ -66,6 +68,21 @@ const User_list_page = () => {
     setDropdownOpen(dropdownOpen === userId ? null : userId);
   };
 
+  useEffect(()=>{
+    const filteredDrivers = User.filter((data) => {
+      if (activeTab === 'all') {
+        return true; 
+      } else if (activeTab === 'Active') {
+        return data.is_active === true; 
+      } else if (activeTab === 'Blocked') {
+        return data.is_active === false; 
+      }
+      return false;
+    });
+  
+    setUserlist(filteredDrivers);
+  },[User,activeTab])
+
   return (
     <div className="flex min-h-screen mt-16 bg-gray-100">
       <div className="w-1/6 bg-white shadow-lg">
@@ -76,6 +93,44 @@ const User_list_page = () => {
           User Management
         </span>
         <div className="m-8 bg-white p-6 rounded-lg  shadow-lg">
+          <div>
+            <div className="text-black  w-1/4 flex justify-evenly rounded-md my-4 overflow-hidden border-2 shadow-2xl">
+              <button
+                className={`flex-grow py-2 ${
+                  activeTab != "all" && "hover:bg-gray-300 hover:text-black"
+                } font-semibold transition-colors duration-700 pr-2 ${
+                  activeTab === "all" ? "bg-black text-white" : "bg-transparent"
+                }`}
+                onClick={() => setActiveTab("all")}
+              >
+                All
+              </button>
+              <button
+                className={`flex-grow py-2 font-semibold ${
+                  activeTab != "Active" && "hover:bg-gray-300 hover:text-black"
+                }  transition-colors duration-700 pr-2 ${
+                  activeTab === "Active"
+                    ? "bg-black text-white"
+                    : "bg-transparent"
+                }`}
+                onClick={() => setActiveTab("Active")}
+              >
+                Active
+              </button>
+              <button
+                className={`flex-grow py-2 font-semibold ${
+                  activeTab != "Blocked" && "hover:bg-gray-300 hover:text-black"
+                } transition-colors duration-700 pr-2 ${
+                  activeTab === "Blocked"
+                    ? "bg-black text-white"
+                    : "bg-transparent"
+                }`}
+                onClick={() => setActiveTab("Blocked")}
+              >
+                Blocked
+              </button>
+            </div>
+          </div>
           <table className="min-w-full bg-white  rounded-lg overflow-auto">
             <thead>
               <tr className="bg-gray-200">
@@ -102,7 +157,7 @@ const User_list_page = () => {
                 </th>
               </tr>
             </thead>
-            <tbody >
+            <tbody>
               {User_list.map((data) => (
                 <tr
                   key={data.id}
@@ -131,62 +186,61 @@ const User_list_page = () => {
                     </span>
                   </td>
                   <td className="py-3 px-4">
-  <div className="relative inline-block text-left">
-    <button
-      type="button"
-      className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      onClick={() => handleDropdownToggle(data.id)}
-    >
-      {data.is_active ? "Active" : "Blocked"}
-      <svg
-        className="-mr-1 ml-2 h-5 w-5"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          fillRule="evenodd"
-          d="M6 8a1 1 0 01.993-.883L7 7a1 1 0 011.414.293L10 9.586l1.293-1.293a1 1 0 011.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 01-.293-.707z"
-          clipRule="evenodd"
-        />
-      </svg>
-    </button>
+                    <div className="relative inline-block text-left">
+                      <button
+                        type="button"
+                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        onClick={() => handleDropdownToggle(data.id)}
+                      >
+                        {data.is_active ? "Active" : "Blocked"}
+                        <svg
+                          className="-mr-1 ml-2 h-5 w-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M6 8a1 1 0 01.993-.883L7 7a1 1 0 011.414.293L10 9.586l1.293-1.293a1 1 0 011.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 01-.293-.707z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
 
-    {dropdownOpen === data.id && (
-      <div
-        className="absolute z-50 mb-2 w-40 origin-bottom-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-        role="menu"
-        aria-orientation="vertical"
-        aria-labelledby={`menu-button-${data.id}`}
-        style={{
-          bottom: `-150%`, 
-        }}
-      >
-        <div className="p-1" role="none">
-          {data.is_active ? (
-            <button
-              onClick={() => handleBlockUnblock(data)}
-              className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-              role="menuitem"
-            >
-              Block
-            </button>
-          ) : (
-            <button
-              onClick={() => handleBlockUnblock(data)}
-              className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100"
-              role="menuitem"
-            >
-              Unblock
-            </button>
-          )}
-        </div>
-      </div>
-    )}
-  </div>
-</td>
-
+                      {dropdownOpen === data.id && (
+                        <div
+                          className="absolute z-50 mb-2 w-40 origin-bottom-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby={`menu-button-${data.id}`}
+                          style={{
+                            bottom: `-150%`,
+                          }}
+                        >
+                          <div className="p-1" role="none">
+                            {data.is_active ? (
+                              <button
+                                onClick={() => handleBlockUnblock(data)}
+                                className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+                                role="menuitem"
+                              >
+                                Block
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleBlockUnblock(data)}
+                                className="block w-full px-4 py-2 text-sm text-green-600 hover:bg-green-100"
+                                role="menuitem"
+                              >
+                                Unblock
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

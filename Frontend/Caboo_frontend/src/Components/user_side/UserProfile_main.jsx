@@ -63,19 +63,23 @@ const UserProfile_main = () => {
     ProfilUpdate(updatedData, profileUpdate_url);
   };
 
-  console.log(profile_img,'profile image ');
-  
+  console.log(profile_img, "profile image ");
+
   return (
     <div className="flex w-screen min-h-screen mt-20 bg-gray-100 justify-center items-center">
       <div className="p-12 flex flex-col items-center bg-white shadow-lg rounded-lg w-full max-w-2xl">
         <h1 className="text-4xl text-gray-800 font-bold mb-8">Account Info</h1>
         <div className="relative mb-8">
           <img
-            src={profile_img ? `${backendUrl}${profile_img}` : profile_img_placeholder}
+            src={
+              profile_img
+                ? `${backendUrl}${profile_img}`
+                : profile_img_placeholder
+            }
             alt="User Profile"
             onError={(e) => {
               console.error("Error loading image:", e);
-              e.target.src =profile_img_placeholder; // Fallback to avatar if image fails to load
+              e.target.src = profile_img_placeholder; // Fallback to avatar if image fails to load
             }}
             className="h-48 w-48 rounded-full object-cover border-4 border-gray-300"
           />
@@ -90,37 +94,55 @@ const UserProfile_main = () => {
           </label>
         </div>
         <div className="bg-white pb-8 rounded-lg shadow-md w-full">
-  <div className="grid grid-cols-1 gap-4 rounded-lg">
-    <div className="flex items-center justify-between border-b border-gray-300 py-4">
-      <label className="text-gray-600 font-semibold text-lg w-1/3">Name</label>
-      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
-        {username}
-      </span>
-    </div>
+          <div className="grid grid-cols-1 gap-4 rounded-lg">
+            <div className="flex items-center justify-between border-b border-gray-300 py-4">
+              <label className="text-gray-600 font-semibold text-lg w-1/3">
+                Name
+              </label>
+              <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+                {username}
+              </span>
+            </div>
 
-    <div className="flex items-center justify-between border-b border-gray-300 py-4">
-      <label className="text-gray-600 font-semibold text-lg w-1/3">Email</label>
-      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
-        {email}{" "}
-        <span className="text-green-600 text-base"><FontAwesomeIcon icon={faCheckCircle} className="text-base ml-2" /> verified</span>
-      </span>
-    </div>
+            <div className="flex items-center justify-between border-b border-gray-300 py-4">
+              <label className="text-gray-600 font-semibold text-lg w-1/3">
+                Email
+              </label>
+              <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+                {email}{" "}
+                <span className="text-green-600 text-base">
+                  <FontAwesomeIcon
+                    icon={faCheckCircle}
+                    className="text-base ml-2"
+                  />{" "}
+                  verified
+                </span>
+              </span>
+            </div>
 
-    <div className="flex items-center justify-between border-b border-gray-300 py-4">
-      <label className="text-gray-600 font-semibold text-lg w-1/3">Phone</label>
-      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
-        +91 {phone}{" "}
-        <span className="text-green-600 text-base"><FontAwesomeIcon icon={faCheckCircle} /> verified</span>
-      </span>
-    </div>
+            <div className="flex items-center justify-between border-b border-gray-300 py-4">
+              <label className="text-gray-600 font-semibold text-lg w-1/3">
+                Phone
+              </label>
+              <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+                +91 {phone}{" "}
+                {phone && (
+                  <span className="text-green-600 text-base">
+                    <FontAwesomeIcon icon={faCheckCircle} /> verified
+                  </span>
+                )}
+              </span>
+            </div>
 
-    <div className="flex items-center justify-between border-b border-gray-300 py-4">
-      <label className="text-gray-600 font-semibold text-lg w-1/3">Referral Code</label>
-      <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
-        dffe87t{referralCode}
-      </span>
-    </div>
-  </div>
+            <div className="flex items-center justify-between border-b border-gray-300 py-4">
+              <label className="text-gray-600 font-semibold text-lg w-1/3">
+                Referral Code
+              </label>
+              <span className="text-gray-800 font-bold text-lg w-2/3 text-right">
+                dffe87t{referralCode}
+              </span>
+            </div>
+          </div>
 
           <div className="mt-8 flex justify-center">
             <button
