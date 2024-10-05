@@ -38,25 +38,7 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/caboo-backend:${{ github.sha }}
-
-    - name: Set up environment for tests
-      run: |
-        cd Backend/Caboo_backend
-        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" > .env
-        echo "POSTGRES_DB=caboo_cab" >> .env
-        echo "POSTGRES_USER=POSTGRES_USER" >> .env
-        echo "POSTGRES_PASSWORD=POSTGRES_PASSWORD" >> .env
-        echo "DB_HOST=db" >> .env
-        echo "DB_PORT=5432" >> .env
-        echo "EMAIL_HOST=EMAIL_HOST" >> .env
-        echo "EMAIL_PORT=EMAIL_PORT" >> .env
-        echo "EMAIL_HOST_USER=EMAIL_HOST_USER" >> .env
-        echo "EMAIL_HOST_PASSWORD=EMAIL_HOST_PASSWORD" >> .env
-        echo "RAZORPAY_SECRET_KEY=RAZORPAY_SECRET_KEY" >> .env
-        echo "RAZORPAY_PUBLIC_KEY=RAZORPAY_PUBLIC_KEY" >> .env
-        echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY" >> .env
-        echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET" >> .env
-
+          
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
@@ -64,47 +46,11 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-
-          # Debugging: Print the current working directory
-          echo "Current working directory: $(pwd)"
-
-          # Pull the latest code from the main branch for the entire repository
-          git pull origin main
-
           # Navigate to the backend directory
           cd Caboo-cab/Backend/Caboo_backend || exit 1
 
-          # Stop the current containers if running
-          docker-compose down -v
-
-          # Pull the latest Docker images
-          docker-compose pull
-
-          # Rebuild the containers (if needed)
-          docker-compose build 
-
-          # Migrate the database
-          docker-compose run web python manage.py migrate
-
-          # Collect static files (for Django)
-          docker-compose run web python manage.py collectstatic --noinput
-
-          # Start the containers
+          # Start the containers (run the app)
           docker-compose up -d
-
-          # Check if containers are running successfully
-          if [ $(docker-compose ps | grep "Up" | wc -l) -eq 0 ]; then
-              echo "Error: Containers failed to start"
-              exit 1
-          else
-              echo "Containers are running successfully"
-          fi
 
           # Optional: Show logs for debugging
           docker-compose logs -f web
-
-          # After ensuring everything is up, you can proceed with your next process
-          # For example, you can start your worker, or whatever is required next
-          echo "Starting the next process..."
-          # Add next steps here
-
