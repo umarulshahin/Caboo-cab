@@ -35,7 +35,9 @@ const Driver_home = () => {
       localStorage.removeItem("loginMessage");
     }
   }, []);
-
+ 
+  console.log(trips,'trips')
+  
   useEffect(() => {
     //* Dashboard data calculations
   
