@@ -37,11 +37,11 @@ const Driver_home = () => {
   }, []);
  
   console.log(trips,'trips')
-  
+
   useEffect(() => {
     //* Dashboard data calculations
   
-    if (trips){
+    if (trips.length>0){
       
 
     const today = new Date();
