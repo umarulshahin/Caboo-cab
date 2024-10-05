@@ -45,10 +45,10 @@ const useDriverWebSocket = () => {
 
     useEffect(() => {
         if (!driver || !driver.user_id || !token) {
-            dispatch(addClearDriver(null))
-            Cookies.remove("DriverTokens")
-            toast.warning("Something went wrong. Please log in again.")
-            navigate("/")
+            // dispatch(addClearDriver(null))
+            // Cookies.remove("DriverTokens")
+            // toast.warning("Something went wrong. Please log in again.")
+            // navigate("/")
             return
         }
         const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
@@ -84,10 +84,10 @@ const useDriverWebSocket = () => {
             if (data.type === "'pending ride'"){
                console.log('yes pending ride is working ',data)
             }else if (data.type === "block notification" ){
-                dispatch(addClearDriver(null))
-                Cookies.remove("DriverTokens")
+                // dispatch(addClearDriver(null))
+                // Cookies.remove("DriverTokens")
                 toast.warning("Your account has been blocked. Please contact our customer service.")
-                navigate("/")
+                // navigate("/")
             }else if (data.type === 'location_request') {
 
                 if (!isRequestInProgress) {

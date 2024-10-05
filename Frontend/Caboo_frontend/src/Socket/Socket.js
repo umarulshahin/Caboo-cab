@@ -47,11 +47,11 @@ const useUserWebSocket = () => {
             console.log('Message received:', data);
             
             if (data.type === "block notification" ){
-                dispatch(addClearUser(null))
-                Cookies.remove('userTokens')
-                localStorage.removeItem('status')
+                // dispatch(addClearUser(null))
+                // Cookies.remove('userTokens')
+                // localStorage.removeItem('status')
                 toast.warning("Your account has been blocked. Please contact our customer service.")
-                navigate("/")
+                // navigate("/")
             }
             else if (data.type==='ride_accepted'){
                

@@ -316,7 +316,7 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             await self.channel_layer.group_add(f'{user_type}_{self.user_id}', self.channel_name)
             print(f'Added to group: {user_type}_{self.user_id}')
             result = await self.uservalidate(self.user_id)
-            print(result,'result ')
+            print(result,'result of the user validation ')
             if not result:
                 
                  await self.channel_layer.group_send(
