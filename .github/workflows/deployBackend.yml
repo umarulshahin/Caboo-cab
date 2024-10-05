@@ -64,32 +64,30 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         script: |
-          # Debugging: Print the current working directory
-          echo "Current working directory: $(pwd)"
-
-          # Pull the latest code from the main branch for the entire repository
+          # Pull the latest code
           git pull origin main
 
           # Navigate to the backend directory
           cd Caboo-cab/Backend/Caboo_backend || exit 1
 
           # Stop the current containers if running
-          docker-compose down -v
+          docker-compose down -v || exit 1
 
           # Pull the latest Docker images
-          docker-compose pull
+          docker-compose pull || exit 1
 
           # Rebuild the containers (if needed)
-          docker-compose build 
+          docker-compose build || exit 1
 
           # Migrate the database
-          docker-compose run --rm web python manage.py migrate
+          docker-compose run web python manage.py migrate || exit 1
 
-          # Collect static files (for Django)
-          docker-compose run --rm web python manage.py collectstatic --noinput
+          # Collect static files
+          docker-compose run web python manage.py collectstatic --noinput || exit 1
 
-          # Run services in detached mode (important for production)
-          docker-compose up -d web nginx
+          # Start the containers in detached mode
+          docker-compose up -d || exit 1
 
-          # Optional: Show logs for debugging
-          docker-compose logs -f web
+          # Check the logs for debugging
+          docker-compose logs -f web || exit 1
+
