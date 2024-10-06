@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const TripHistory = () => {
   const navigate = useNavigate();
   const trips = useSelector((state) => state.driver_data.driverTrips);
-
   const [currentPage, setCurrentPage] = useState(1);
   const tripsPerPage = 10; 
 
@@ -14,7 +13,7 @@ const TripHistory = () => {
 
   const indexOfLastTrip = currentPage * tripsPerPage;
   const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
-  const currentTrips = trips?.slice(indexOfFirstTrip, indexOfLastTrip) || [];
+  const currentTrips = trips.length >0 ? trips.slice(indexOfFirstTrip, indexOfLastTrip) : [];
 
   const formatAddress = (address) => {
     const parts = address.split(",");

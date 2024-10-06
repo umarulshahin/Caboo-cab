@@ -95,7 +95,6 @@ export const DriverWebSocketProvider = ({ children }) => {
       console.log('Received message:', data);
       if (data.type.trim() === "chat_message") {
 
-        // if(data.message_id  messages)
         dispatch(
           adddriverMessage([
             {

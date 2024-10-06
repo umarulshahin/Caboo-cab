@@ -315,18 +315,18 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
         if user_type and self.user_id:
             await self.channel_layer.group_add(f'{user_type}_{self.user_id}', self.channel_name)
             print(f'Added to group: {user_type}_{self.user_id}')
-            # result = await self.uservalidate(self.user_id)
-            # print(result,'result of the user validation ')
-            # if not result:
+            result = await self.uservalidate(self.user_id)
+            print(result,'result of the user validation ')
+            if not result:
                 
-            #      await self.channel_layer.group_send(
-            #                 f'{user_type}_{self.user_id}', 
-            #                 {
-            #                     'type': 'BlockNotification',
-            #                     'status': 'Your account has been blocked',
-            #                     'message': 'Your account has been blocked. Please contact our customer service.',
-            #                 }
-            #             )
+                 await self.channel_layer.group_send(
+                            f'{user_type}_{self.user_id}', 
+                            {
+                                'type': 'BlockNotification',
+                                'status': 'Your account has been blocked',
+                                'message': 'Your account has been blocked. Please contact our customer service.',
+                            }
+                        )
             # current_ride = await self.Current_ride_check(self.user_id)
             # print(current_ride,'current ride')
             # if current_ride:
@@ -848,9 +848,9 @@ class LocationConsumer(AsyncJsonWebsocketConsumer):
             'data': event
         }))
     
-    # async def BlockNotification(self,event):
-    #     print("block notification is working")
-    #     await self.send(text_data=json.dumps({
-    #         'type': 'block notification',
-    #         'data': event
-    #     }))
+    async def BlockNotification(self,event):
+        print("block notification is working")
+        await self.send(text_data=json.dumps({
+            'type': 'block notification',
+            'data': event
+        }))

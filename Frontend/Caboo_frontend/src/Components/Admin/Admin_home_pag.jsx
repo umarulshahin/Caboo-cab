@@ -4,6 +4,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, Ba
 import useAdmin from "../../Hooks/useAdmin";
 import Sidebar_admin from "./Sidebar_admin";
 import { get_Driver_url, get_Users_url } from "../../Utils/Constanse";
+import { useSelector } from "react-redux";
 
 // Register Chart.js components
 ChartJS.register(
@@ -22,7 +23,13 @@ const Admin_home_page = () => {
   const { GetUsers, Usermanagement } = useAdmin();
   const [userData, setUserData] = useState([]);
   const [driverData, setDriverData] = useState([]);
-  
+  const drivers = useSelector((state) => state.admin_data.Driver_list || []);
+  const Users = useSelector((state) => state.admin_data.users_list);
+  const alltrip = useSelector((state) => state.admin_data.allTrips);
+ 
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       const userResponse = await GetUsers(get_Users_url, "user");
@@ -38,7 +45,20 @@ const Admin_home_page = () => {
     };
 
     fetchData();
-  }, [GetUsers]);
+  }, []);
+  console.log(alltrip,'all trip')
+  useEffect(()=>{
+
+    if(alltrip && alltrip.length>0){
+        
+    
+        const profit = alltrip && alltrip.map((data)=>{
+          console.log(data,'data ')
+          
+        })
+    }
+   
+  },[])
 
   // Example data for charts (Replace with actual data)
   const tripData = {
@@ -88,17 +108,17 @@ const Admin_home_page = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Total Users</h2>
-            <p className="text-2xl font-bold">{userData.length}</p>
+            <p className="text-2xl font-bold">{Users.length}</p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Total Drivers</h2>
-            <p className="text-2xl font-bold">{driverData.length}</p>
+            <p className="text-2xl font-bold">{drivers.length}</p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Total Profit</h2>
-            <p className="text-2xl font-bold">$120,000</p>
+            <p className="text-2xl font-bold">{}</p>
           </div>
         </div>
 

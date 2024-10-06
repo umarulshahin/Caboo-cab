@@ -157,6 +157,7 @@ def Get_AllTrips(request):
     try:
         print('all trip working')
         trips = TripDetails.objects.all().order_by('-id')
+        print(trips,'trips all')
         if trips:
             serializer = AllRidesSerializer(trips,many=True)
             return Response(serializer.data)

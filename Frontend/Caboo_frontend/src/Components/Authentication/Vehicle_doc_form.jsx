@@ -10,7 +10,7 @@ const Vehicle_doc_form = () => {
   const driver = useSelector((state) => state.driver_data.driver_data);
   const role = useSelector((state) => state.Authentication.role);
   const { DriverCreation } = useAuthentication();
-  console.log(driver.phone);
+
   const initialValues = {
     aadhaar: "",
     vehicle_name: "",
@@ -44,45 +44,43 @@ const Vehicle_doc_form = () => {
 
     phone: Yup.string()
       .trim()
-
       .matches(
         /^(?!.*(\d)\1{9})\d{10}$/,
         "Phone number must be 10 digits and cannot have all the same digits"
       )
-
       .required("Phone number is required"),
 
     rc_img: Yup.mixed()
       .test("fileType", "Unsupported file format", (value) => {
-        if (!value) return true; // Allow empty value if not required
+        if (!value) return true;
         return ["image/jpeg", "image/png"].includes(value.type);
       })
       .required("RC Document is required"),
 
     license: Yup.mixed()
       .test("fileType", "Unsupported file format", (value) => {
-        if (!value) return true; // Allow empty value if not required
+        if (!value) return true;
         return ["image/jpeg", "image/png"].includes(value.type);
       })
       .required("License is required"),
 
     insurance: Yup.mixed()
       .test("fileType", "Unsupported file format", (value) => {
-        if (!value) return true; // Allow empty value if not required
+        if (!value) return true;
         return ["image/jpeg", "image/png"].includes(value.type);
       })
       .required("Insurance is required"),
 
     vehicle_Photo: Yup.mixed()
       .test("fileType", "Unsupported file format", (value) => {
-        if (!value) return true; // Allow empty value if not required
+        if (!value) return true;
         return ["image/jpeg", "image/png"].includes(value.type);
       })
       .required("Vehicle Photo is required"),
 
     profile: Yup.mixed()
       .test("fileType", "Unsupported file format", (value) => {
-        if (!value) return true; // Allow empty value if not required
+        if (!value) return true;
         return ["image/jpeg", "image/png"].includes(value.type);
       })
       .required("Profile Photo is required"),
@@ -90,17 +88,27 @@ const Vehicle_doc_form = () => {
     Vehicle_type: Yup.string().required("Vehicle type is required"),
   });
 
-  const onSubmit = (values) => {
-    console.log(driver);
-    const updatdriver= {...driver}
-    if (values["phone"] && !driver.phone) {
-      console.log(values["phone"], "yes its working");
-      updatdriver.phone = values.phone;
+  const onSubmit = async (values, { setSubmitting, setStatus }) => {
+    try {
+      const updatedDriver = { ...driver };
+      if (values.phone && !driver.phone) {
+        updatedDriver.phone = values.phone;
+      }
+      
+      const submitData = {
+        ...values,
+        role: role,
+        customuser: updatedDriver
+      };
+      
+      console.log("Submitting data:", submitData);
+      await DriverCreation(submitData, driver_signup_url);
+    } catch (error) {
+      console.error("Submit error:", error);
+      setStatus({ error: "Failed to submit form. Please try again." });
+    } finally {
+      setSubmitting(false);
     }
-    values["role"] = role;
-    values["customuser"] = updatdriver;
-    console.log("Submitted values:", values);
-    DriverCreation(values, driver_signup_url);
   };
 
   return (
@@ -120,8 +128,14 @@ const Vehicle_doc_form = () => {
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
               >
-                {({ setFieldValue, values }) => (
+                {({ setFieldValue, values, isSubmitting, status }) => (
                   <Form className="space-y-6">
+                    {status && status.error && (
+                      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                        {status.error}
+                      </div>
+                    )}
+
                     <div className="flex flex-wrap -mx-2">
                       <div className="w-full md:w-1/2 px-2 mb-4">
                         <Field
@@ -170,20 +184,20 @@ const Vehicle_doc_form = () => {
                       </div>
                       <div className="w-full md:w-1/2 px-2 mb-4">
                         {!driver.phone && (
-                        <>
-                          <Field
-                            type="number"
-                            id="phone"
-                            name="phone"
-                            placeholder="Phone"
-                            className="w-full p-2 bg-gray-200 rounded-md text-black"
-                          />
-                          <ErrorMessage
-                            name="phone"
-                            component="div"
-                            className="text-red-500 text-sm mt-1"
-                          />
-                        </>
+                          <>
+                            <Field
+                              type="number"
+                              id="phone"
+                              name="phone"
+                              placeholder="Phone"
+                              className="w-full p-2 bg-gray-200 rounded-md text-black"
+                            />
+                            <ErrorMessage
+                              name="phone"
+                              component="div"
+                              className="text-red-500 text-sm mt-1"
+                            />
+                          </>
                         )}
                       </div>
                     </div>
@@ -194,8 +208,8 @@ const Vehicle_doc_form = () => {
                         name="Vehicle_type"
                         className="w-full p-2 bg-gray-200 rounded-md text-black"
                       >
-                        <option value="" disabled selected>
-                          Vehicle Type
+                        <option value="" disabled>
+                          Select Vehicle Type
                         </option>
                         <option value="Car">Car</option>
                         <option value="Bike">Bike</option>
@@ -210,43 +224,34 @@ const Vehicle_doc_form = () => {
 
                     <div className="w-full space-y-4">
                       {[
-                        "rc_img",
-                        "license",
-                        "insurance",
-                        "vehicle_Photo",
-                        "profile",
-                      ].map((field) => (
-                        <div key={field} className="mb-4">
+                        { name: "rc_img", label: "RC Document" },
+                        { name: "license", label: "License" },
+                        { name: "insurance", label: "Insurance" },
+                        { name: "vehicle_Photo", label: "Vehicle Photo" },
+                        { name: "profile", label: "Profile Photo" }
+                      ].map(({ name, label }) => (
+                        <div key={name} className="mb-4">
                           <label className="block text-sm font-medium text-gray-500 mb-2">
-                            {field
-                              .split("_")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1)
-                              )
-                              .join(" ")}
+                            {label}
                           </label>
                           <input
                             type="file"
-                            name={field}
+                            name={name}
                             accept="image/*"
                             onChange={(event) => {
-                              setFieldValue(
-                                field,
-                                event.currentTarget.files[0]
-                              );
+                              setFieldValue(name, event.currentTarget.files[0]);
                             }}
                             className="w-full p-2 border border-gray-300 rounded-md text-white"
                           />
-                          {values[field] && (
+                          {values[name] && (
                             <img
-                              src={URL.createObjectURL(values[field])}
-                              alt={`${field} Preview`}
-                              className="mt-2 h-32 object-fit rounded-lg"
+                              src={URL.createObjectURL(values[name])}
+                              alt={`${label} Preview`}
+                              className="mt-2 h-32 w-40 object-fit rounded-lg"
                             />
                           )}
                           <ErrorMessage
-                            name={field}
+                            name={name}
                             component="div"
                             className="text-red-500 text-sm mt-1"
                           />
@@ -257,11 +262,18 @@ const Vehicle_doc_form = () => {
                     <div className="mt-6 flex justify-center">
                       <button
                         type="submit"
-                        className="px-20 py-2 bg-white text-black rounded-md hover:bg-gray-700 hover:text-white"
+                        disabled={isSubmitting}
+                        className="px-20 py-2 bg-white text-black rounded-md hover:bg-gray-700 hover:text-white disabled:opacity-50 transition-all duration-300"
                       >
-                        Submit
+                        {isSubmitting ? 'Submitting...' : 'Submit'}
                       </button>
                     </div>
+
+                    {isSubmitting && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+                      </div>
+                    )}
                   </Form>
                 )}
               </Formik>

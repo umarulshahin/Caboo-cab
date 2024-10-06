@@ -86,10 +86,10 @@ const useDriverWebSocket = () => {
             if (data.type === "'pending ride'"){
                console.log('yes pending ride is working ',data)
             }else if (data.type === "block notification" ){
-                // dispatch(addClearDriver(null))
-                // Cookies.remove("DriverTokens")
+                dispatch(addClearDriver(null))
+                Cookies.remove("DriverTokens")
                 toast.warning("Your account has been blocked. Please contact our customer service.")
-                // navigate("/")
+                navigate("/")
             }else if (data.type === 'location_request') {
 
                 if (!isRequestInProgress) {
