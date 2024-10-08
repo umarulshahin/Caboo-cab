@@ -29,7 +29,7 @@ const TripListing = () => {
   return (
     <div className="p-10">
     
-      <div className=" flex flex-col  ">
+      <div className=" flex flex-col ">
         <h1 className="text-3xl  text-black  font-bold mb-5">All trips</h1>
         {/* Table Container */}
         <div className=" bg-white rounded-lg shadow-lg">

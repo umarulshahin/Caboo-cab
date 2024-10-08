@@ -7,6 +7,8 @@ import TripListing from "../../Components/Admin/TripListing";
 import Coupons from "../../Components/Admin/Coupons";
 import User_list_page from "../../Components/Admin/User_list_page";
 import Drivers_list_page from "../../Components/Admin/Drivers_list_page";
+import Documents_page from "../../Components/Admin/Documents_page";
+import TripMore from "../../Components/Admin/TripMore";
 
 const Admin_home = () => {
   const [activepage, setActivePage] = useState("home");
@@ -19,12 +21,16 @@ const Admin_home = () => {
         <div className="w-1/6 pt-16">
           <Sidebar_admin activepage={setActivePage} />
         </div>
-        <div className="w-5/6 bg-white  pt-10 rounded-tl-[5rem]">
-          {activepage === "home" && <Admin_home_page />}
-          {activepage === "trip" && <TripListing />}
+        <div className="w-5/6 bg-white min-h-screen  pt-10 rounded-tl-[5rem]">
+          {activepage === "home" && <Admin_home_page  />}
+          {activepage === "trip" && <TripListing activepage={setActivePage} />}
           {activepage === "user" && <User_list_page />}
-          {activepage === "driver" && <Drivers_list_page />}
+          {activepage === "driver" && <Drivers_list_page activepage={setActivePage} />}
           {activepage === "coupon" && <Coupons />}
+          {activepage === "documents" && <Documents_page />}
+          {activepage === "trip_more" && <TripMore />}
+
+
         </div>
       </div>
 

@@ -4,16 +4,12 @@ import Footer from '../../Components/Footer';
 import Documents_page from '../../Components/Admin/Documents_page';
 
 const Documents = () => {
-    const headprops = {
-        ride: false,
-        drive: false,
-        user: false,
-      };
+  
     
       return (
         <div>
             <div>
-            <Admin_header headprops={headprops} />
+            <Admin_header />
     
             </div>
             <div className='bg-black'>

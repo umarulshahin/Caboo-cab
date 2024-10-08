@@ -28,15 +28,14 @@ const TripMore = () => {
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Admin_header />
 
-      <div className="flex mt-16">
-        <div className="w-1/5 bg-white  h-screen">
-          <Sidebar_admin />
+      <div className="flex bg-black min-h-screen ">
+        <div className="w-1/6 pt-28  ">
         </div>
 
-        <div className="flex-1 p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="bg-white shadow-2xl p-8 rounded-lg">
-              <div className="border-b pb-6 mb-6 flex justify-between items-center">
+        <div className="flex-1  w-5/6">
+          <div className=" mx-auto  ">
+            <div className="bg-white shadow-2xl  mt-24 p-8 rounded-tl-[5rem] ">
+              <div className="border-b py-6 mb-6  flex justify-between items-center">
                 <h2 className="font-bold text-2xl">Trip Details</h2>
                 <div className="text-gray-500 font-medium text-lg space-x-8">
                   <span>Service Type: {trips?.service_type}</span>
@@ -173,7 +172,7 @@ const TripMore = () => {
               </div>
 
               {/* Buttons */}
-              <div className="flex justify-end mt-8 space-x-4">
+              <div className="flex justify-start mt-8 space-x-4">
                 <button
                   onClick={() => navigate(-1)}
                   className="bg-white border border-gray-700 text-gray-700 font-bold py-2 px-8 rounded-lg flex items-center hover:bg-gray-200 transition"
