@@ -46,20 +46,17 @@ const Drivers_list_page = () => {
   
 
   return (
-    <div className="flex min-h-screen mt-16 bg-gray-200">
-      <div className="w-1/6 bg-white shadow-xl h-screen">
-        <Sidebar_admin />
-      </div>
-      <div className="w-5/6 mt-10 pl-10 flex flex-col">
-        <span className="text-4xl text-gray-800 mx-8 font-bold mb-6">Drivers</span>
-
+    <div className="p-10">
+    
+    <div className=" flex flex-col  ">
+      <h1 className="text-3xl text-black font-bold mb-5">Driver Management</h1>
         {/* Table Container */}
-        <div className="m-8 bg-white p-6 rounded-lg shadow-lg">
+        <div className=" bg-white p-6 rounded-lg shadow-lg">
           <div  >
 
         <div className='text-black  w-2/4 flex justify-evenly rounded-md my-4 overflow-hidden border-2 shadow-2xl'>
           <button 
-            className={`flex-grow py-2 ${ activeTab != 'all' && "hover:bg-gray-300 hover:text-black"} font-semibold transition-colors duration-700 pr-2 ${
+            className={`flex-grow py-2 ${ activeTab != 'all' && "hover:bg-gray-300 hover:text-black"} font-semibold transition-colors duration-500 pr-2 ${
               activeTab === 'all' ? 'bg-black text-white' : 'bg-transparent'
             }`} 
             onClick={() => setActiveTab('all')}
@@ -67,7 +64,7 @@ const Drivers_list_page = () => {
            All
           </button>
           <button 
-            className={`flex-grow py-2 font-semibold ${ activeTab != 'Active' && "hover:bg-gray-300 hover:text-black"}  transition-colors duration-700 pr-2 ${
+            className={`flex-grow py-2 font-semibold ${ activeTab != 'Active' && "hover:bg-gray-300 hover:text-black"}  transition-colors duration-500 pr-2 ${
               activeTab === 'Active' ? 'bg-black text-white' : 'bg-transparent'
             }`} 
             onClick={() => setActiveTab('Active')}
@@ -75,7 +72,7 @@ const Drivers_list_page = () => {
             Active
           </button>
           <button 
-            className={`flex-grow py-2 font-semibold ${ activeTab != 'Pending' && "hover:bg-gray-300 hover:text-black"} transition-colors duration-700 pr-2 ${
+            className={`flex-grow py-2 font-semibold ${ activeTab != 'Pending' && "hover:bg-gray-300 hover:text-black"} transition-colors duration-500 pr-2 ${
               activeTab === 'Pending' ? 'bg-black text-white' : 'bg-transparent'
             }`} 
             onClick={() => setActiveTab('Pending')}
@@ -85,7 +82,7 @@ const Drivers_list_page = () => {
 
 
           <button 
-            className={`flex-grow py-2 font-semibold ${ activeTab != 'Decline' && "hover:bg-gray-300 hover:text-black"}  transition-colors duration-700 pr-2 ${
+            className={`flex-grow py-2 font-semibold ${ activeTab != 'Decline' && "hover:bg-gray-300 hover:text-black"}  transition-colors duration-500 pr-2 ${
               activeTab === 'Decline' ? 'bg-black text-white' : 'bg-transparent'
             }`} 
             onClick={() => setActiveTab('Decline')}

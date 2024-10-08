@@ -62,11 +62,13 @@ const useAdmin = () => {
         }
     }
 
-    const GetTripdata=async()=>{
-
+    const GetTripdata=async(data)=>{
         try{
+            console.log(data,'data in get trips')
             const responds = await AdminAxios.get(Get_all_trips_url,{
+                params:data,
                 headers:{
+
                     "Content-Type":"application/json"
                 }
             })

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import LandingPage from "./Pages/LandingPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Signin_selection from "./Pages/Signin_selection";
@@ -10,11 +10,9 @@ import UserHome from "./Pages/user_side/UserHome";
 import UserProfile from "./Pages/user_side/UserProfile";
 import PrivatRoute from "./PrivatRoute";
 import PrivatRoute_user from "./PrivatRoute_user";
-import Admin_home from "./Pages/Admin/Admin_home";
+// import Admin_home from "./Pages/Admin/Admin_home";
 import "./App.css";
-import User_list from "./Pages/Admin/User_list";
 import WaitingModal from "./Components/Driver/WaitingModal";
-import Driver_list from "./Pages/Admin/Driver_list";
 import Documents from "./Pages/Admin/Documents";
 import Signup from "./Pages/Authentication/Signup";
 import OtpForm from "./Components/Authentication/OtpFrom";
@@ -38,9 +36,13 @@ import User_header from "./Components/user_side/User_header";
 import { WebSocketProvider } from "./Socket/UserChatSocker.jsx";
 import { DriverWebSocketProvider } from "./Socket/DriverChatSocket.jsx";
 import Driver_Header from "./Components/Driver/Driver_Header.jsx";
+import Coupons from "./Components/Admin/Coupons.jsx";
 
+const Admin_home = lazy(()=>import('./Pages/Admin/Admin_home.jsx'))
 
 const App = () => {
+
+
   return (
     <div>
       <Provider store={appStore}>
@@ -69,12 +71,12 @@ const App = () => {
               <Route path="/userheader" element={<PrivatRoute_user><User_header /></PrivatRoute_user>} />
 
               <Route path="/admin" element={<Admin_Signin />} />
-              <Route path="/admin_home" element={<AdminPrivatRoute><Admin_home /></AdminPrivatRoute>} />
-              <Route path="/User_list" element={<AdminPrivatRoute><User_list /></AdminPrivatRoute>} />
-              <Route path="/Driver_list" element={<AdminPrivatRoute><Driver_list /></AdminPrivatRoute>} />
+              <Route path="/admin_home" element={<AdminPrivatRoute><Suspense fallback={<div>Loading ...</div>} ><Admin_home /></Suspense></AdminPrivatRoute>} />
               <Route path="/Documents" element={<AdminPrivatRoute><Documents /></AdminPrivatRoute>} />
               <Route path="/triplisting" element={<AdminPrivatRoute><TripListing /></AdminPrivatRoute>}/>
               <Route path="/tripmore" element={<AdminPrivatRoute><TripMore /></AdminPrivatRoute>}/>
+              <Route path="/coupons" element={<AdminPrivatRoute><Coupons /></AdminPrivatRoute>}/>
+
               
             
               <Route path="/driver_home" element={<Driver_PrivatRoute><Driver_home /></ Driver_PrivatRoute>} />

@@ -34,8 +34,8 @@ const useUserWebSocket = () => {
 
         if (!user.user_id || !token )return ;
 
-        const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
-        // const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
+        // const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
+        const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${user.user_id}/?token=${token["access"]}`);
 
 
 
@@ -52,11 +52,11 @@ const useUserWebSocket = () => {
             console.log('Message received:', data);
             
             if (data.type === "block notification" ){
-                dispatch(addClearUser(null))
-                Cookies.remove('userTokens')
-                localStorage.removeItem('status')
+                // dispatch(addClearUser(null))
+                // Cookies.remove('userTokens')
+                // localStorage.removeItem('status')
                 toast.warning("Your account has been blocked. Please contact our customer service.")
-                navigate("/")
+                // navigate("/")
             }else if (data.type==='ride_accepted'){
                
                 dispatch(addRideDriverdetails(data))

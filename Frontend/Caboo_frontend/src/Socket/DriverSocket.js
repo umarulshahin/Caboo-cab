@@ -51,8 +51,8 @@ const useDriverWebSocket = () => {
             // navigate("/")
             return
         }
-        const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
-        // const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
+        // const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
+        const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
 
         socketRef.current = ws;
 
@@ -85,11 +85,12 @@ const useDriverWebSocket = () => {
             
             if (data.type === "'pending ride'"){
                console.log('yes pending ride is working ',data)
+
             }else if (data.type === "block notification" ){
-                dispatch(addClearDriver(null))
-                Cookies.remove("DriverTokens")
+                // dispatch(addClearDriver(null))
+                // Cookies.remove("DriverTokens")
                 toast.warning("Your account has been blocked. Please contact our customer service.")
-                navigate("/")
+                // navigate("/")
             }else if (data.type === 'location_request') {
 
                 if (!isRequestInProgress) {

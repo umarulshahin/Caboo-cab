@@ -15,7 +15,7 @@ import calendar from '../../assets/calendar.png'
 import money from '../../assets/money.png'
 import rating_icon from '../../assets/rating.png'
 import feedback from '../../assets/feedback.png'
-import { FaStar } from "react-icons/fa";
+import { FaArrowLeft, FaDownload, FaStar } from "react-icons/fa";
 
 
 const TripMore = () => {
@@ -173,7 +173,7 @@ const TripMore = () => {
               </div>
 
               {/* Buttons */}
-              {/* <div className="flex justify-end mt-8 space-x-4">
+              <div className="flex justify-end mt-8 space-x-4">
                 <button
                   onClick={() => navigate(-1)}
                   className="bg-white border border-gray-700 text-gray-700 font-bold py-2 px-8 rounded-lg flex items-center hover:bg-gray-200 transition"
@@ -185,7 +185,7 @@ const TripMore = () => {
                   <FaDownload className="mr-2" />
                   Download
                 </button>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>
