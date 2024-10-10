@@ -85,7 +85,8 @@ const useAdmin = () => {
     const CouponManage= async (url,data)=>{
       
         try{
-          
+            console.log(url,'url ')
+            console.log(data,'data')
             const response = await AdminAxios.post(url,data,{
                 
                 headers:{

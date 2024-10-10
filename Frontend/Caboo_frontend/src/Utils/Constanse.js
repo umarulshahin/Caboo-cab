@@ -49,4 +49,6 @@ export const Walletdetails_url = backendUrl+"/Api/walletdetails/";
 
 export const Reviw_add_url = backendUrl+"/Api/review/";
 
-export const GoogleAuth_url = backendUrl+"/Api/googleAuth/"
+export const GoogleAuth_url = backendUrl+"/Api/googleAuth/";
+
+export const CouponManage_url = backendUrl+"/Api/couponManagement/";

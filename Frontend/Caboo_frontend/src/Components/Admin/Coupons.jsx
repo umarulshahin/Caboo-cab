@@ -2,6 +2,7 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAdmin from "../../Hooks/useAdmin";
+import { CouponManage_url } from "../../Utils/Constanse";
 
 const Coupons = () => {
 
@@ -62,7 +63,7 @@ const Coupons = () => {
       // Handle form submission logic here
       console.log("Form values:", values);
 
-     CouponManage(url,values)
+     CouponManage(CouponManage_url,values)
     },
   });
 
