@@ -82,6 +82,26 @@ const useAdmin = () => {
         }
     }
 
-    return {GetUsers,Usermanagement,GetTripdata}
+    const CouponManage= async (url,data)=>{
+      
+        try{
+          
+            const response = await AdminAxios.post(url,data,{
+                
+                headers:{
+                    "Content-Type" : "multipart/form-data",
+
+                }
+            })
+
+            if (response.status === 200){
+                console.log(response.data,'coupon manage')
+            }
+        }catch(error){
+            console.log(error,'couponManage')
+        }
+    }
+
+    return {GetUsers,Usermanagement,GetTripdata,CouponManage}
 }
 export default useAdmin

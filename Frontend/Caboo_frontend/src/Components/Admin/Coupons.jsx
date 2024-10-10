@@ -1,8 +1,11 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import useAdmin from "../../Hooks/useAdmin";
 
 const Coupons = () => {
+
+  const { CouponManage}=useAdmin()
   const formik = useFormik({
     initialValues: {
       couponCode: "",
@@ -15,21 +18,51 @@ const Coupons = () => {
       isActive: false,
     },
     validationSchema: Yup.object({
-      couponCode: Yup.string().required("Coupon code is required"),
-      couponType: Yup.string().required("Coupon type is required"),
+      // Coupon code: start with a number or string and no spaces allowed
+      couponCode: Yup.string()
+        .matches(
+          /^[A-Za-z0-9][^\s]*$/,
+          "Coupon code must start with a letter or number and must not contain spaces"
+        )
+        .required("Coupon code is required"),
+
+      // Coupon type: must be one of the selected options
+      couponType: Yup.string()
+        .oneOf(["percentage", "amount"], "Invalid coupon type") // Add your available options here
+        .required("Coupon type is required"),
+
+      // Discount: must be a number and less than or equal to 50%
       discount: Yup.number()
         .typeError("Discount must be a number")
+        .max(50, "Discount cannot be more than 50%")
         .required("Discount amount/percentage is required"),
+
+      // Max Amount: must be less than or equal to 50
       maxAmount: Yup.number()
         .typeError("Max amount must be a number")
         .required("Maximum amount is required"),
+
+      // Image: must be provided
       image: Yup.mixed().required("Image is required"),
-      startDate: Yup.date().required("Start date is required"),
-      expireDate: Yup.date().required("Expiry date is required"),
+
+      // Start date: must be today or in the future
+      startDate: Yup.date()
+        .min( new Date(new Date().setHours(0, 0, 0, 0)), "Start date must be today or a future date")
+        .required("Start date is required"),
+
+      // Expire date: must be after the start date
+      expireDate: Yup.date()
+        .min(
+          Yup.ref("startDate"),
+          "Expiry date cannot be before the start date"
+        )
+        .required("Expiry date is required"),
     }),
     onSubmit: (values) => {
       // Handle form submission logic here
       console.log("Form values:", values);
+
+     CouponManage(url,values)
     },
   });
 
@@ -61,15 +94,18 @@ const Coupons = () => {
             <label htmlFor="couponType" className="font-semibold">
               Coupon Type <span className="text-red-600">*</span>
             </label>
-            <input
-              type="text"
+            <select
               id="couponType"
               name="couponType"
               className="bg-gray-200 py-2 px-6 my-2 border border-gray-400"
               value={formik.values.couponType}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-            />
+            >
+              <option value="" label="Select coupon type" />
+              <option value="percentage" label="Percentage" />
+              {/* <option value="amount" label="Amount" /> */}
+            </select>
             {formik.touched.couponType && formik.errors.couponType ? (
               <p className="text-red-600">{formik.errors.couponType}</p>
             ) : null}

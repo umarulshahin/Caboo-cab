@@ -20,7 +20,7 @@ const Sidebar_admin = ({activepage}) => {
       <div className="flex flex-col items-start space-y-4 p-4">
         <button
           onClick={() => handleActivePage('home')}
-          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:bg-gray-200 rounded transition-colors duration-200 ${
+          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:text-black hover:bg-gray-200 rounded transition-colors duration-200 ${
             active === 'home' ? 'bg-gray-300 text-black' : ''
           }`}
         >
@@ -30,7 +30,7 @@ const Sidebar_admin = ({activepage}) => {
 
         <button
           onClick={() => handleActivePage('trip')}
-          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:bg-gray-200 rounded transition-colors duration-200 ${
+          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:text-black hover:bg-gray-200 rounded transition-colors duration-200 ${
             active === 'trip' ? 'bg-gray-300 text-black' : ''
           }`}
         >
@@ -40,7 +40,7 @@ const Sidebar_admin = ({activepage}) => {
 
         <button
           onClick={() => handleActivePage('user')}
-          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:bg-gray-200 rounded transition-colors duration-200 ${
+          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:text-black hover:bg-gray-200 rounded transition-colors duration-200 ${
             active=== 'user' ? 'bg-gray-300 text-black' : ''
           }`}
         >
@@ -50,7 +50,7 @@ const Sidebar_admin = ({activepage}) => {
 
         <button
           onClick={() => handleActivePage('driver')}
-          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:bg-gray-200 rounded transition-colors duration-200 ${
+          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:text-black hover:bg-gray-200 rounded transition-colors duration-200 ${
             active=== 'driver' ? 'bg-gray-300 text-black' : ''
           }`}
         >
@@ -60,7 +60,7 @@ const Sidebar_admin = ({activepage}) => {
 
         <button
           onClick={() => handleActivePage('coupon')}
-          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:bg-gray-200 rounded transition-colors duration-200 ${
+          className={`flex items-center font-bold text-lg w-full py-2 px-4 hover:text-black hover:bg-gray-200 rounded transition-colors duration-200 ${
             active === 'coupon' ? 'bg-gray-300 text-black' : ''
           }`}
         >
