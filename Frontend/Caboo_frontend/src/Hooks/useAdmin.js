@@ -91,13 +91,13 @@ const useAdmin = () => {
                 
                 headers:{
                     "Content-Type" : "multipart/form-data",
-
                 }
             })
 
-            if (response.status === 200){
+            if (response.status === 201){
                 console.log(response.data,'coupon manage')
             }
+            console.log(response,'response')
         }catch(error){
             console.log(error,'couponManage')
         }

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAdmin from "../../Hooks/useAdmin";
 import { CouponManage_url } from "../../Utils/Constanse";
+import Coupon_list_page from "./Coupon_list_page";
 
 const Coupons = () => {
 
   const { CouponManage}=useAdmin()
+  const [showform,serShowform]=useState(false)
   const formik = useFormik({
     initialValues: {
       couponCode: "",
@@ -70,6 +72,10 @@ const Coupons = () => {
   return (
     <div className="p-10">
       <h1 className="text-3xl text-black font-bold mb-5">Coupons Management</h1>
+      <div className="flex justify-end  mt-10">
+        <button onClick={()=>serShowform(!showform)} className="bg-black text-white py-3 px-4 rounded-lg hover:text-black hover:bg-gray-300 font-semibold">Create New Coupon</button>
+      </div>
+      {showform ? (
       <form onSubmit={formik.handleSubmit}>
         {/* First Line: Coupon Code and Coupon Type */}
         <div className="flex justify-evenly pt-10 w-full space-x-10">
@@ -234,7 +240,7 @@ const Coupons = () => {
             Save
           </button>
         </div>
-      </form>
+      </form>):(<div className="mt-7"> <Coupon_list_page/></div> )}
     </div>
   );
 };
