@@ -79,8 +79,8 @@ export const DriverWebSocketProvider = ({ children }) => {
 
     const roomId = driver_id;
     // const ws = new WebSocket(`wss://cabooserver.online/ws/chat/${roomId}/?token=${accessToken}`);
-    const ws = new WebSocket(`ws://127.0.0.1:8001/ws/chat/${roomId}/?token=${accessToken}`);
-        // const ws = new WebSocket(`wss://backend.caboo.site/ws/chat/${roomId}/?token=${accessToken}`);
+    // const ws = new WebSocket(`ws://127.0.0.1:8001/ws/chat/${roomId}/?token=${accessToken}`);
+        const ws = new WebSocket(`wss://backend.caboo.site/ws/chat/${roomId}/?token=${accessToken}`);
 
 
 
