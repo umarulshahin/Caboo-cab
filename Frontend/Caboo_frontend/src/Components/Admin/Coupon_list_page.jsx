@@ -1,8 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import useAdmin from "../../Hooks/useAdmin";
+import { useSelector } from "react-redux";
 
 const Coupon_list_page = () => {
     const [current_page,setcurrentpage]=useState()
-    const [currentTrips,setcurrtrip]=useState()
+    const [currentcoupons,setcurrentcoupons]=useState()
+    const [showskelton,setSkelton] = useState(true)
+    const { Get_Coupon }=useAdmin()
+    const coupon = useSelector((state)=>state.admin_data.coupons)
+    useEffect(()=>{
+        setTimeout(() => {
+            setSkelton(false)
+        }, 1000);
+       
+        Get_Coupon()
+        setcurrentcoupons(coupon?coupon:{})
+    },[])
   return (
     <div>
       <div className=" bg-white rounded-lg shadow-lg">
@@ -13,33 +26,67 @@ const Coupon_list_page = () => {
                 No
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-semibold">
-                PickUp
+                Coupon Code
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-semibold">
-                DropOff
+                Coupon Type
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-semibold">
-                Date
+              Discount/ Percentage
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-semibold">
-                Status
+              Max Amount
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-semibold">
-                More
+                Start Date
+              </th>
+              <th className="py-3 px-4 text-left text-gray-600 font-semibold">
+                Expire Date
+              </th>
+             
+              <th className="py-3 px-4 text-left text-gray-600 font-semibold">
+              Status
+              </th>
+              <th className="py-3 px-4 text-left text-gray-600 font-semibold">
+                Action
               </th>
             </tr>
           </thead>
           <tbody>
-            {currentTrips && currentTrips.length > 0 ? (
-              currentTrips.map((data, index) => (
+            {showskelton ?(
+              <tr>
+                <td colSpan="7" className="py-2  px-4 text-center">
+                  <div>
+                    <div className="animate-pulse flex flex-col items-center mt-10  gap-4 w-full">
+                      {" "}
+                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
+                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
+
+                      <div className="h-7 bg-slate-400 w-1/2 rounded-md"></div>
+                      <div className="h-7 bg-slate-400 w-1/2 rounded-md"></div>
+                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
+                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ):
+            
+            currentcoupons && currentcoupons.length > 0 ? (
+              currentcoupons.map((data, index) => (
                 <tr
                   key={data.id}
                   className="relative hover:bg-gray-200 font-bold transition-colors"
                 >
                   <td className="py-3 px-4 text-gray-500">{index + 1}</td>
-                  <td className="py-3 px-4"></td>
-                  <td className="py-3 px-4"></td>
-                  <td className="py-3 px-4"></td>
+                  <td className="py-3 px-4">{data.code}</td>
+                  <td className="py-3 px-4">{data.type}</td>
+                  <td className="py-3 px-4">{data.discount}%</td>
+                  <td className="py-3 px-4">{data.max_amount}</td>
+                  <td className="py-3 px-4">{data.start_date}</td>
+                  <td className="py-3 px-4">{data.end_date}</td>
+                  <td className={`py-3 px-4 ${data.status ? 'text-green-600':'text-orange-600'}`}>{data.status ? 'Active' : 'InActive'}</td>
+
                   <td></td>
                   <td className="py-3">
                     <button className="px-6 py-2 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition">
@@ -48,23 +95,11 @@ const Coupon_list_page = () => {
                   </td>
                 </tr>
               ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="py-2  px-4 text-center">
-                  <div>
-                    <div className="animate-pulse flex flex-col items-center mt-10  gap-4 w-full">
-                      {" "}
-                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
-                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
-                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
-                      <div className="h-7 bg-slate-400 w-full rounded-md"></div>
-                      <div className="h-7 bg-slate-400 w-1/2 rounded-md"></div>
-                      <div className="h-7 bg-slate-400 w-1/2 rounded-md"></div>
-                    </div>
-                  </div>
+            ) : ( <tr>
+                <td colSpan="9" className="py-4 px-4 text-2xl font-bold  text-center">
+                  No data available
                 </td>
-              </tr>
-            )}
+              </tr>)}
           </tbody>
         </table>
         {/* <div className="flex   justify-center space-x-3 my-5">

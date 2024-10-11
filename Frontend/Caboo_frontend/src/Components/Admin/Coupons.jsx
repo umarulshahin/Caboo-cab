@@ -8,7 +8,7 @@ import Coupon_list_page from "./Coupon_list_page";
 const Coupons = () => {
 
   const { CouponManage}=useAdmin()
-  const [showform,serShowform]=useState(false)
+  const [showform,setShowform]=useState(false)
   const formik = useFormik({
     initialValues: {
       couponCode: "",
@@ -73,7 +73,7 @@ const Coupons = () => {
     <div className="p-10">
       <h1 className="text-3xl text-black font-bold mb-5">Coupons Management</h1>
       <div className="flex justify-end  mt-10">
-        <button onClick={()=>serShowform(!showform)} className="bg-black text-white py-3 px-4 rounded-lg hover:text-black hover:bg-gray-300 font-semibold">Create New Coupon</button>
+        <button onClick={()=>setShowform(!showform)} className="bg-black text-white py-3 px-4 rounded-lg hover:text-black hover:bg-gray-300 font-semibold">{ showform ? 'View coupons': 'Create New Coupon'}</button>
       </div>
       {showform ? (
       <form onSubmit={formik.handleSubmit}>

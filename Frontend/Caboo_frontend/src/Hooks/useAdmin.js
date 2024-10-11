@@ -1,7 +1,7 @@
 
 import { useDispatch } from 'react-redux'
-import { addAllTrips, addDriver_list, addUsers_list } from '../Redux/AdminSlice'
-import { Get_all_trips_url, get_Driver_url, get_Users_url } from '../Utils/Constanse'
+import { addAllTrips, addCoupons, addDriver_list, addUsers_list } from '../Redux/AdminSlice'
+import { Get_all_trips_url, Get_Coupon_url, get_Driver_url, get_Users_url } from '../Utils/Constanse'
 import { toast } from 'sonner'
 import AdminAxios from '../Axios/AdminAxios'
 import { useNavigate } from 'react-router-dom'
@@ -96,13 +96,33 @@ const useAdmin = () => {
 
             if (response.status === 201){
                 console.log(response.data,'coupon manage')
+                toast.success('Coupon Created successfully')
             }
             console.log(response,'response')
         }catch(error){
             console.log(error,'couponManage')
         }
     }
+    const Get_Coupon=async()=>{
+        try{
+            const response =await AdminAxios.get(Get_Coupon_url,{
+                headers:{
+                    "Content-Type":"application/json"
 
-    return {GetUsers,Usermanagement,GetTripdata,CouponManage}
+                }
+
+            })
+            if(response.status === 200){
+               console.log(response.data,'get coupons')
+               dispatch(addCoupons(response.data))
+            }
+            console.log(response,'response data')
+
+        }catch(error){
+            console.log(error,'get coupons')
+        }
+    }
+
+    return {GetUsers,Usermanagement,GetTripdata,CouponManage,Get_Coupon}
 }
 export default useAdmin
