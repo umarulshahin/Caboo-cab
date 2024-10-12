@@ -8,7 +8,7 @@ import useGetUser from '../Hooks/useGetUser';
 import { user_data_url } from '../Utils/Constanse';
 import { addClearChat } from '../Redux/Chatslice';
 import Cookies from "js-cookie"
-import { addClearUser } from '../Redux/UserSlice';
+import { addClearUser, addUserCoupons } from '../Redux/UserSlice';
 import { backendUrl } from '../Utils/Constanse';
 
 const useUserWebSocket = () => {
@@ -52,11 +52,11 @@ const useUserWebSocket = () => {
             console.log('Message received:', data);
             
             if (data.type === "block notification" ){
-                // dispatch(addClearUser(null))
-                // Cookies.remove('userTokens')
-                // localStorage.removeItem('status')
+                dispatch(addClearUser(null))
+                Cookies.remove('userTokens')
+                localStorage.removeItem('status')
                 toast.warning("Your account has been blocked. Please contact our customer service.")
-                // navigate("/")
+                navigate("/")
             }else if (data.type==='ride_accepted'){
                
                 dispatch(addRideDriverdetails(data))
@@ -75,7 +75,8 @@ const useUserWebSocket = () => {
 
 
             }else if (data.type.trim() === 'Trip complete'){
-                console.log("yes payment is working ")
+                console.log(data.message,"yes payment is working ")
+                dispatch(addUserCoupons(data.message))
                 navigate('/paymentModal')
             }else if (data.type.trim() === "payment completed"){
                 const trip=trip_id

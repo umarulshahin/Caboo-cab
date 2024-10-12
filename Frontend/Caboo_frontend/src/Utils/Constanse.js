@@ -1,8 +1,7 @@
 
 // export const backendUrl = 'http://127.0.0.1:8001';
-// export const backendUrl = 'https://cabooserver.online'
+// export const backendUrl = 'https://cabooserver.online';
 export const backendUrl = 'https://backend.caboo.site';
-;
 
 export const user_signup_url = backendUrl+'/Api/signup/';
 
@@ -55,4 +54,6 @@ export const GoogleAuth_url = backendUrl+"/Api/googleAuth/";
 
 export const CouponManage_url = backendUrl+"/Api/couponManagement/";
 
-export const Get_Coupon_url = backendUrl+"/Api/getcoupon/"
+export const Get_Coupon_url = backendUrl+"/Api/getcoupon/";
+
+export const Update_Coupon_url = backendUrl+"/Api/couponupdate/";

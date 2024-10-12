@@ -1,83 +1,64 @@
-import React, { useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import useAdmin from "../../Hooks/useAdmin";
-import { CouponManage_url } from "../../Utils/Constanse";
-import Coupon_list_page from "./Coupon_list_page";
+import React, { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { backendUrl } from '../../Utils/Constanse';
+import useAdmin from '../../Hooks/useAdmin';
+import { addCurrentPage } from '../../Redux/AdminSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
+const Coupon_edit = ({ coupondata,EditCoupon }) => {
+    const {Update_coupon}=useAdmin()
+  
+    useEffect(() => {
+      formik.setFieldValue('startDate', new Date(coupondata.start_date).toISOString().substring(0, 10));
+      formik.setFieldValue('expireDate', new Date(coupondata.end_date).toISOString().substring(0, 10));
+    }, [coupondata]);
 
-const Coupons = () => {
-
-  const { CouponManage}=useAdmin()
-  const [showform,setShowform]=useState(false)
   const formik = useFormik({
     initialValues: {
-      couponCode: "",
-      couponType: "",
-      discount: "",
-      maxAmount: "",
-      image: null,
-      startDate: "",
-      expireDate: "",
-      isActive: false,
+      couponCode: coupondata.code,
+      couponType: coupondata.type,
+      discount: coupondata.discount,
+      maxAmount: coupondata.max_amount,
+      image: '',
+      startDate: '',
+      expireDate: '',
+      isActive: coupondata.status,
     },
     validationSchema: Yup.object({
-      // Coupon code: start with a number or string and no spaces allowed
       couponCode: Yup.string()
-        .matches(
-          /^[A-Za-z0-9][^\s]*$/,
-          "Coupon code must start with a letter or number and must not contain spaces"
-        )
-        .required("Coupon code is required"),
-
-      // Coupon type: must be one of the selected options
+        .matches(/^[A-Za-z0-9][^\s]*$/, 'Coupon code must start with a letter or number and must not contain spaces')
+        .required('Coupon code is required'),
       couponType: Yup.string()
-        .oneOf(["percentage", "amount"], "Invalid coupon type") // Add your available options here
-        .required("Coupon type is required"),
-
-      // Discount: must be a number and less than or equal to 50%
+        .oneOf(['percentage', 'amount'], 'Invalid coupon type')
+        .required('Coupon type is required'),
       discount: Yup.number()
-        .typeError("Discount must be a number")
-        .max(50, "Discount cannot be more than 50%")
-        .required("Discount amount/percentage is required"),
-
-      // Max Amount: must be less than or equal to 50
+        .typeError('Discount must be a number')
+        .max(50, 'Discount cannot be more than 50%')
+        .required('Discount amount/percentage is required'),
       maxAmount: Yup.number()
-        .typeError("Max amount must be a number")
-        .required("Maximum amount is required"),
-
-      // Image: must be provided
-      image: Yup.mixed().required("Image is required"),
-
-      // Start date: must be today or in the future
+        .typeError('Max amount must be a number')
+        .required('Maximum amount is required'),
+      image: Yup.mixed(),
       startDate: Yup.date()
-        .min( new Date(new Date().setHours(0, 0, 0, 0)), "Start date must be today or a future date")
-        .required("Start date is required"),
-
-      // Expire date: must be after the start date
+        .min(new Date(new Date().setHours(0, 0, 0, 0)), 'Start date must be today or a future date')
+        .required('Start date is required'),
       expireDate: Yup.date()
-        .min(
-          Yup.ref("startDate"),
-          "Expiry date cannot be before the start date"
-        )
-        .required("Expiry date is required"),
+        .min(Yup.ref('startDate'), 'Expiry date cannot be before the start date')
+        .required('Expiry date is required'),
     }),
     onSubmit: (values) => {
-      // Handle form submission logic here
-      console.log("Form values:", values);
+      values['id']=coupondata.id
+      console.log('Form values:', values);
 
-     CouponManage(CouponManage_url,values)
+      Update_coupon(values)
     },
   });
- 
+  
 
   return (
-    <div className="p-10">
-      <h1 className="text-3xl text-black font-bold mb-5">Coupons Management</h1>
-      <div className="flex justify-end  mt-10">
-        <button onClick={()=>setShowform(!showform)} className="bg-black text-white py-3 px-4 rounded-lg hover:text-black hover:bg-gray-300 font-semibold">{ showform ? 'View coupons': 'Create New Coupon'}</button>
-      </div>
-      {showform ? (
+    <div className="flex justify-end mt-10">
       <form onSubmit={formik.handleSubmit}>
         {/* First Line: Coupon Code and Coupon Type */}
         <div className="flex justify-evenly pt-10 w-full space-x-10">
@@ -89,6 +70,7 @@ const Coupons = () => {
               type="text"
               id="couponCode"
               name="couponCode"
+              disabled
               className="bg-gray-200 py-2 px-6 my-2 border border-gray-400"
               value={formik.values.couponCode}
               onChange={formik.handleChange}
@@ -104,6 +86,7 @@ const Coupons = () => {
               Coupon Type <span className="text-red-600">*</span>
             </label>
             <select
+            disabled
               id="couponType"
               name="couponType"
               className="bg-gray-200 py-2 px-6 my-2 border border-gray-400"
@@ -113,7 +96,6 @@ const Coupons = () => {
             >
               <option value="" label="Select coupon type" />
               <option value="percentage" label="Percentage" />
-              {/* <option value="amount" label="Amount" /> */}
             </select>
             {formik.touched.couponType && formik.errors.couponType ? (
               <p className="text-red-600">{formik.errors.couponType}</p>
@@ -169,10 +151,22 @@ const Coupons = () => {
               name="image"
               className="bg-gray-200 py-2 px-6 my-2 border border-gray-400"
               onChange={(event) => {
-                formik.setFieldValue("image", event.currentTarget.files[0]);
+                formik.setFieldValue('image', event.currentTarget.files[0]);
               }}
               onBlur={formik.handleBlur}
             />
+            {/* Display image preview if available */}
+            {formik.values.image && typeof formik.values.image === 'object' ? (
+              <img
+                src={ URL.createObjectURL(formik.values.image)}
+                alt="Image Preview"
+                className="mt-2 max-w-full h-200"
+              />
+            ) : (
+              coupondata.image && (
+                <img src={backendUrl+coupondata.image} alt="Existing Image" className="mt-2 max-w-full h-200" />
+              )
+            )}
             {formik.touched.image && formik.errors.image ? (
               <p className="text-red-600">{formik.errors.image}</p>
             ) : null}
@@ -233,18 +227,26 @@ const Coupons = () => {
           </div>
         </div>
 
-        {/* Save Button */}
-        <div className="flex justify-center pt-10">
+        <div className="flex justify-center pt-10 space-x-4">
+        <button
+            type='button'
+            onClick={()=>EditCoupon(false)}
+            className=" hover:bg-gray-300 font-bold text-black border-2 border-black py-2 px-8 rounded-lg"
+          >
+            Cancel
+          </button>
+           <>
           <button
             type="submit"
-            className="bg-black text-white py-2 px-10 rounded-full font-bold hover:bg-gray-800"
+            className="bg-black hover:bg-gray-300 text-white py-2 px-8 rounded-lg"
           >
-            Create 
+            Update Coupon
           </button>
+          </>
         </div>
-      </form>):(<div className="mt-7"> <Coupon_list_page /></div> )}
+      </form>
     </div>
   );
 };
 
-export default Coupons;
+export default Coupon_edit;

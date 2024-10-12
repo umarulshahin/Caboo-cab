@@ -9,9 +9,11 @@ import User_list_page from "../../Components/Admin/User_list_page";
 import Drivers_list_page from "../../Components/Admin/Drivers_list_page";
 import Documents_page from "../../Components/Admin/Documents_page";
 import TripMore from "../../Components/Admin/TripMore";
+import { useSelector } from "react-redux";
 
 const Admin_home = () => {
-  const [activepage, setActivePage] = useState("home");
+  const currentpage = useSelector((state)=>state.admin_data.currentpage)
+  const [activepage, setActivePage] = useState(currentpage);
 
   console.log(activepage, "active page");
   return (
@@ -23,9 +25,9 @@ const Admin_home = () => {
         </div>
         <div className="w-5/6 bg-white min-h-screen  pt-10 rounded-tl-[5rem]">
           {activepage === "home" && <Admin_home_page  />}
-          {activepage === "trip" && <TripListing activepage={setActivePage} />}
+          {activepage === "trip" && <TripListing />}
           {activepage === "user" && <User_list_page />}
-          {activepage === "driver" && <Drivers_list_page activepage={setActivePage} />}
+          {activepage === "driver" && <Drivers_list_page  />}
           {activepage === "coupon" && <Coupons />}
           {activepage === "documents" && <Documents_page />}
           {activepage === "trip_more" && <TripMore />}

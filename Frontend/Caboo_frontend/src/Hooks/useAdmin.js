@@ -1,7 +1,7 @@
 
 import { useDispatch } from 'react-redux'
 import { addAllTrips, addCoupons, addDriver_list, addUsers_list } from '../Redux/AdminSlice'
-import { Get_all_trips_url, Get_Coupon_url, get_Driver_url, get_Users_url } from '../Utils/Constanse'
+import { Get_all_trips_url, Get_Coupon_url, get_Driver_url, get_Users_url, Update_Coupon_url } from '../Utils/Constanse'
 import { toast } from 'sonner'
 import AdminAxios from '../Axios/AdminAxios'
 import { useNavigate } from 'react-router-dom'
@@ -113,16 +113,32 @@ const useAdmin = () => {
 
             })
             if(response.status === 200){
-               console.log(response.data,'get coupons')
                dispatch(addCoupons(response.data))
             }
-            console.log(response,'response data')
 
         }catch(error){
             console.log(error,'get coupons')
         }
     }
 
-    return {GetUsers,Usermanagement,GetTripdata,CouponManage,Get_Coupon}
+    const Update_coupon=async(data)=>{
+
+        try{
+            const response = await AdminAxios.put(Update_Coupon_url,data,{
+                headers:{
+                    "Content-Type":"multipart/form-data",
+                }
+            })
+            if(response.status===200){
+                console.log(response.data,'coupon update')
+                toast.success("Coupon updated successfully")
+            }
+        }catch(error){
+           
+            console.log(error,'coupon update error')
+        }
+    }
+
+    return {GetUsers,Usermanagement,GetTripdata,CouponManage,Get_Coupon,Update_coupon}
 }
 export default useAdmin

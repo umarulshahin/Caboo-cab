@@ -1,24 +1,38 @@
 import React, { useEffect, useState } from "react";
 import useAdmin from "../../Hooks/useAdmin";
 import { useSelector } from "react-redux";
+import Coupon_edit from "./Coupon_edit";
 
 const Coupon_list_page = () => {
-    const [current_page,setcurrentpage]=useState()
     const [currentcoupons,setcurrentcoupons]=useState()
     const [showskelton,setSkelton] = useState(true)
+    const [EditCoupon,setEditCoupon]=useState(null)
+
     const { Get_Coupon }=useAdmin()
     const coupon = useSelector((state)=>state.admin_data.coupons)
+
+    useEffect(()=>{
+        setcurrentcoupons(coupon?coupon:{})
+
+    },[coupon])
+
     useEffect(()=>{
         setTimeout(() => {
             setSkelton(false)
+
         }, 1000);
        
         Get_Coupon()
-        setcurrentcoupons(coupon?coupon:{})
     },[])
+
+    const handleCoupon=(value)=>{
+        setEditCoupon(value)
+       }
+
   return (
     <div>
-      <div className=" bg-white rounded-lg shadow-lg">
+      <div className=" bg-white rounded-lg ">
+        { EditCoupon ? <div className="flex justify-center"><Coupon_edit coupondata={EditCoupon} EditCoupon={setEditCoupon} /></div> :(
         <table className="min-w-full bg-white rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-gray-200">
@@ -32,7 +46,7 @@ const Coupon_list_page = () => {
                 Coupon Type
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-semibold">
-              Discount/ Percentage
+              Discount/ <br /> Percentage
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-semibold">
               Max Amount
@@ -82,14 +96,14 @@ const Coupon_list_page = () => {
                   <td className="py-3 px-4">{data.code}</td>
                   <td className="py-3 px-4">{data.type}</td>
                   <td className="py-3 px-4">{data.discount}%</td>
-                  <td className="py-3 px-4">{data.max_amount}</td>
-                  <td className="py-3 px-4">{data.start_date}</td>
-                  <td className="py-3 px-4">{data.end_date}</td>
-                  <td className={`py-3 px-4 ${data.status ? 'text-green-600':'text-orange-600'}`}>{data.status ? 'Active' : 'InActive'}</td>
+                  <td className="py-3 px-4">₹ {data.max_amount}</td>
+                  <td className="py-3 px-4">{new Date(data.start_date).toLocaleDateString()}</td>
+                  <td className="py-3 px-4">{new Date(data.end_date).toLocaleDateString()}</td>
+                  <td className={`py-3 px-4 ${data.status ? 'text-green-600':'text-orange-600'}`}>{data.status ? 'Active' : 'Inactive'}</td>
 
-                  <td></td>
                   <td className="py-3">
-                    <button className="px-6 py-2 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition">
+                
+                    <button onClick={()=>handleCoupon(data)} className="px-6 py-2 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition">
                       View
                     </button>
                   </td>
@@ -102,6 +116,7 @@ const Coupon_list_page = () => {
               </tr>)}
           </tbody>
         </table>
+        )}
         {/* <div className="flex   justify-center space-x-3 my-5">
           <button
             disabled={page === 1}

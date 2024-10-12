@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 
 const AdminSlice = createSlice({
@@ -9,7 +10,8 @@ const AdminSlice = createSlice({
         users_list:{},
         Driver_list:{},
         allTrips:{},
-        coupons:{}
+        coupons:{},
+        currentpage:'home'
     },
     reducers:{
         addadmin_token:(state,action)=>{
@@ -30,6 +32,10 @@ const AdminSlice = createSlice({
         addCoupons:(state,action)=>{
             state.coupons=action.payload
         },
+        addCurrentPage:(state,action)=>{
+           console.log(action.payload,'payload page')
+           state.currentpage=action.payload
+        },
         ClearAdmin:(state,action)=>{
             state.admin_data={}
             state.admin_token={}
@@ -37,9 +43,10 @@ const AdminSlice = createSlice({
             state.Driver_list={}
             state.allTrips={}
             state.coupons={}
+            state.currentpage='home'
         }    }
 })
 
-export const {addadmin_data,addadmin_token,addUsers_list,addDriver_list,addAllTrips,addCoupons}=AdminSlice.actions
+export const {addadmin_data,addadmin_token,addUsers_list,addDriver_list,addAllTrips,addCoupons,ClearAdmin,addCurrentPage}=AdminSlice.actions
 
 export default AdminSlice.reducer;

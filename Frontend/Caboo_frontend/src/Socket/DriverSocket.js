@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import {addDriver_driverRide, addDriverClearRide, addDriverOTPvalidation, addDriverRideDetails, addDriverRideLocations, addDriverTripId,} from '../Redux/DriverRideSlice';
 import { addClearChat } from '../Redux/Chatslice';
 import Cookies from "js-cookie"
-import { addClearDriver } from '../Redux/DriverSlice';
+import { addApplyoffer, addClearDriver } from '../Redux/DriverSlice';
 
 const libraries = ["places"];
 const apiKey = import.meta.env.VITE_google_map_api_key;
@@ -20,6 +20,8 @@ const useDriverWebSocket = () => {
     const driver = useSelector((state) => state.driver_data.driver_token);
     const driverdetails = useSelector((state) => state.driver_data.driver_data);
     const tripId = useSelector((state)=>state.driver_ride_data.drivertripid)
+    const applyoffer = useSelector((state)=>state.driver_data.applyoffer)
+
     const [declineTimeout, setDeclineTimeout] = useState(null);
     const socketRef = useRef(null);
     const respondedRef = useRef(false);
@@ -133,7 +135,12 @@ const useDriverWebSocket = () => {
                 console.log('after otp ')
 
             }else if (data.type === 'Payment verification'){
-                
+                console.log(data.message.userRequest,'user request')
+                if(data.message.userRequest.offer ){
+                    console.log("yes verification is working")
+
+                   dispatch(addApplyoffer(data.message.userRequest.offer))
+                }
                 navigate('/paymentconfirm')
             }else if (data.type.trim() === "Trip cancel"){
 
@@ -381,20 +388,23 @@ const useDriverWebSocket = () => {
         socketRef.current.send(JSON.stringify({
             requestType: 'ride complete',
             ride_complete: 'success',
-            trip_id:tripId
+            trip_id:tripId,
+            applyoffer:applyoffer
         }))
     }
 
     const Paymentconfirm=()=>{
 
-        dispatch(addDriverClearRide(null))
+        
 
         socketRef.current.send(JSON.stringify({
             requestType : "payment received ",
             'payment received' : 'cashinhand',
-            trip_id:tripId
+            trip_id:tripId,
+            applyoffer:applyoffer
 
         }))
+        dispatch(addDriverClearRide(null))
         navigate('/driver_home')
         
     }

@@ -16,14 +16,22 @@ import money from '../../assets/money.png'
 import rating_icon from '../../assets/rating.png'
 import feedback from '../../assets/feedback.png'
 import { FaArrowLeft, FaDownload, FaStar } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { addCurrentPage } from "../../Redux/AdminSlice";
 
 
 const TripMore = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const { trips } = state || {};
   console.log(state, "state value in trip more page");
 
+  const handlechange=()=>{
+    dispatch(addCurrentPage('trip'))
+    navigate(-1)
+  }
+  
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Admin_header />
@@ -174,7 +182,7 @@ const TripMore = () => {
               {/* Buttons */}
               <div className="flex justify-start mt-8 space-x-4">
                 <button
-                  onClick={() => navigate(-1)}
+                  onClick={handlechange}
                   className="bg-white border border-gray-700 text-gray-700 font-bold py-2 px-8 rounded-lg flex items-center hover:bg-gray-200 transition"
                 >
                   <FaArrowLeft className="mr-2" />

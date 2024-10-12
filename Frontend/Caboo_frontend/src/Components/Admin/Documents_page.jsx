@@ -5,11 +5,12 @@ import {
   DriverManagement_url,
   get_Driver_url,
 } from "../../Utils/Constanse";
-import Sidebar_admin from "./Sidebar_admin";
 import { useLocation, useNavigate } from "react-router-dom";
 import ImageModal from "./ImageModal";
 import DeclineModal from "./DeclineModal";
 import { FaArrowLeft } from "react-icons/fa";
+import { addCurrentPage } from "../../Redux/AdminSlice";
+import { useDispatch } from "react-redux";
 
 const Documents_page = () => {
   const { state } = useLocation();
@@ -17,7 +18,8 @@ const Documents_page = () => {
   const { Usermanagement, GetUsers } = useAdmin();
   const [selectedImage, setSelectedImage] = useState(null);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const navigate=useNavigate()
   useEffect(() => {
     GetUsers(get_Driver_url, "driver");
   }, []);
@@ -52,6 +54,11 @@ const Documents_page = () => {
     };
 
     Usermanagement(DriverManagement_url, value);
+  };
+
+  const handleChangePage = () => {
+    dispatch(addCurrentPage('driver')); 
+    navigate(-1)
   };
 
   return (
@@ -186,7 +193,7 @@ const Documents_page = () => {
         <div className="flex w-full  my-10">
           <div className=" w-1/3 pl-7">
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => handleChangePage('driver')}
               className="border text-black font-bold py-2 px-4 rounded-full bg-white border-black hover:bg-black hover:text-white transition duration-500 transform hover:scale-110 active:bg-gray-800 active:text-white active:duration-250 active:shadow-none active:scale-95 flex items-center"
             >
               <FaArrowLeft className="mr-2" />

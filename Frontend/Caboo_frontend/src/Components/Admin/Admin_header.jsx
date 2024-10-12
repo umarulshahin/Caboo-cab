@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import avatar from "../../assets/profile_img.png"
 import { backendUrl } from "../../Utils/Constanse";
 import Cookies from "js-cookie"
-import { addadmin_data, addadmin_token, addDriver_list, addUsers_list } from "../../Redux/AdminSlice";
+import { ClearAdmin } from "../../Redux/AdminSlice";
 
 const Admin_header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -33,10 +33,7 @@ const Admin_header = () => {
   
     const handleLogout=()=>{
   
-      dispatch(addadmin_data(null))
-      dispatch(addadmin_token(null))
-      dispatch(addUsers_list(null))
-      dispatch(addDriver_list(null))
+      dispatch(ClearAdmin())
       Cookies.remove('adminTokens')
       navigate("/admin")
     }
