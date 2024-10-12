@@ -73,7 +73,6 @@ const useUserWebSocket = () => {
 
                 navigate('/userRide')
 
-
             }else if (data.type.trim() === 'Trip complete'){
                 console.log(data.message,"yes payment is working ")
                 dispatch(addUserCoupons(data.message))
