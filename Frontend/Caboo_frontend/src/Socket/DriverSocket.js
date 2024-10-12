@@ -54,8 +54,8 @@ const useDriverWebSocket = () => {
             return
         }
         // const ws = new WebSocket(`wss://cabooserver.online/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
-        const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
-        // const ws = new WebSocket(`wss://backend.caboo.site/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
+        // const ws = new WebSocket(`ws://127.0.0.1:8001/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
+        const ws = new WebSocket(`wss://backend.caboo.site/ws/driverlocation/${driver.user_id}/?token=${token["access"]}`);
 
 
         socketRef.current = ws;
